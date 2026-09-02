@@ -10,6 +10,7 @@ Date: 2026-09-02
 - Replay objective: DER++ feature MSE plus sparse PCE and ZS global consistency under each sample's historical task/class space
 - Smoke run: `c6smk3`, Class T1 to T2, two train batches per task
 - Static/runtime audit: PASS; DER++ feature loss, replay PCE, replay global loss, MiB KD, and current-task ZS global loss were all exercised
+- Sparse-label gate: PASS; T1 uses global labels 1 to 3, T2 uses 4 to 5, and T3 uses 6 to 7, with 0 for background and -100 for ignored pixels
 
 ## Validation-only sweep
 
