@@ -712,7 +712,7 @@ def _run_independent_domain_references(args, tasks: tuple[Task, ...], device: to
 METHODS = {
     "class": (
         "pce-sequential", "zs-sequential", "pce-ewc", "pce-gpm", "pce-der",
-        "zs-mib", "zs-gpm", "zs-der", "zs-derpp",
+        "zs-mib", "zs-gpm", "zs-der", "zs-derpp", "zs-derpp-mib",
     ),
     "organ": (
         "pce-sequential", "zs-sequential", "pce-ewc", "zs-ewc", "pce-gpm", "zs-gpm",
@@ -781,8 +781,8 @@ def main(project_scenario: str) -> None:
     use_ewc = args.method.endswith("-ewc")
     use_gpm = args.method.endswith("-gpm")
     use_der = args.method.endswith("-der")
-    use_derpp = args.method.endswith("-derpp")
-    use_mib = args.method == "zs-mib"
+    use_derpp = args.method in {"zs-derpp", "zs-derpp-mib"}
+    use_mib = args.method in {"zs-mib", "zs-derpp-mib"}
     use_joint = args.method == "zs-joint"
     if args.zs_global_weight is None:
         args.zs_global_weight = 1.0 if use_zs else 0.0
@@ -1228,6 +1228,13 @@ def main(project_scenario: str) -> None:
             },
             args.output / f"s{stage + 1:02d}_state.pt",
         )
+        seen_validation = {} if use_joint else {
+            seen_task.code: _evaluate_task(
+                model, project_scenario, seen_task, seen_stage, args.data_root,
+                "val", args.batch_size, device,
+            )["benchmark_mean"]
+            for seen_stage, seen_task in enumerate(tasks[:stage + 1])
+        }
         evaluated = {}
         evaluation_tasks = tasks if project_scenario == "domain" else tasks[:stage + 1]
         for evaluated_stage, evaluated_task in enumerate(evaluation_tasks):
@@ -1248,6 +1255,10 @@ def main(project_scenario: str) -> None:
             "task": "joint" if use_joint else task.code,
             "train_samples": len(train),
             "best_validation": best,
+            "seen_validation": seen_validation,
+            "seen_validation_mean": (
+                None if use_joint else float(np.mean(tuple(seen_validation.values())))
+            ),
             "evaluated": evaluated,
             "fisher": fisher_summary,
             "gpm": gpm_summary,
@@ -1275,6 +1286,7 @@ def main(project_scenario: str) -> None:
         "completed_stages": 1 if use_joint else last_stage + 1,
         "joint_training": use_joint,
         "final_seen_mean": float(np.nanmean(final_values)),
+        "final_seen_validation_mean": stage_rows[-1]["seen_validation_mean"],
         "matrix": serializable_matrix,
         "stage_rows": stage_rows,
         "history_images": use_der or use_derpp,

@@ -13,13 +13,14 @@ def main() -> None:
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--method", required=True)
     parser.add_argument("--scenario", choices=("class", "organ", "domain"), required=True)
+    parser.add_argument("--expected-stages", type=int)
     args = parser.parse_args()
     manifest = json.loads((args.output / "manifest.json").read_text())
     summary = json.loads((args.output / "summary.json").read_text())
     rows = [json.loads(line) for line in (args.output / "train.jsonl").read_text().splitlines()]
     epoch_rows = [row for row in rows if "loss" in row]
     is_joint = args.method == "zs-joint"
-    expected_stages = 1 if is_joint else 2
+    expected_stages = args.expected_stages or (1 if is_joint else 2)
     expected_epoch_rows = manifest["epochs_per_task"] * expected_stages
     state = torch.load(args.output / f"s{expected_stages:02d}_state.pt", map_location="cpu")
     failures = []
@@ -35,7 +36,9 @@ def main() -> None:
             failures.append("joint matrix contract violation")
         if any(summary[key] is not None for key in ("BWTR", "RMA", "E-FWT")):
             failures.append("undefined joint continual metric is populated")
-    uses_replay = args.method.endswith("-der") or args.method.endswith("-derpp")
+    uses_derpp = args.method in {"zs-derpp", "zs-derpp-mib"}
+    uses_mib = args.method in {"zs-mib", "zs-derpp-mib"}
+    uses_replay = args.method.endswith("-der") or uses_derpp
     replay_flags = (
         manifest["history_images"], manifest["replay"],
         summary["history_images"], summary["replay"],
@@ -46,13 +49,13 @@ def main() -> None:
         failures.append("final state contract violation")
     if args.method.endswith("-ewc"):
         fisher = json.loads((args.output / "fisher.json").read_text())
-        if len(fisher) != 2 or min(row["nonzero"] for row in fisher) <= 0:
+        if len(fisher) != expected_stages or min(row["nonzero"] for row in fisher) <= 0:
             failures.append("invalid Fisher")
         if state["continual"] is None or not state["continual"]["anchor"]:
             failures.append("missing EWC state")
     elif args.method.endswith("-gpm"):
         gpm = json.loads((args.output / "gpm.json").read_text())
-        if len(gpm) != 2 or min(len(row["layers"]) for row in gpm) <= 0:
+        if len(gpm) != expected_stages or min(len(row["layers"]) for row in gpm) <= 0:
             failures.append("invalid GPM")
         if state["continual"] is None or not state["continual"]["bases"]:
             failures.append("missing GPM state")
@@ -64,7 +67,7 @@ def main() -> None:
             failures.append("DER buffer overflow")
         if max(row["der_penalty"] for row in epoch_rows) <= 0:
             failures.append("DER replay objective did not run")
-    elif args.method.endswith("-derpp"):
+    elif uses_derpp:
         continual = state["continual"]
         if continual is None or continual["examples"] is None:
             failures.append("missing DER++ buffer state")
@@ -78,7 +81,7 @@ def main() -> None:
             failures.append("DER++ replay global objective did not run")
     elif state["continual"] is not None:
         failures.append("unexpected continual state")
-    if args.method == "zs-mib" and epoch_rows[1]["mib_kd_loss"] <= 0:
+    if uses_mib and epoch_rows[-1]["mib_kd_loss"] <= 0:
         failures.append("MiB KD did not run")
     if args.method.startswith("zs-") and min(row["zs_global_loss"] for row in epoch_rows) <= 0:
         failures.append("ZS global objective did not run at every stage")
