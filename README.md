@@ -23,5 +23,6 @@ Inputs are external and are not published. The expected task files and sparse-an
 - [Aggregate metrics](results/joint_short_20260902/metrics.csv)
 - [Training curves](results/joint_short_20260902/curves.csv)
 - [ZS-DER++ A-to-B parameter sweep](reports/zs_derpp_ab_sweep_20260902.md)
+- [Organ-CL ZS-DER++ T1-to-T2 parameter sweep](reports/organ_zs_derpp_ab_sweep_20260902.md)
 
 The tested runtime used Python 3.10, PyTorch 2.2.1+cu121, and CUDA 12.1. Install a CUDA-specific PyTorch wheel appropriate for the target machine.
