@@ -20,11 +20,12 @@ def main() -> None:
     epoch_rows = [row for row in rows if "loss" in row]
     is_joint = args.method == "zs-joint"
     expected_stages = 1 if is_joint else 2
+    expected_epoch_rows = manifest["epochs_per_task"] * expected_stages
     state = torch.load(args.output / f"s{expected_stages:02d}_state.pt", map_location="cpu")
     failures = []
     if manifest["method"] != args.method or summary["method"] != args.method:
         failures.append("method mismatch")
-    if summary["completed_stages"] != expected_stages or len(epoch_rows) != expected_stages:
+    if summary["completed_stages"] != expected_stages or len(epoch_rows) != expected_epoch_rows:
         failures.append("stage completion mismatch")
     if is_joint:
         matrix = summary["matrix"]
