@@ -14,14 +14,16 @@ Date: 2026-09-02
 
 ## Validation-only sweep
 
-Both candidates use seed 42, Class T1 to T2, 20 epochs per task, SGD learning rate 0.03, ZS global weight 0.1, DER++ buffer 64, replay minibatch 8, alpha 0.5, and beta 0.5.
+Both candidates use seed 42, Class T1 to T2, 20 epochs per task, SGD learning rate 0.03, ZS global weight 0.1, DER++ buffer 64, replay minibatch 4, alpha 0.5, and beta 0.5.
 
 | Run ID | MiB KD weight | Device role | Status at publication |
 |---|---:|---|---|
-| `c6m1` | 1.0 | sweep worker 1 | running |
-| `c7m2` | 10.0 | sweep worker 2 | running |
+| `c6m3` | 1.0 | sweep worker 1 | running |
+| `c7m4` | 10.0 | sweep worker 2 | running |
 
-Selection uses the mean 3D validation Dice over all seen tasks after T2 (`final_seen_validation_mean`). Test results are not used for hyperparameter selection. After both candidates pass the output audit, the selected coefficient is automatically used by formal run `v6c42` for Class T1 to T3, 80 epochs per task.
+The original runs `c6m1` and `c7m2` completed T1 but failed at the first T2 replay step because batch 4, replay minibatch 8, and the MiB teacher exceeded 24 GB GPU memory by 242 MiB. They are retained as failed-run evidence. Reducing only the replay minibatch to 4 leaves the buffer capacity and objective unchanged and lowers the observed training footprint to about 15.5 GB.
+
+Selection uses the mean 3D validation Dice over all seen tasks after T2 (`final_seen_validation_mean`). Test results are not used for hyperparameter selection. After both candidates pass the output audit, the selected coefficient is automatically used by formal run `v6c43` for Class T1 to T3, 80 epochs per task.
 
 ## Related formal run
 
