@@ -13,6 +13,6 @@ Both tests load a stable best-validation checkpoint and evaluate every task seen
 
 The Class-CL intermediate checkpoint retains both seen tasks at this point.
 
-The Organ-CL checkpoint has severe forgetting of T2. Its persisted matrix independently confirms the pattern: T2 was 0.6637 immediately after T2, then 0.0018 after T3. The near-zero T2 score during T4 is therefore a method outcome, not an evaluator mismatch. The intermediate test did not terminate or alter the active Organ training run.
+The Organ-CL checkpoint has severe forgetting of T2. Its persisted matrix independently confirms the pattern: T2 was 0.6637 immediately after T2, then 0.0018 after T3. The near-zero T2 score during T4 is therefore a method outcome, not an evaluator mismatch. Based on this evidence, the active Organ run was stopped with its artifacts retained; no files were deleted.
 
 Raw medical data and checkpoints are excluded from the public repository.
