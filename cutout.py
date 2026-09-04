@@ -1,6 +1,6 @@
 import torch
 import numpy as np
-import PIL
+import PIL 
 import torchvision.transforms.functional as F
 import torch
 
@@ -50,21 +50,21 @@ def rotate_invariant(imgs,labels):
     imgs_out_list = []
     labels_out_list = []
     angles = []
-
+    
     for i in range(num):
         img = imgs[i,:,:,:]
         label = labels[i,:,:,:]
 
         angle = float(torch.empty(1).uniform_(0.0, 360.0).item())
-
+        
         rotated_img = F.rotate(img, angle, PIL.Image.NEAREST, False, None)
         rotated_label = F.rotate(label, angle, PIL.Image.NEAREST, False, None)
-
+        
         imgs_out_list.append(rotated_img)
         labels_out_list.append(rotated_label)
-
+        
         angles.append(angle)
-
+    
     imgs_out = torch.stack(imgs_out_list)
     labels_out = torch.stack(labels_out_list)
     return imgs_out, labels_out, angles
@@ -75,22 +75,22 @@ def rotate_back(imgs,outputs,labels,angles):
     imgs_out_list = []
     outputs_out_list = []
     labels_out_list = []
-
+    
     for i in range(num):
         img = imgs[i,:,:,:]
         output = outputs[i,:,:,:]
         label = labels[i,:,:,:]
         angle = -angles[i]
-
+        
         rotated_img = F.rotate(img, angle, PIL.Image.NEAREST, False, None)
         rotated_output = F.rotate(output, angle, PIL.Image.NEAREST, False, None)
         rotated_label = F.rotate(label, angle, PIL.Image.NEAREST, False, None)
-
+        
         imgs_out_list.append(rotated_img)
         outputs_out_list.append(rotated_output)
         labels_out_list.append(rotated_label)
-
+    
     imgs_out = torch.stack(imgs_out_list)
-    outputs_out = torch.stack(outputs_out_list)
+    outputs_out = torch.stack(outputs_out_list) 
     labels_out = torch.stack(labels_out_list)
     return imgs_out, {"pred_masks":outputs_out}, labels_out

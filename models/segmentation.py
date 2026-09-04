@@ -44,7 +44,7 @@ class SetCriterion(nn.Module):
         targets_masks = targets.argmax(1)
         dice=(2*torch.sum((src_masks==2)*(targets_masks==2),(1, 2)).float())/(torch.sum(src_masks==2,(1, 2)).float()+torch.sum(targets_masks==2,(1, 2)).float()+1e-10)
         return {"Myo": dice.mean()}
-
+    
     def Rv(self, outputs, targets):
         src_masks = outputs["pred_masks"]
         src_masks = src_masks.argmax(1)
@@ -70,7 +70,9 @@ class SetCriterion(nn.Module):
         return dice.mean()
 
     def loss_multiDice(self, outputs, targets):
-        """Compute multi-dice."""
+        """
+    	Compute multi-dice
+    	"""
         num_classes = 4
         src_masks = outputs["pred_masks"]
         ##mixup
@@ -101,13 +103,13 @@ class SetCriterion(nn.Module):
                 "loss_CrossEntropy":flat_loss_weighted,
         }
         return losses
-
+        
     def get_loss(self, loss, outputs, targets):
         loss_map = {'multiDice': self.loss_multiDice,
-                    'Rv': self.Rv,
-                    'Lv': self.Lv,
-                    'Myo': self.Myo,
-                    'Avg': self.Avg,
+                    'Rv': self.Rv, 
+                    'Lv': self.Lv, 
+                    'Myo': self.Myo, 
+                    'Avg': self.Avg, 
                     'CrossEntropy': self.loss_CrossEntropy,
                     }
         assert loss in loss_map, f'do you really want to compute {loss} loss?'
@@ -144,12 +146,12 @@ class PostProcessSegm(nn.Module):
 class Visualization(nn.Module):
     def __init__(self):
         super().__init__()
-
+        
     def save_image(self, image, tag, epoch, writer):
         image = (image - image.min()) / (image.max() - image.min() + 1e-6)
         grid = torchvision.utils.make_grid(image, nrow=4, pad_value=1)
         writer.add_image(tag, grid, epoch)
-
+        
     def forward(self, inputs, outputs, labels, epoch, writer):
         self.save_image(inputs, 'inputs', epoch, writer)
         self.save_image(outputs.float(), 'outputs', epoch, writer)
@@ -173,3 +175,4 @@ def build(args):
     postprocessors = {'segm': PostProcessSegm()}
 
     return model, criterion, postprocessors, visualizer
+

@@ -10,16 +10,6 @@ def cut_grid_graph(unary_cost: np.ndarray, pairwise_cost: np.ndarray,
                    algorithm: str = "swap") -> np.ndarray:
     """Match the legacy ``gco.cut_grid_graph`` contract used by ZScribbleSeg."""
     height, width, classes = unary_cost.shape
-    if not hasattr(gco, "GCOGridGraph"):
-        labels = gco.cut_grid_graph(
-            np.ascontiguousarray(unary_cost, dtype=np.float64),
-            np.ascontiguousarray(pairwise_cost, dtype=np.float64),
-            np.ascontiguousarray(vertical_cost, dtype=np.float64),
-            np.ascontiguousarray(horizontal_cost, dtype=np.float64),
-            algorithm=algorithm,
-        )
-        return np.asarray(labels, dtype=np.int32).reshape(height, width)
-
     graph = gco.GCOGridGraph(width, height, classes)
     graph.set_data_cost(np.ascontiguousarray(unary_cost.reshape(-1, classes), dtype=np.float64))
     vertical = np.zeros((height, width), dtype=np.float64)

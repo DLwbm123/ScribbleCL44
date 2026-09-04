@@ -3,12 +3,45 @@ from __future__ import annotations
 
 from dataclasses import asdict, dataclass
 import math
-from collections import OrderedDict
+from collections import Counter, OrderedDict
+from contextlib import contextmanager
 from typing import Callable
 
 import numpy as np
 import torch
+import torch.nn as nn
 import torch.nn.functional as F
+
+
+@contextmanager
+def freeze_batchnorm_stats(module: nn.Module):
+    """Keep replay forwards differentiable without mutating BN running state."""
+    layers = [
+        layer for layer in module.modules()
+        if isinstance(layer, nn.modules.batchnorm._BatchNorm)
+    ]
+    states = [layer.training for layer in layers]
+    for layer in layers:
+        layer.eval()
+    try:
+        yield
+    finally:
+        for layer, state in zip(layers, states):
+            layer.train(state)
+
+
+def stable_backbone_features(
+    model: nn.Module,
+    images: torch.Tensor,
+    *,
+    no_grad: bool = False,
+) -> torch.Tensor:
+    """Run the shared backbone without updating its BatchNorm statistics."""
+    with freeze_batchnorm_stats(model.backbone):
+        if no_grad:
+            with torch.no_grad():
+                return model.backbone(images).detach()
+        return model.backbone(images)
 
 
 def selected_parameters(model) -> dict[str, torch.nn.Parameter]:
@@ -458,7 +491,7 @@ class DarkExperienceReplay:
         if not self.examples:
             return next(model.parameters()).sum() * 0.0
         examples, targets = self.sample(device)
-        features = model.backbone(examples)
+        features = stable_backbone_features(model, examples)
         if features.shape != targets.shape:
             raise ValueError("DER replay feature shape mismatch")
         return self.alpha * F.mse_loss(features, targets)
@@ -522,6 +555,8 @@ class DarkExperienceReplayPlus:
         self.sparse_labels: list[torch.Tensor] = []
         self.task_ids: list[int] = []
         self.class_counts: list[int] = []
+        self.replay_batches = 0
+        self.replay_draw_counts: Counter[int] = Counter()
 
     def __len__(self) -> int:
         return len(self.examples)
@@ -574,6 +609,8 @@ class DarkExperienceReplayPlus:
         labels = torch.stack([self.sparse_labels[index] for index in indices]).to(device)
         task_ids = torch.tensor([self.task_ids[index] for index in indices], device=device)
         class_counts = torch.tensor([self.class_counts[index] for index in indices], device=device)
+        self.replay_batches += 1
+        self.replay_draw_counts.update(int(value) for value in task_ids.tolist())
         return examples, targets, labels, task_ids, class_counts
 
     def feature_penalty(self, model, device: torch.device) -> tuple[torch.Tensor, tuple[torch.Tensor, ...] | None]:
@@ -582,10 +619,35 @@ class DarkExperienceReplayPlus:
             return zero, None
         replay = self.sample(device)
         examples, targets = replay[:2]
-        features = model.backbone(examples)
+        features = stable_backbone_features(model, examples)
         if features.shape != targets.shape:
             raise ValueError("DER++ replay feature shape mismatch")
         return self.alpha * F.mse_loss(features, targets), replay
+
+    def coverage(self) -> dict:
+        stored = Counter(self.task_ids)
+        labels = {
+            task_id: [label for label, value in zip(self.sparse_labels, self.task_ids) if value == task_id]
+            for task_id in sorted(stored)
+        }
+        label_pixels = {}
+        for task_id, values in labels.items():
+            joined = torch.stack(values)
+            known = joined.ne(-100)
+            label_pixels[str(task_id)] = {
+                "known": int(known.sum().item()),
+                "ignore": int((~known).sum().item()),
+                "background": int(joined.eq(0).sum().item()),
+                "foreground": int(joined.gt(0).sum().item()),
+            }
+        return {
+            "stored_examples_by_task": {str(key): int(value) for key, value in sorted(stored.items())},
+            "label_pixels_by_task": label_pixels,
+            "replay_batches": int(self.replay_batches),
+            "replay_examples_by_task": {
+                str(key): int(value) for key, value in sorted(self.replay_draw_counts.items())
+            },
+        }
 
     def state_dict(self) -> dict:
         return {
@@ -599,7 +661,45 @@ class DarkExperienceReplayPlus:
             "sparse_labels": None if not self.sparse_labels else torch.stack(self.sparse_labels),
             "task_ids": None if not self.task_ids else torch.tensor(self.task_ids, dtype=torch.int64),
             "class_counts": None if not self.class_counts else torch.tensor(self.class_counts, dtype=torch.int64),
+            "replay_batches": self.replay_batches,
+            "replay_draw_counts": dict(self.replay_draw_counts),
+            "coverage": self.coverage(),
         }
+
+    def load_state_dict(self, state: dict) -> None:
+        if int(state["buffer_size"]) != self.buffer_size:
+            raise ValueError("DER++ buffer-size mismatch")
+        if int(state["minibatch_size"]) != self.minibatch_size:
+            raise ValueError("DER++ minibatch-size mismatch")
+        if float(state["alpha"]) != self.alpha or float(state["beta"]) != self.beta:
+            raise ValueError("DER++ coefficient mismatch")
+        examples = state["examples"]
+        targets = state["feature_targets"]
+        labels = state["sparse_labels"]
+        task_ids = state["task_ids"]
+        class_counts = state["class_counts"]
+        if examples is None:
+            if any(value is not None for value in (targets, labels, task_ids, class_counts)):
+                raise ValueError("incomplete empty DER++ state")
+            self.examples = []
+            self.feature_targets = []
+            self.sparse_labels = []
+            self.task_ids = []
+            self.class_counts = []
+        else:
+            count = int(examples.shape[0])
+            if any(value is None or int(value.shape[0]) != count for value in (targets, labels, task_ids, class_counts)):
+                raise ValueError("inconsistent DER++ state")
+            self.examples = [value.to(device="cpu", dtype=torch.float32).clone() for value in examples]
+            self.feature_targets = [value.to(device="cpu", dtype=torch.float32).clone() for value in targets]
+            self.sparse_labels = [value.to(device="cpu", dtype=torch.int16).clone() for value in labels]
+            self.task_ids = [int(value) for value in task_ids.tolist()]
+            self.class_counts = [int(value) for value in class_counts.tolist()]
+        self.num_seen_examples = int(state["num_seen_examples"])
+        self.replay_batches = int(state.get("replay_batches", 0))
+        self.replay_draw_counts = Counter(
+            {int(key): int(value) for key, value in state.get("replay_draw_counts", {}).items()}
+        )
 
     def summary(self) -> dict:
         return {
@@ -610,6 +710,7 @@ class DarkExperienceReplayPlus:
             "num_seen_examples": self.num_seen_examples,
             "stored_examples": len(self.examples),
             "state_bytes": self.nbytes(),
+            "coverage": self.coverage(),
         }
 
     def nbytes(self) -> int:

@@ -28,6 +28,13 @@ def main() -> None:
         failures.append("method mismatch")
     if summary["completed_stages"] != expected_stages or len(epoch_rows) != expected_epoch_rows:
         failures.append("stage completion mismatch")
+    if manifest.get("selection_split") != "validation" or manifest.get("test_for_selection") is not False:
+        failures.append("selection provenance contract violation")
+    if "validation_matrix" not in summary:
+        failures.append("missing validation matrix")
+    if not manifest.get("test_evaluation", False):
+        if any(value is not None for row in summary["matrix"] for value in row):
+            failures.append("test metrics present in validation-only run")
     if is_joint:
         matrix = summary["matrix"]
         if args.scenario != "domain" or manifest.get("training_mode") != "joint":
@@ -79,6 +86,15 @@ def main() -> None:
             failures.append("DER++ replay PCE did not run")
         if max(row["derpp_global_loss"] for row in epoch_rows) <= 0:
             failures.append("DER++ replay global objective did not run")
+        coverage = continual.get("coverage")
+        if coverage is None:
+            failures.append("missing DER++ coverage audit")
+        else:
+            stored = coverage["stored_examples_by_task"]
+            if sum(stored.values()) != continual["examples"].shape[0]:
+                failures.append("DER++ coverage count mismatch")
+            if expected_stages > 1 and not coverage["replay_examples_by_task"]:
+                failures.append("DER++ replay coverage missing")
     elif state["continual"] is not None:
         failures.append("unexpected continual state")
     if uses_mib and epoch_rows[-1]["mib_kd_loss"] <= 0:
@@ -96,6 +112,13 @@ def main() -> None:
         "method": args.method,
         "completed_stages": summary["completed_stages"],
         "epoch_rows": len(epoch_rows),
+        "selection_split": manifest.get("selection_split"),
+        "test_evaluation": manifest.get("test_evaluation"),
+        "derpp_coverage": (
+            None
+            if not uses_derpp or state["continual"] is None
+            else state["continual"].get("coverage")
+        ),
         "failures": failures,
     }
     print(json.dumps(result, indent=2, sort_keys=True))

@@ -20,7 +20,7 @@ def _match_spatial(skip, reference):
 class conv_block(nn.Module):
     def __init__(self, in_ch, out_ch):
         super(conv_block, self).__init__()
-
+        
         self.conv = nn.Sequential(
             nn.Conv2d(in_ch, out_ch, kernel_size=3, stride=1, padding=0, bias=True),
             nn.ReLU(inplace=True),
@@ -60,7 +60,7 @@ class Unet(nn.Module):
         filters = [64, 128, 256, 512, 1024]
 
         self.Pad = nn.ConstantPad2d((92, 92, 92, 92), 0)
-
+        
         self.Maxpool1 = nn.MaxPool2d(kernel_size=2, stride=2)
         self.Maxpool2 = nn.MaxPool2d(kernel_size=2, stride=2)
         self.Maxpool3 = nn.MaxPool2d(kernel_size=2, stride=2)
@@ -78,7 +78,7 @@ class Unet(nn.Module):
 
         self.Up3 = up_conv(filters[3], 4)
         self.Up_conv3 = conv_block(260, filters[2])
-
+        
         self.Up2 = up_conv(filters[2], filters[1])
         self.Up_conv2 = conv_block(filters[2], filters[1])
 

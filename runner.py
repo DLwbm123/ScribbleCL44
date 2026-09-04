@@ -3,4 +3,4 @@ from runner_core import main as run
 
 
 def main() -> None:
-    run("domain")
+    run("organ")

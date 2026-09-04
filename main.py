@@ -7,12 +7,6 @@ if "--setting-run" in sys.argv:
     setting_main()
     raise SystemExit(0)
 
-if "--domain-wsl-pce" in sys.argv:
-    sys.argv.remove("--domain-wsl-pce")
-    from domain_wsl_pce import main as domain_wsl_pce_main
-    domain_wsl_pce_main()
-    raise SystemExit(0)
-
 import argparse
 import datetime
 import random
@@ -55,7 +49,7 @@ def get_args_parser():
     parser.add_argument('--frozen_weights', type=str, default=None,
                         help="Path to the pretrained model. If set, only the mask head will be trained")
     parser.add_argument('--in_channels', default=1, type=int)
-
+    
     # Puzzle Mix
     parser.add_argument('--in_batch', type=str2bool, default=False, help='whether to use different lambdas in batch')
     parser.add_argument('--mixup_alpha', type=float, default=0.5, help='alpha parameter for mixup')
@@ -87,16 +81,16 @@ def get_args_parser():
     parser.add_argument('--Myo', default=1, type=float)
     parser.add_argument('--Avg', default=1, type=float)
     # dataset parameters
-
+    
     parser.add_argument('--dataset', default='ACDC_fold0', type=str,
                         help='multi-sequence CMR segmentation dataset')
-    parser.add_argument('--data_root', default='./data', type=str,
+    parser.add_argument('--data_root', default='/root/data', type=str,
                         help='multi-sequence CMR segmentation dataset')
-    parser.add_argument('--output_dir', default='./runs/default/',
+    parser.add_argument('--output_dir', default='/root/ZScribble/ZScribbleSeg_ACDC/ZScribbleSeg_fold07/',
                         help='path where to save, empty for no saving')
     parser.add_argument('--device', default='cuda:2', type=str,
                         help='device to use for training / testing')
-    parser.add_argument('--GPU_ids', type=str, default = '1', help = 'Ids of GPUs')
+    parser.add_argument('--GPU_ids', type=str, default = '1', help = 'Ids of GPUs')    
     parser.add_argument('--seed', default=42, type=int)
     parser.add_argument('--resume', default=False, help='resume from checkpoint')
     parser.add_argument('--start_epoch', default=0, type=int, metavar='N',
@@ -169,15 +163,15 @@ def main(args):
     sampler_train_dict = {k : torch.utils.data.RandomSampler(v) for k, v in dataset_train_dict.items()}
     sampler_val_dict = {k : torch.utils.data.SequentialSampler(v) for k, v in dataset_val_dict.items()}
 
-    batch_sampler_train = {
+    batch_sampler_train = { 
         k : torch.utils.data.BatchSampler(v, args.batch_size, drop_last=True) for k, v in sampler_train_dict.items()
         }
     dataloader_train_dict = {
-        k : DataLoader(v1, batch_sampler=v2, collate_fn=utils.collate_fn, num_workers=args.num_workers)
+        k : DataLoader(v1, batch_sampler=v2, collate_fn=utils.collate_fn, num_workers=args.num_workers) 
         for (k, v1), v2 in zip(dataset_train_dict.items(), batch_sampler_train.values())
         }
     dataloader_val_dict = {
-        k : DataLoader(v1, args.batch_size, sampler=v2, drop_last=False, collate_fn=utils.collate_fn, num_workers=args.num_workers)
+        k : DataLoader(v1, args.batch_size, sampler=v2, drop_last=False, collate_fn=utils.collate_fn, num_workers=args.num_workers) 
         for (k, v1), v2 in zip(dataset_val_dict.items(), sampler_val_dict.values())
         }
 

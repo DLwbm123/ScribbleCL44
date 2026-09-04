@@ -18,7 +18,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from scipy import ndimage
-from torch.utils.data import ConcatDataset, DataLoader, Dataset
+from torch.utils.data import DataLoader, Dataset
 
 from cutout import Cutout, rotate_back, rotate_invariant
 from mixup import mixup_process
@@ -30,8 +30,10 @@ from cl_methods import (
     GradientProjectionMemory,
     OnlineEWC,
     estimate_sparse_fisher,
+    freeze_batchnorm_stats,
     mib_distillation_loss,
     mib_sparse_loss,
+    stable_backbone_features,
 )
 
 
@@ -78,11 +80,13 @@ class H5Slices(Dataset):
         sparse_path: Path | None = None,
         label_shift: int = 0,
         augment: bool = False,
+        replay_source: bool = False,
     ) -> None:
         self.path = str(path)
         self.split = split
         self.label_shift = int(label_shift)
         self.augment = augment
+        self.replay_source = replay_source
         self._handle = None
         with h5py.File(self.path, "r") as handle:
             self.length = int(handle[f"{split}_images"].shape[2])
@@ -111,7 +115,7 @@ class H5Slices(Dataset):
         state["_handle"] = None
         return state
 
-    def __getitem__(self, index: int) -> tuple[torch.Tensor, torch.Tensor]:
+    def __getitem__(self, index: int):
         handle = self._open()
         image = np.asarray(handle[f"{self.split}_images"][:, :, index], dtype=np.float32)
         if self.sparse is not None:
@@ -120,6 +124,8 @@ class H5Slices(Dataset):
             label = np.asarray(handle[f"{self.split}_labels"][:, :, index]).astype(np.int64)
             if self.label_shift:
                 label = np.where(label > 0, label + self.label_shift, 0)
+        replay_image = image.copy()
+        replay_label = label.copy()
         if self.augment:
             if random.random() > 0.5:
                 turns, axis = np.random.randint(0, 4), np.random.randint(0, 2)
@@ -128,8 +134,25 @@ class H5Slices(Dataset):
             elif random.random() > 0.5:
                 angle = np.random.randint(-20, 20)
                 image = ndimage.rotate(image, angle, order=0, reshape=False)
-                label = ndimage.rotate(label, angle, order=0, reshape=False)
-        return torch.from_numpy(image[None].copy()), torch.from_numpy(label.copy()).long()
+                label = ndimage.rotate(
+                    label,
+                    angle,
+                    order=0,
+                    reshape=False,
+                    mode="constant",
+                    cval=IGNORE_INDEX,
+                    prefilter=False,
+                )
+        image = torch.from_numpy(image[None].copy())
+        label = torch.from_numpy(label.copy()).long()
+        if self.replay_source:
+            return (
+                image,
+                label,
+                torch.from_numpy(replay_image[None].copy()),
+                torch.from_numpy(replay_label.copy()).long(),
+            )
+        return image, label
 
     def close(self) -> None:
         if self._handle is not None:
@@ -349,16 +372,17 @@ def derpp_replay_losses(
     examples, _, labels, task_ids, class_counts = replay
     pce_terms = []
     global_terms = []
-    for task_value in torch.unique(task_ids, sorted=True).tolist():
-        selection = task_ids.eq(int(task_value))
-        classes = int(class_counts[selection][0].item())
-        target = native_target(labels[selection], classes)
-        task_id = int(task_value) if scenario in {"class", "organ"} else None
-        outputs, global_loss, _, _ = zs_cutout_invariance(
-            model, examples[selection], target, task_id, args, device,
-        )
-        pce_terms.append(pce_loss(outputs["pred_masks"], target))
-        global_terms.append(global_loss)
+    with freeze_batchnorm_stats(model.backbone):
+        for task_value in torch.unique(task_ids, sorted=True).tolist():
+            selection = task_ids.eq(int(task_value))
+            classes = int(class_counts[selection][0].item())
+            target = native_target(labels[selection], classes)
+            task_id = int(task_value) if scenario in {"class", "organ"} else None
+            outputs, global_loss, _, _ = zs_cutout_invariance(
+                model, examples[selection], target, task_id, args, device, include_gd=False,
+            )
+            pce_terms.append(pce_loss(outputs["pred_masks"], target))
+            global_terms.append(global_loss)
     return torch.stack(pce_terms).mean(), torch.stack(global_terms).mean()
 
 
@@ -376,6 +400,7 @@ def zs_cutout_invariance(
     task_id: int | None,
     args,
     device: torch.device,
+    include_gd: bool = True,
 ) -> tuple[dict[str, torch.Tensor], torch.Tensor, torch.Tensor, bool]:
     use_adversarial = False
     working_image = image
@@ -421,8 +446,12 @@ def zs_cutout_invariance(
     mixed_output = (outputs["pred_masks"] * mask + shuffled * (1 - mask)) * cut_mask
     invariant = 1 - F.cosine_similarity(cut_probability, mixed_output, dim=1).mean()
     annotated_cut = cut_target.sum(dim=1, keepdim=True)
-    gd = -(cut_target * torch.log(cut_probability + 1e-12)).sum(dim=1, keepdim=True)
-    return outputs, invariant, (gd * annotated_cut).mean(), use_adversarial
+    if include_gd:
+        gd = -(cut_target * torch.log(cut_probability + 1e-12)).sum(dim=1, keepdim=True)
+        gd_loss = (gd * annotated_cut).mean()
+    else:
+        gd_loss = cut_probability.new_zeros(())
+    return outputs, invariant, gd_loss, use_adversarial
 
 
 def zs_em_mixture_ratios(probabilities: torch.Tensor, target: torch.Tensor) -> dict[int, float]:
@@ -547,26 +576,12 @@ def _evaluate_task(model, scenario: str, task: Task, stage: int, root: Path, spl
     return result
 
 
-def _evaluate_joint(model, tasks: tuple[Task, ...], root: Path, split: str,
-                    batch_size: int, device: torch.device) -> dict:
-    per_task = {
-        task.code: _evaluate_task(model, "domain", task, stage, root, split, batch_size, device)
-        for stage, task in enumerate(tasks)
-    }
-    return {
-        "benchmark_mean": float(np.mean([score["benchmark_mean"] for score in per_task.values()])),
-        "per_task": per_task,
-    }
-
-
-def _write_matrix(path: Path, matrix: np.ndarray, tasks: tuple[Task, ...],
-                  row_labels: tuple[str, ...] | None = None) -> None:
+def _write_matrix(path: Path, matrix: np.ndarray, tasks: tuple[Task, ...]) -> None:
     with path.open("w", newline="") as stream:
         writer = csv.writer(stream)
         writer.writerow(["stage", *[task.code for task in tasks]])
         for index, row in enumerate(matrix):
-            label = index + 1 if row_labels is None else row_labels[index]
-            writer.writerow([label, *["" if np.isnan(value) else f"{value:.10f}" for value in row]])
+            writer.writerow([index + 1, *["" if np.isnan(value) else f"{value:.10f}" for value in row]])
 
 
 def domain_matrix_metrics(
@@ -712,7 +727,7 @@ def _run_independent_domain_references(args, tasks: tuple[Task, ...], device: to
 METHODS = {
     "class": (
         "pce-sequential", "zs-sequential", "pce-ewc", "pce-gpm", "pce-der",
-        "zs-mib", "zs-gpm", "zs-der", "zs-derpp", "zs-derpp-mib",
+        "zs-mib", "zs-gpm", "zs-der", "zs-derpp",
     ),
     "organ": (
         "pce-sequential", "zs-sequential", "pce-ewc", "zs-ewc", "pce-gpm", "zs-gpm",
@@ -720,7 +735,7 @@ METHODS = {
     ),
     "domain": (
         "pce-sequential", "zs-sequential", "pce-ewc", "zs-ewc", "pce-gpm", "zs-gpm",
-        "pce-der", "zs-der", "zs-derpp", "zs-joint",
+        "pce-der", "zs-der", "zs-derpp",
     ),
 }
 
@@ -752,6 +767,11 @@ def main(project_scenario: str) -> None:
     parser.add_argument("--lr", type=float, default=0.03)
     parser.add_argument("--workers", type=int, default=8)
     parser.add_argument("--max-task", type=int)
+    parser.add_argument(
+        "--test-evaluation",
+        action="store_true",
+        help="write held-out test metrics after training; never use them for selection",
+    )
     parser.add_argument("--validate-every", type=int, default=200)
     parser.add_argument("--method", choices=METHODS[project_scenario], default="pce-sequential")
     parser.add_argument("--pce-loss-weight", type=float, default=1.0)
@@ -781,9 +801,8 @@ def main(project_scenario: str) -> None:
     use_ewc = args.method.endswith("-ewc")
     use_gpm = args.method.endswith("-gpm")
     use_der = args.method.endswith("-der")
-    use_derpp = args.method in {"zs-derpp", "zs-derpp-mib"}
-    use_mib = args.method in {"zs-mib", "zs-derpp-mib"}
-    use_joint = args.method == "zs-joint"
+    use_derpp = args.method.endswith("-derpp")
+    use_mib = args.method == "zs-mib"
     if args.zs_global_weight is None:
         args.zs_global_weight = 1.0 if use_zs else 0.0
     if not use_zs and (
@@ -820,8 +839,6 @@ def main(project_scenario: str) -> None:
     ):
         parser.error("independent references are Domain-only PCE from-scratch runs")
     tasks = TASKS[project_scenario]
-    if use_joint and args.max_task is not None:
-        parser.error("zs-joint always trains on all Domain-CL tasks")
     if args.max_task is not None and not 1 <= args.max_task <= len(tasks):
         parser.error("--max-task is one-based and outside the task sequence")
     last_stage = len(tasks) - 1 if args.max_task is None else args.max_task - 1
@@ -879,14 +896,11 @@ def main(project_scenario: str) -> None:
         "backbone": "ZScribbleSeg_UNet",
         "seed": args.seed,
         "epochs_per_task": args.epochs_per_task,
-        "batch_size": args.batch_size,
-        "learning_rate": args.lr,
-        "workers": args.workers,
-        "validate_every": args.validate_every,
         "task_count": last_stage + 1,
         "task_order": [task.code for task in tasks[:last_stage + 1]],
-        "training_mode": "joint" if use_joint else "continual",
         "test_for_selection": False,
+        "selection_split": "validation",
+        "test_evaluation": args.test_evaluation,
         "history_images": use_der or use_derpp,
         "replay": use_der or use_derpp,
         "ignore_index": IGNORE_INDEX,
@@ -915,17 +929,16 @@ def main(project_scenario: str) -> None:
         "mib_kd_weight": args.mib_kd_weight if use_mib else None,
         "max_train_batches": args.max_train_batches,
         "independent_scores": None if args.independent_scores is None else args.independent_scores.name,
-        "status": "running",
     }
-    manifest_path = args.output / "manifest.json"
-    manifest_path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n")
-    matrix = np.full((1 if use_joint else len(tasks), len(tasks)), np.nan)
+    (args.output / "manifest.json").write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n")
+    matrix = np.full((len(tasks), len(tasks)), np.nan)
+    validation_matrix = np.full((len(tasks), len(tasks)), np.nan)
     stage_rows = []
     fisher_rows = []
     gpm_rows = []
     train_log = args.output / "train.jsonl"
     random_scores = None
-    if project_scenario == "domain" and not use_joint:
+    if project_scenario == "domain" and args.test_evaluation:
         random_scores = [
             _evaluate_task(
                 model, project_scenario, task, index, args.data_root,
@@ -939,8 +952,7 @@ def main(project_scenario: str) -> None:
             "source": "same-seed untrained model before task A",
         }, indent=2, sort_keys=True) + "\n")
 
-    stage_plan = ((0, tasks[-1]),) if use_joint else enumerate(tasks[:last_stage + 1])
-    for stage, task in stage_plan:
+    for stage, task in enumerate(tasks[:last_stage + 1]):
         teacher = None
         old_class_count = None
         if use_mib and stage > 0:
@@ -950,24 +962,20 @@ def main(project_scenario: str) -> None:
             old_class_count = model.output_channels(stage - 1)
         model.activate_stage(stage)
         model.train()
-        training_tasks = tasks if use_joint else (task,)
-        train_parts = [
-            H5Slices(
-                args.data_root / training_task.folder / training_task.filename,
-                "train",
-                _sparse_path(args.sparse_root, project_scenario, training_task, args.seed),
-                augment=True,
-            )
-            for training_task in training_tasks
-        ]
-        train = ConcatDataset(train_parts) if use_joint else train_parts[0]
-        val = None if use_joint else H5Slices(
+        train = H5Slices(
+            args.data_root / task.folder / task.filename,
+            "train",
+            _sparse_path(args.sparse_root, project_scenario, task, args.seed),
+            augment=True,
+            replay_source=use_derpp,
+        )
+        val = H5Slices(
             args.data_root / task.folder / task.filename,
             "val",
             label_shift=task.label_shift if project_scenario == "class" else 0,
         )
         train_loader = _loader(train, args.batch_size, True, args.workers, args.seed + stage)
-        val_loader = None if val is None else _loader(val, args.batch_size, False, 0, args.seed)
+        val_loader = _loader(val, args.batch_size, False, 0, args.seed)
         optimizer = torch.optim.SGD(
             [parameter for parameter in model.parameters() if parameter.requires_grad],
             lr=args.lr,
@@ -984,13 +992,20 @@ def main(project_scenario: str) -> None:
         iteration = 0
         best = {"benchmark_mean": -1.0, "epoch": None, "iteration": None}
         best_path = args.output / f"s{stage + 1:02d}_best.pt"
+        best_state_path = args.output / f"s{stage + 1:02d}_best_state.pt"
         task_id = stage if project_scenario == "organ" else None
         classes = model.output_channels(stage)
 
-        def validate_current() -> dict:
-            if use_joint:
-                return _evaluate_joint(model, tasks, args.data_root, "val", args.batch_size, device)
-            return evaluate(model, val_loader, val.ends, device, task_id, task.classes)
+        def save_best_checkpoint() -> None:
+            torch.save(model.state_dict(), best_path)
+            torch.save(
+                {
+                    "model": model.state_dict(),
+                    "derpp": None if derpp is None else derpp.state_dict(),
+                    "stage": stage,
+                },
+                best_state_path,
+            )
 
         with train_log.open("a") as stream:
             for epoch in range(args.epochs_per_task):
@@ -1002,9 +1017,15 @@ def main(project_scenario: str) -> None:
                 }
                 adversarial_batches = 0
                 ratios = None
-                for batch_index, (image, label) in enumerate(train_loader):
+                for batch_index, batch in enumerate(train_loader):
                     if args.max_train_batches is not None and batch_index >= args.max_train_batches:
                         break
+                    if use_derpp:
+                        image, label, replay_image, replay_label = batch
+                        replay_image = replay_image.to(device)
+                        replay_label = replay_label.to(device)
+                    else:
+                        image, label = batch
                     image, label = image.to(device), label.to(device)
                     target = native_target(label, classes)
                     optimizer.zero_grad(set_to_none=True)
@@ -1016,7 +1037,7 @@ def main(project_scenario: str) -> None:
                         model.train()
                     if use_zs and (args.zs_global_weight or args.zs_gd_loss):
                         outputs, global_loss, gd_loss, used_adversarial = zs_cutout_invariance(
-                            model, image, target, task_id, args, device,
+                            model, image, target, task_id, args, device, include_gd=args.zs_gd_loss,
                         )
                     else:
                         outputs = zs_forward(model, image, task_id)
@@ -1086,9 +1107,9 @@ def main(project_scenario: str) -> None:
                                 (image.shape[0],), stage, device=image.device, dtype=torch.int64,
                             )
                             derpp.add_data(
-                                image,
-                                model.backbone(image),
-                                label,
+                                replay_image,
+                                stable_backbone_features(model, replay_image, no_grad=True),
+                                replay_label,
                                 replay_task_ids,
                                 classes,
                             )
@@ -1109,7 +1130,7 @@ def main(project_scenario: str) -> None:
                     totals["derpp_global"].append(float(derpp_global.detach()))
                     adversarial_batches += int(used_adversarial)
                     if iteration % args.validate_every == 0:
-                        validation = validate_current()
+                        validation = evaluate(model, val_loader, val.ends, device, task_id, task.classes)
                         stream.write(json.dumps({
                             "stage": stage,
                             "epoch": epoch,
@@ -1119,10 +1140,9 @@ def main(project_scenario: str) -> None:
                         stream.flush()
                         if validation["benchmark_mean"] > best["benchmark_mean"]:
                             best = {**validation, "epoch": epoch, "iteration": iteration}
-                            torch.save(model.state_dict(), best_path)
+                            save_best_checkpoint()
                 row = {
                     "stage": stage,
-                    "task": "joint" if use_joint else task.code,
                     "epoch": epoch,
                     "iteration": iteration,
                     "loss": float(np.mean(totals["loss"])),
@@ -1149,11 +1169,14 @@ def main(project_scenario: str) -> None:
                 }
                 stream.write(json.dumps(row, sort_keys=True) + "\n")
                 stream.flush()
-        final_validation = validate_current()
+        final_validation = evaluate(model, val_loader, val.ends, device, task_id, task.classes)
         if final_validation["benchmark_mean"] > best["benchmark_mean"]:
             best = {**final_validation, "epoch": args.epochs_per_task - 1, "iteration": iteration}
-            torch.save(model.state_dict(), best_path)
-        model.load_state_dict(torch.load(best_path, map_location=device))
+            save_best_checkpoint()
+        best_state = torch.load(best_state_path, map_location=device)
+        model.load_state_dict(best_state["model"])
+        if derpp is not None:
+            derpp.load_state_dict(best_state["derpp"])
         torch.save(model.state_dict(), args.output / f"s{stage + 1:02d}.pt")
         fisher_summary = None
         if use_ewc:
@@ -1228,37 +1251,40 @@ def main(project_scenario: str) -> None:
             },
             args.output / f"s{stage + 1:02d}_state.pt",
         )
-        seen_validation = {} if use_joint else {
-            seen_task.code: _evaluate_task(
-                model, project_scenario, seen_task, seen_stage, args.data_root,
-                "val", args.batch_size, device,
-            )["benchmark_mean"]
-            for seen_stage, seen_task in enumerate(tasks[:stage + 1])
-        }
-        evaluated = {}
-        evaluation_tasks = tasks if project_scenario == "domain" else tasks[:stage + 1]
-        for evaluated_stage, evaluated_task in enumerate(evaluation_tasks):
+        validation_evaluated = {}
+        for evaluated_stage, evaluated_task in enumerate(tasks[:stage + 1]):
             score = _evaluate_task(
                 model,
                 project_scenario,
                 evaluated_task,
                 evaluated_stage,
                 args.data_root,
-                "test",
+                "val",
                 args.batch_size,
                 device,
             )
-            matrix[stage, evaluated_stage] = score["benchmark_mean"]
-            evaluated[evaluated_task.code] = score
+            validation_matrix[stage, evaluated_stage] = score["benchmark_mean"]
+            validation_evaluated[evaluated_task.code] = score
+        evaluated = {}
+        if args.test_evaluation:
+            evaluation_tasks = tasks if project_scenario == "domain" else tasks[:stage + 1]
+            for evaluated_stage, evaluated_task in enumerate(evaluation_tasks):
+                score = _evaluate_task(
+                    model,
+                    project_scenario,
+                    evaluated_task,
+                    evaluated_stage,
+                    args.data_root,
+                    "test",
+                    args.batch_size,
+                    device,
+                )
+                matrix[stage, evaluated_stage] = score["benchmark_mean"]
+                evaluated[evaluated_task.code] = score
         stage_row = {
             "stage": stage,
-            "task": "joint" if use_joint else task.code,
-            "train_samples": len(train),
             "best_validation": best,
-            "seen_validation": seen_validation,
-            "seen_validation_mean": (
-                None if use_joint else float(np.mean(tuple(seen_validation.values())))
-            ),
+            "validation_evaluated": validation_evaluated,
             "evaluated": evaluated,
             "fisher": fisher_summary,
             "gpm": gpm_summary,
@@ -1267,27 +1293,32 @@ def main(project_scenario: str) -> None:
         }
         stage_rows.append(stage_row)
         (args.output / "stages.json").write_text(json.dumps(stage_rows, indent=2, sort_keys=True) + "\n")
-        row_labels = ("joint",) if use_joint else None
-        _write_matrix(args.output / "matrix.csv", matrix, tasks, row_labels)
-        _write_matrix(args.output / "performance_matrix.csv", matrix, tasks, row_labels)
-        for train_part in train_parts:
-            train_part.close()
-        if val is not None:
-            val.close()
+        _write_matrix(args.output / "validation_matrix.csv", validation_matrix, tasks)
+        if args.test_evaluation:
+            _write_matrix(args.output / "matrix.csv", matrix, tasks)
+            _write_matrix(args.output / "performance_matrix.csv", matrix, tasks)
+        train.close()
+        val.close()
 
     serializable_matrix = [
         [None if np.isnan(value) else float(value) for value in row]
         for row in matrix
     ]
-    final_matrix_row = 0 if use_joint else last_stage
-    final_values = matrix[final_matrix_row] if use_joint else matrix[final_matrix_row, :last_stage + 1]
+    serializable_validation_matrix = [
+        [None if np.isnan(value) else float(value) for value in row]
+        for row in validation_matrix
+    ]
     summary = {
         "method": args.method,
-        "completed_stages": 1 if use_joint else last_stage + 1,
-        "joint_training": use_joint,
-        "final_seen_mean": float(np.nanmean(final_values)),
-        "final_seen_validation_mean": stage_rows[-1]["seen_validation_mean"],
+        "completed_stages": last_stage + 1,
+        "final_seen_mean": (
+            float(np.nanmean(matrix[last_stage, :last_stage + 1]))
+            if args.test_evaluation
+            else None
+        ),
+        "final_seen_validation_mean": float(np.nanmean(validation_matrix[last_stage, :last_stage + 1])),
         "matrix": serializable_matrix,
+        "validation_matrix": serializable_validation_matrix,
         "stage_rows": stage_rows,
         "history_images": use_der or use_derpp,
         "replay": use_der or use_derpp,
@@ -1298,21 +1329,17 @@ def main(project_scenario: str) -> None:
         "derpp_state_bytes": None if derpp is None else derpp.nbytes(),
         "derpp_buffer": None if derpp is None else derpp.summary(),
     }
-    if project_scenario == "domain":
-        if use_joint:
-            summary.update({"A-Dice": summary["final_seen_mean"], "BWTR": None, "E-FWT": None, "RMA": None})
-            summary["rma_reference"] = None
-        else:
-            independent = None
-            if args.independent_scores is not None and args.independent_scores.is_file():
-                reference_payload = json.loads(args.independent_scores.read_text())
-                if reference_payload.get("complete") and len(reference_payload.get("scores", ())) == len(tasks):
-                    independent = reference_payload["scores"]
-            summary.update(domain_matrix_metrics(matrix, random_scores, independent))
-            summary["rma_reference"] = (
-                None if args.independent_scores is None else args.independent_scores.name
-            )
-    if project_scenario == "class" and last_stage == len(tasks) - 1:
+    if project_scenario == "domain" and args.test_evaluation:
+        independent = None
+        if args.independent_scores is not None and args.independent_scores.is_file():
+            reference_payload = json.loads(args.independent_scores.read_text())
+            if reference_payload.get("complete") and len(reference_payload.get("scores", ())) == len(tasks):
+                independent = reference_payload["scores"]
+        summary.update(domain_matrix_metrics(matrix, random_scores, independent))
+        summary["rma_reference"] = (
+            None if args.independent_scores is None else args.independent_scores.name
+        )
+    if project_scenario == "class" and args.test_evaluation and last_stage == len(tasks) - 1:
         whole = H5Slices(args.data_root / "MMWHS" / "whole_heart_test.h5", "test")
         summary["whole_class_dice"] = evaluate(
             model,
@@ -1324,6 +1351,4 @@ def main(project_scenario: str) -> None:
         )
         whole.close()
     (args.output / "summary.json").write_text(json.dumps(summary, indent=2, sort_keys=True) + "\n")
-    manifest["status"] = "complete"
-    manifest_path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n")
     print(json.dumps(summary, indent=2, sort_keys=True))
