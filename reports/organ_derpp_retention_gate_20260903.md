@@ -42,3 +42,5 @@ To separate new-task plasticity from forgetting without changing the epoch budge
 | 1.0 | 128 | 0.3450 | 0.4787 | **0.2148** | 0.8272 |
 
 No setting eliminated T2 forgetting. Alpha 0.5 with a 128-example buffer was selected for the formal T1-to-T4 run because it had the best T2 acquisition, retained T1 almost completely, and retained a nonzero T2 score. Alpha 1.0 with the same buffer retained slightly more T2 but its T2 acquisition was too weak for selection.
+
+The selected formal run was intentionally stopped before completing a usable stage after review of the remaining T2 score (0.1628 after T3). It produces no formal result and must not be used in reporting.
