@@ -63,3 +63,23 @@ Promotion criterion: after T3, T2 validation Dice must fall by at most 0.10
 from its post-T2 value, retain at least 80% of that value, and T3 must show
 non-trivial current-task learning.  If no run meets the criterion, no formal
 training is started.
+
+## Gate incident: numerical failure before retention evaluation
+
+The four runs stopped during T1, before any T2/T3 matrix could be produced.
+No test evaluation was enabled or read, no configuration was selected, and no
+formal run was started.
+
+| Run ID | alpha | beta | buffer | Last completed T1 epoch row | Terminal condition |
+| --- | ---: | ---: | ---: | ---: | --- |
+| `x4a1` | 0.5 | 0.5 | 128 | 3 | `FloatingPointError: non-finite training loss` |
+| `x5a2` | 1.0 | 0.5 | 128 | 3 | `FloatingPointError: non-finite training loss` |
+| `x6a3` | 0.5 | 1.0 | 128 | 4 | `FloatingPointError: non-finite training loss` |
+| `x7a4` | 0.5 | 1.0 | 256 | 6 | `FloatingPointError: non-finite training loss` |
+
+Each terminal log first reports `mixup.py` producing an invalid value while
+constructing the graph-cut unary cost.  The fault therefore occurs before a
+retention claim is possible and is independent of the tested DER++ alpha,
+beta, and buffer settings.  This is a numerical-stability incident to diagnose
+separately; it is not evidence that BatchNorm drift is, or is not, the source
+of historical T2 forgetting.
