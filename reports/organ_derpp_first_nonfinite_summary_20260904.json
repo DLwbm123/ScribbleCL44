@@ -1,0 +1,16 @@
+{
+  "status": "T1_NUMERICAL_GATE_FAIL__RETENTION_UNTESTED",
+  "scope": "Scalar-only public summary of the first numerical failure; raw failure artifacts remain private on the server.",
+  "last_completed_or_validated_point": {"epoch_zero_based": 3, "iteration": 600, "validation_dice": 0.5370384854476795},
+  "first_nonfinite": {
+    "branch": "buffer_capture",
+    "tensor": "feature_targets",
+    "shape": [4, 64, 244, 244],
+    "dtype": "torch.float32",
+    "nonfinite_entries": 15239808,
+    "finite_min": -1.107092261314392,
+    "finite_max": 3.352514977604391e+38
+  },
+  "conclusion": "The first detected invalid value was a backbone feature target captured for the DER++ buffer. This gate does not attribute the preceding cause and does not test retention.",
+  "follow_on_runs": {"t2_t3": false, "sweep": false, "formal": false, "test_evaluation": false}
+}

@@ -29,7 +29,7 @@ The existing server environment ran all checks below:
 | Check | Result |
 | --- | --- |
 | Compilation and Ruff on touched runtime/test files | PASS |
-| `test_numerical_safety.py` | PASS, 25 tests, including deferred first-NaN, gradient, and optimizer-state guards |
+| `test_numerical_safety.py` | PASS, 26 tests, including deferred first-NaN, gradient, optimizer-state, and JSON-safe failure-summary guards |
 | `gco_numerical_smoke.py` against the installed GCO backend | PASS; 2x2 solver energy matched exhaustive optimum and non-finite costs were rejected |
 | `zs_derpp_smoke.py` | PASS; exact feature target, finite replay PCE, frozen backbone BN, buffer coverage, and serialization restore |
 | `organ_derpp_runtime_audit.py` | PASS; Organ entry route, raw replay source, `-100` rotation border, and opt-in test evaluation |
@@ -37,12 +37,20 @@ The existing server environment ran all checks below:
 
 ## Fixed numerical gate
 
-The sole post-repair diagnostic is T1 only: seed 42, 20 epochs, batch 4,
+The sole post-repair diagnostic was T1 only: seed 42, 20 epochs, batch 4,
 workers 8, LR 0.03, validation every 200 iterations, ZS-DER++ with PCE + 0.1
 global, alpha 0.5, beta 0.5, buffer 128, replay minibatch 8, and no test
-evaluation.  Its run identifier is anonymous.  The gate status is recorded in
-the companion JSON report once it terminates; no retention conclusion is made
-from T1 alone.
+evaluation. Its run identifier is anonymous.
+
+**Status: `T1_NUMERICAL_GATE_FAIL__RETENTION_UNTESTED`.** It passed epoch 0,
+epoch 1, and epoch 2 and reached the epoch-3 validation at iteration 600. The
+first detected non-finite value occurred after that validation and before the
+epoch-3 row completed, at `buffer_capture/feature_targets`: a four-sample
+64x244x244 backbone feature-target batch had 15,239,808 non-finite entries.
+This is direct evidence of exploding/invalid backbone output at buffer target
+capture, not evidence that GCO casting itself was the first non-finite
+operation. It does not establish which preceding update caused that output;
+the gate has not tested retention. No T2/T3, sweep, or formal run was started.
 
 ## Privacy and publication boundary
 

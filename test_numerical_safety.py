@@ -11,6 +11,7 @@ from numerical_safety import (
     normalized_unary,
     rms_saliency,
     sparse_pce_from_log_probs,
+    tensor_summary,
     validate_graph_labels,
 )
 
@@ -153,3 +154,10 @@ def test_deferred_audit_checks_gradients_state_and_first_nan(tmp_path):
     audit.check("replay_global", "injected_nan", torch.tensor(float("nan")))
     with pytest.raises(NumericalFailure, match="replay_global/injected_nan"):
         audit.flush()
+
+
+def test_nonfinite_summary_keeps_scalar_metadata_json_safe():
+    value = torch.tensor([torch.finfo(torch.float32).max, float("nan")])
+    summary = tensor_summary(value)
+    assert not summary["finite"]
+    assert np.isfinite(summary["mean"])

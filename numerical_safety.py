@@ -32,7 +32,7 @@ def tensor_summary(value: torch.Tensor | np.ndarray) -> dict[str, Any]:
         }
         if source.numel() and source.is_floating_point() and bool(finite.any()):
             valid = source[finite]
-            item.update(min=float(valid.min()), max=float(valid.max()), mean=float(valid.float().mean()))
+            item.update(min=float(valid.min()), max=float(valid.max()), mean=float(valid.double().mean()))
         return item
     source = np.asarray(value)
     finite = np.isfinite(source) if np.issubdtype(source.dtype, np.floating) else np.ones(source.shape, dtype=bool)
@@ -42,7 +42,7 @@ def tensor_summary(value: torch.Tensor | np.ndarray) -> dict[str, Any]:
     }
     if source.size and np.issubdtype(source.dtype, np.number) and finite.any():
         valid = source[finite]
-        item.update(min=float(valid.min()), max=float(valid.max()), mean=float(valid.mean()))
+        item.update(min=float(valid.min()), max=float(valid.max()), mean=float(valid.astype(np.float64).mean()))
     return item
 
 
@@ -227,7 +227,9 @@ class NumericalAudit:
             for branch, name, value in self.pending
         )
         self.pending.clear()
-        details = failure.details if isinstance(failure, NumericalFailure) else {**self.metadata(), "events": self.events}
+        details = {**self.metadata(), "events": self.events}
+        if isinstance(failure, NumericalFailure):
+            details.update(failure.details)
         details.update(exception=type(failure).__name__, message=str(failure))
         (self.output / "FIRST_NONFINITE.json").write_text(json.dumps(details, indent=2, sort_keys=True) + "\n")
         torch.save(

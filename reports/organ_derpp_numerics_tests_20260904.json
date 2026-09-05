@@ -7,17 +7,27 @@
   },
   "checks": [
     {"name": "compile_and_ruff", "status": "PASS"},
-    {"name": "numerical_safety_pytest", "status": "PASS", "tests": 25, "includes": ["deferred_first_nan", "gradient_guard", "optimizer_state_guard"]},
+    {"name": "numerical_safety_pytest", "status": "PASS", "tests": 26, "includes": ["deferred_first_nan", "gradient_guard", "optimizer_state_guard", "json_safe_failure_summary"]},
     {"name": "installed_gco_2x2_exhaustive", "status": "PASS", "energy": 4.0, "exhaustive_optimum": 4.0, "nonfinite_cost_rejected": true},
     {"name": "derpp_buffer_bn_coverage_smoke", "status": "PASS"},
     {"name": "organ_runtime_audit", "status": "PASS"},
     {"name": "organ_derpp_e2e_debug_smoke", "status": "PASS", "test_evaluation": false, "paired_best_buffer": true, "first_nonfinite": false}
   ],
   "t1_numerical_gate": {
-    "status": "RUNNING",
+    "status": "T1_NUMERICAL_GATE_FAIL__RETENTION_UNTESTED",
     "tasks": 1,
     "epochs": 20,
     "seed": 42,
-    "test_evaluation": false
+    "test_evaluation": false,
+    "last_validation": {"iteration": 600, "dice": 0.5370384854476795},
+    "first_nonfinite": {
+      "branch": "buffer_capture",
+      "tensor": "feature_targets",
+      "shape": [4, 64, 244, 244],
+      "nonfinite_entries": 15239808,
+      "finite_min": -1.107092261314392,
+      "finite_max": 3.352514977604391e+38,
+      "private_snapshot_retained": true
+    }
   }
 }
