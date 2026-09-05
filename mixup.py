@@ -1,8 +1,7 @@
-import os
 import numpy as np
 import torch
 import torch.nn.functional as F
-import gco
+from numerical_safety import NumericalAudit, checked_int32_cost, normalized_unary, validate_graph_labels
 from zs_gco_compat import cut_grid_graph
 
 
@@ -31,11 +30,22 @@ def cost_matrix(width):
     return C
       
 
-def mixup_process(out, target_reweighted, hidden=0, args=None, grad=None, noise=None, adv_mask1=0, adv_mask2=0, mp=None):
+def mixup_process(
+    out,
+    target_reweighted,
+    hidden=0,
+    args=None,
+    grad=None,
+    noise=None,
+    adv_mask1=0,
+    adv_mask2=0,
+    mp=None,
+    audit: NumericalAudit | None = None,
+    branch: str = "current_saliency",
+):
     '''various mixup process'''
     if args is not None:
         mixup_alpha = args.mixup_alpha
-        in_batch = args.in_batch
         mean = args.mean
         std = args.std
         box = args.box
@@ -67,7 +77,8 @@ def mixup_process(out, target_reweighted, hidden=0, args=None, grad=None, noise=
                 out, ratio, mask = mixup_graph(out,target_reweighted, grad, indices, block_num=block_num,
                                  alpha=lam, beta=beta, gamma=gamma, eta=eta, neigh_size=neigh_size, n_labels=n_labels,
                                  mean=mean, std=std, transport=transport, t_eps=t_eps, t_size=t_size, 
-                                 noise=noise, adv_mask1=adv_mask1, adv_mask2=adv_mask2, device=device, mp=mp)
+                                 noise=noise, adv_mask1=adv_mask1, adv_mask2=adv_mask2, device=device, mp=mp,
+                                 audit=audit, branch=branch)
                 target_shuffled_onehot = target_reweighted[indices].clone()
                 target_reweighted_final = torch.zeros_like(target_shuffled_onehot)
                 # print(mask.shape, target_shuffled_onehot.shape)
@@ -93,7 +104,7 @@ def get_lambda(alpha=1.0, alpha2=None):
     return lam
 
   
-def graphcut_multi(unary1, unary2, pw_x, pw_y, alpha, beta, eta, n_labels=2):
+def graphcut_multi(unary1, unary2, pw_x, pw_y, alpha, beta, eta, n_labels=2, audit=None, branch="current_saliency"):
     '''alpha-beta swap algorithm'''
     block_num = unary1.shape[0]
     
@@ -107,18 +118,28 @@ def graphcut_multi(unary1, unary2, pw_x, pw_y, alpha, beta, eta, n_labels=2):
         prior= eta * np.array([-np.log(alpha**3 + 1e-8), -np.log(3 * alpha **2 * (1-alpha) + 1e-8), 
                              -np.log(3 * alpha * (1-alpha) **2 + 1e-8), -np.log((1 - alpha)**3 + 1e-8)]) / block_num ** 2
         
-    unary_cost =  (large_val * np.stack([(1-lam) * unary1 + lam * unary2 + prior[i] for i, lam in enumerate(np.linspace(0,1, n_labels))], axis=-1)).astype(np.int32)
+    unary_float = large_val * np.stack(
+        [(1-lam) * unary1 + lam * unary2 + prior[i] for i, lam in enumerate(np.linspace(0, 1, n_labels))],
+        axis=-1,
+    )
+    unary_cost = checked_int32_cost("graphcut_unary", unary_float)
     pairwise_cost = np.zeros(shape=[n_labels, n_labels], dtype=np.float32)
 
     for i in range(n_labels):
         for j in range(n_labels):
             pairwise_cost[i, j] = (i-j)**2 / (n_labels-1)**2
 
-    pw_x = (large_val * (pw_x + beta)).astype(np.int32)
-    pw_y = (large_val * (pw_y + beta)).astype(np.int32)
+    pw_x = checked_int32_cost("graphcut_vertical", large_val * (pw_x + beta))
+    pw_y = checked_int32_cost("graphcut_horizontal", large_val * (pw_y + beta))
 
-    labels = 1.0 - cut_grid_graph(unary_cost, pairwise_cost, pw_x, pw_y, algorithm='swap')/(n_labels-1)
+    labels = cut_grid_graph(unary_cost, pairwise_cost, pw_x, pw_y, algorithm='swap')
+    validate_graph_labels(labels, n_labels)
+    labels = 1.0 - labels / (n_labels-1)
     mask = labels.reshape(block_num, block_num)
+    if not np.isfinite(mask).all() or (mask < 0).any() or (mask > 1).any():
+        raise FloatingPointError("invalid graph-cut mask")
+    if audit is not None:
+        audit.note(branch, "graphcut", unary_min=float(unary_float.min()), unary_max=float(unary_float.max()))
 
     return mask
 
@@ -161,7 +182,8 @@ def mixup_box(input1, input2, alpha=0.5, device='cuda'):
 
 
 def mixup_graph(input1,target_reweighted, grad1, indices, block_num=2, alpha=0.5, beta=0., gamma=0., eta=0.2, neigh_size=2, n_labels=2, 
-        mean=None, std=None, transport=False, t_eps=10.0, t_size=16, noise=None, adv_mask1=0, adv_mask2=0, device='cuda', mp=None):
+        mean=None, std=None, transport=False, t_eps=10.0, t_size=16, noise=None, adv_mask1=0, adv_mask2=0, device='cuda', mp=None,
+        audit: NumericalAudit | None = None, branch: str = "current_saliency"):
     '''Puzzle Mix'''
     input2 = input1[indices].clone()
         
@@ -174,8 +196,12 @@ def mixup_graph(input1,target_reweighted, grad1, indices, block_num=2, alpha=0.5
     beta = beta/block_num/16
     
     # unary term
-    grad1_pool = F.avg_pool2d(grad1, block_size)
-    unary1_torch = grad1_pool / grad1_pool.reshape(batch_size, -1).sum(1).reshape(batch_size, 1, 1)
+    if audit is not None:
+        audit.check(branch, "saliency_before_normalization", grad1)
+    unary1_torch, unary_diagnostics = normalized_unary(grad1, block_size)
+    if audit is not None:
+        audit.check(branch, "normalized_unary", unary1_torch)
+        audit.note(branch, "unary_fallback", **unary_diagnostics)
     unary2_torch = unary1_torch[indices]
      
     # calculate pairwise terms
@@ -194,6 +220,9 @@ def mixup_graph(input1,target_reweighted, grad1, indices, block_num=2, alpha=0.5
 
     pw_x = beta * gamma * pw_x
     pw_y = beta * gamma * pw_y
+    if audit is not None:
+        audit.check(branch, "pairwise_vertical", pw_x)
+        audit.check(branch, "pairwise_horizontal", pw_y)
         
     # re-define unary and pairwise terms to draw graph
     unary1 = unary1_torch.clone()
@@ -221,7 +250,7 @@ def mixup_graph(input1,target_reweighted, grad1, indices, block_num=2, alpha=0.5
     if mp is None:
         mask=[]
         for i in range(batch_size):
-            mask.append(graphcut_multi(unary2[i], unary1[i], pw_x[i], pw_y[i], alpha, beta, eta, n_labels))
+            mask.append(graphcut_multi(unary2[i], unary1[i], pw_x[i], pw_y[i], alpha, beta, eta, n_labels, audit, branch))
     else:
         input_mp = []
         for i in range(batch_size):
@@ -231,6 +260,10 @@ def mixup_graph(input1,target_reweighted, grad1, indices, block_num=2, alpha=0.5
     # optimal mask
     mask = torch.tensor(mask, dtype=torch.float32, device=device)
     mask = mask.unsqueeze(1)
+    if audit is not None:
+        audit.check(branch, "graphcut_mask", mask)
+    if not bool(((mask >= 0) & (mask <= 1)).all()):
+        raise FloatingPointError("graph-cut mask is outside [0, 1]")
 
     # add adversarial noise
     if adv_mask1 == 1.:
@@ -252,15 +285,14 @@ def mixup_graph(input1,target_reweighted, grad1, indices, block_num=2, alpha=0.5
             # block_size % t_size should be 0 
             t_block_num = width // t_size
             mask = F.interpolate(mask, size=t_block_num)
-            grad1_pool = F.avg_pool2d(grad1, t_size)
-            unary1_torch = grad1_pool / grad1_pool.reshape(batch_size, -1).sum(1).reshape(batch_size, 1, 1)
+            unary1_torch, _ = normalized_unary(grad1, t_size)
             unary2_torch = unary1_torch[indices]
         else:
             t_block_num = block_num
 
         ### downsample target_reweighted
         mask1_pool = F.avg_pool2d(1-target_reweighted[:,-1,:,:], t_size)
-        mask1_torch = mask1_pool / mask1_pool.reshape(batch_size, -1).sum(1).reshape(batch_size, 1, 1)
+        mask1_torch, _ = normalized_unary(mask1_pool, 1)
         mask2_pool = mask1_pool[indices]
         
         # input1
@@ -282,7 +314,6 @@ cost_matrix_dict = {'2':cost_matrix(2).unsqueeze(0), '4':cost_matrix(4).unsqueez
                     '32':cost_matrix(32).unsqueeze(0),'64':cost_matrix(64).unsqueeze(0)}
 def mask_transport(mask, grad_pool, target_reweighted, device, eps=0.01):
     '''optimal transport plan'''
-    batch_size = mask.shape[0]
     block_num = mask.shape[-1]
 
     n_iter = int(block_num)

@@ -76,6 +76,7 @@ def main() -> None:
             "2",
             "--method",
             "zs-derpp",
+            "--numerical-debug",
             "--zs-global-weight",
             "0.1",
             "--der-buffer-size",
@@ -113,18 +114,21 @@ def main() -> None:
             torch.equal(continual["examples"], best["derpp"]["examples"])
             and torch.equal(continual["task_ids"], best["derpp"]["task_ids"])
         )
+        no_numerical_failure = not (output / "FIRST_NONFINITE.json").exists()
         passed = (
             summary["final_seen_mean"] is None
             and test_hidden
             and validation_seen
             and continual["coverage"]["replay_examples_by_task"]
             and buffer_matches_best
+            and no_numerical_failure
         )
         result = {
             "status": "PASS" if passed else "FAIL",
             "test_hidden": test_hidden,
             "validation_seen": validation_seen,
             "buffer_matches_best": buffer_matches_best,
+            "no_numerical_failure": no_numerical_failure,
             "coverage": continual["coverage"],
         }
         print(json.dumps(result, indent=2, sort_keys=True))

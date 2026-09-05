@@ -7,6 +7,7 @@ import copy
 import csv
 import json
 import random
+from contextlib import contextmanager
 from dataclasses import dataclass
 from functools import partial
 from pathlib import Path
@@ -23,6 +24,13 @@ from torch.utils.data import DataLoader, Dataset
 from cutout import Cutout, rotate_back, rotate_invariant
 from mixup import mixup_process
 from models import build_model
+from numerical_safety import (
+    NumericalAudit,
+    NumericalFailure,
+    log_probability_resize,
+    rms_saliency,
+    sparse_pce_from_log_probs,
+)
 from spatial_function import ModelWeightGatedCRF
 from cl_methods import (
     DarkExperienceReplay,
@@ -340,8 +348,41 @@ def native_target(labels: torch.Tensor, classes: int) -> torch.Tensor:
     return value
 
 
-def pce_loss(probabilities: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
-    return -(target * torch.log(probabilities + 1e-12)).sum() / target.sum().clamp_min(1)
+def _target_labels(target: torch.Tensor) -> torch.Tensor:
+    known = target.sum(dim=1).bool()
+    labels = target.argmax(dim=1).long()
+    return labels.masked_fill(~known, IGNORE_INDEX)
+
+
+def pce_loss(prediction: dict[str, torch.Tensor] | torch.Tensor, target: torch.Tensor) -> torch.Tensor:
+    """Sparse PCE; runner forwards use stable log-probabilities.
+
+    The probability-tensor fallback preserves compatibility for legacy smoke
+    callers.  All current, saliency, and DER++ replay training paths pass the
+    ``zs_forward`` dictionary and therefore keep extreme-error gradients.
+    """
+    if isinstance(prediction, dict):
+        return sparse_pce_from_log_probs(prediction["log_probabilities"], _target_labels(target))
+    return -(target * torch.log(prediction + 1e-12)).sum() / target.sum().clamp_min(1)
+
+
+@contextmanager
+def _capture_numerical_failure(
+    audit: NumericalAudit,
+    model: nn.Module,
+    optimizer: torch.optim.Optimizer,
+    derpp: DarkExperienceReplayPlus | None,
+):
+    try:
+        yield
+    except (NumericalFailure, FloatingPointError, OverflowError, ValueError) as failure:
+        audit.save_failure(
+            failure,
+            model=model,
+            optimizer=optimizer,
+            derpp_state=None if derpp is None else derpp.state_dict(),
+        )
+        raise
 
 
 def sparse_pce_loss(probabilities: torch.Tensor, labels: torch.Tensor) -> torch.Tensor:
@@ -353,12 +394,27 @@ def sparse_pce_loss(probabilities: torch.Tensor, labels: torch.Tensor) -> torch.
     return -gathered[known].clamp_min(1e-12).log().mean()
 
 
-def zs_forward(model: nn.Module, image: torch.Tensor, task_id: int | None) -> dict[str, torch.Tensor]:
-    probabilities = model(image, task_id)
-    if probabilities.shape[-2:] != image.shape[-2:]:
-        probabilities = F.interpolate(probabilities, size=image.shape[-2:], mode="bilinear", align_corners=False)
-        probabilities = probabilities / probabilities.sum(dim=1, keepdim=True).clamp_min(1e-12)
-    return {"pred_masks": probabilities}
+def zs_forward(
+    model: nn.Module,
+    image: torch.Tensor,
+    task_id: int | None,
+    audit: NumericalAudit | None = None,
+    branch: str = "current_global",
+) -> dict[str, torch.Tensor]:
+    """One native-logit forward, retaining probability-space resize semantics."""
+    logits = model.forward_logits(image, task_id)
+    if audit is not None:
+        audit.check(branch, "native_logits", logits)
+    log_probabilities = log_probability_resize(logits, image.shape[-2:])
+    probabilities = log_probabilities.exp()
+    if audit is not None:
+        audit.check(branch, "probabilities", probabilities)
+        audit.check(branch, "log_probabilities", log_probabilities)
+    return {
+        "pred_masks": probabilities,
+        "log_probabilities": log_probabilities,
+        "native_logits": logits,
+    }
 
 
 def derpp_replay_losses(
@@ -367,6 +423,7 @@ def derpp_replay_losses(
     scenario: str,
     args,
     device: torch.device,
+    audit: NumericalAudit | None = None,
 ) -> tuple[torch.Tensor, torch.Tensor]:
     """Compute sparse PCE and ZS global consistency on DER++ replay samples."""
     examples, _, labels, task_ids, class_counts = replay
@@ -379,9 +436,18 @@ def derpp_replay_losses(
             target = native_target(labels[selection], classes)
             task_id = int(task_value) if scenario in {"class", "organ"} else None
             outputs, global_loss, _, _ = zs_cutout_invariance(
-                model, examples[selection], target, task_id, args, device, include_gd=False,
+                model,
+                examples[selection],
+                target,
+                task_id,
+                args,
+                device,
+                include_gd=False,
+                audit=audit,
+                branch="replay_global",
+                saliency_branch="replay_saliency",
             )
-            pce_terms.append(pce_loss(outputs["pred_masks"], target))
+            pce_terms.append(pce_loss(outputs, target))
             global_terms.append(global_loss)
     return torch.stack(pce_terms).mean(), torch.stack(global_terms).mean()
 
@@ -401,6 +467,9 @@ def zs_cutout_invariance(
     args,
     device: torch.device,
     include_gd: bool = True,
+    audit: NumericalAudit | None = None,
+    branch: str = "current_global",
+    saliency_branch: str | None = None,
 ) -> tuple[dict[str, torch.Tensor], torch.Tensor, torch.Tensor, bool]:
     use_adversarial = False
     working_image = image
@@ -408,10 +477,18 @@ def zs_cutout_invariance(
         use_adversarial = bool(np.random.binomial(1, 0.1) or np.random.binomial(1, 0.1))
         if use_adversarial:
             working_image = image + torch.zeros_like(image).uniform_(10.0 / 255.0, 10.0 / 255.0)
+    if audit is not None:
+        audit.check(branch, "input", working_image)
+        audit.check_labels(branch, "target", _target_labels(target), target.shape[1])
+    saliency_branch = f"{branch}_saliency" if saliency_branch is None else saliency_branch
     unary_image = working_image.detach().requires_grad_(True)
-    unary = torch.sqrt(torch.mean(torch.autograd.grad(
-        pce_loss(zs_forward(model, unary_image, task_id)["pred_masks"], target), unary_image,
-    )[0].square(), dim=1))
+    unary_outputs = zs_forward(model, unary_image, task_id, audit, saliency_branch)
+    input_gradient = torch.autograd.grad(pce_loss(unary_outputs, target), unary_image)[0]
+    if audit is not None:
+        audit.check(saliency_branch, "input_gradient", input_gradient)
+    unary = rms_saliency(input_gradient)
+    if audit is not None:
+        audit.check(saliency_branch, "rms_saliency", unary)
     mix_args = SimpleNamespace(
         mixup_alpha=0.5,
         in_batch=False,
@@ -431,13 +508,13 @@ def zs_cutout_invariance(
         t_size=4,
         device=str(device),
     )
-    outputs = zs_forward(model, working_image, task_id)
+    outputs = zs_forward(model, working_image, task_id, audit, branch)
     mixed_image, mixed_target, indices, mask = mixup_process(
-        working_image, target, args=mix_args, grad=unary,
+        working_image, target, args=mix_args, grad=unary, audit=audit, branch=saliency_branch,
     )
     cut_image, cut_target, cut_mask = Cutout(mixed_image, mixed_target, device)
     cut_image, cut_target, angles = rotate_invariant(cut_image, cut_target)
-    cut_outputs = zs_forward(model, cut_image, task_id)
+    cut_outputs = zs_forward(model, cut_image, task_id, audit, branch)
     _, rotated_outputs, cut_target = rotate_back(
         cut_image, cut_outputs["pred_masks"], cut_target, angles,
     )
@@ -445,6 +522,10 @@ def zs_cutout_invariance(
     shuffled = outputs["pred_masks"][torch.as_tensor(indices, device=device)]
     mixed_output = (outputs["pred_masks"] * mask + shuffled * (1 - mask)) * cut_mask
     invariant = 1 - F.cosine_similarity(cut_probability, mixed_output, dim=1).mean()
+    if audit is not None:
+        audit.check(branch, "cut_probability", cut_probability)
+        audit.check(branch, "mixed_probability", mixed_output)
+        audit.check(branch, "global_loss", invariant)
     annotated_cut = cut_target.sum(dim=1, keepdim=True)
     if include_gd:
         gd = -(cut_target * torch.log(cut_probability + 1e-12)).sum(dim=1, keepdim=True)
@@ -674,8 +755,8 @@ def _run_independent_domain_references(args, tasks: tuple[Task, ...], device: to
                 for image, label in train_loader:
                     image, label = image.to(device), label.to(device)
                     optimizer.zero_grad(set_to_none=True)
-                    probability = zs_forward(model, image, None)["pred_masks"]
-                    loss = pce_loss(probability, native_target(label, 2))
+                    outputs = zs_forward(model, image, None)
+                    loss = pce_loss(outputs, native_target(label, 2))
                     if not torch.isfinite(loss):
                         raise FloatingPointError("non-finite independent-reference loss")
                     loss.backward()
@@ -794,6 +875,11 @@ def main(project_scenario: str) -> None:
     parser.add_argument("--der-beta", type=float, default=0.5)
     parser.add_argument("--mib-kd-weight", type=float, default=10.0)
     parser.add_argument("--max-train-batches", type=int)
+    parser.add_argument(
+        "--numerical-debug",
+        action="store_true",
+        help="write one private FIRST_NONFINITE record and exact failing batch on numerical failure",
+    )
     parser.add_argument("--independent-reference", action="store_true")
     parser.add_argument("--independent-scores", type=Path)
     args = parser.parse_args()
@@ -928,6 +1014,7 @@ def main(project_scenario: str) -> None:
         "derpp_target": "backbone_features_plus_sparse_pce_global" if use_derpp else None,
         "mib_kd_weight": args.mib_kd_weight if use_mib else None,
         "max_train_batches": args.max_train_batches,
+        "numerical_debug": args.numerical_debug,
         "independent_scores": None if args.independent_scores is None else args.independent_scores.name,
     }
     (args.output / "manifest.json").write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n")
@@ -985,6 +1072,7 @@ def main(project_scenario: str) -> None:
             # into protected directions and violate the projection constraint.
             weight_decay=0.0 if use_gpm else 1e-4,
         )
+        numerics = NumericalAudit(args.output, enabled=args.numerical_debug)
         batches_per_epoch = len(train_loader)
         if args.max_train_batches is not None:
             batches_per_epoch = min(batches_per_epoch, args.max_train_batches)
@@ -1007,7 +1095,7 @@ def main(project_scenario: str) -> None:
                 best_state_path,
             )
 
-        with train_log.open("a") as stream:
+        with train_log.open("a") as stream, _capture_numerical_failure(numerics, model, optimizer, derpp):
             for epoch in range(args.epochs_per_task):
                 model.train()
                 totals = {
@@ -1027,20 +1115,39 @@ def main(project_scenario: str) -> None:
                     else:
                         image, label = batch
                     image, label = image.to(device), label.to(device)
+                    numerics.begin(
+                        stage=stage,
+                        epoch=epoch,
+                        iteration=iteration + 1,
+                        task_id=task_id,
+                        image=image,
+                        label=label,
+                        replay_image=replay_image if use_derpp else None,
+                        replay_label=replay_label if use_derpp else None,
+                    )
                     target = native_target(label, classes)
                     optimizer.zero_grad(set_to_none=True)
                     use_spatial = args.zs_spatial_loss_weight > 0 and epoch > args.zs_spatial_warmup_epochs
                     if use_spatial:
                         model.eval()
                         with torch.no_grad():
-                            ratios = zs_em_mixture_ratios(zs_forward(model, image, task_id)["pred_masks"], target)
+                            ratios = zs_em_mixture_ratios(zs_forward(model, image, task_id, numerics)["pred_masks"], target)
                         model.train()
                     if use_zs and (args.zs_global_weight or args.zs_gd_loss):
                         outputs, global_loss, gd_loss, used_adversarial = zs_cutout_invariance(
-                            model, image, target, task_id, args, device, include_gd=args.zs_gd_loss,
+                            model,
+                            image,
+                            target,
+                            task_id,
+                            args,
+                            device,
+                            include_gd=args.zs_gd_loss,
+                            audit=numerics,
+                            branch="current_global",
+                            saliency_branch="current_saliency",
                         )
                     else:
-                        outputs = zs_forward(model, image, task_id)
+                        outputs = zs_forward(model, image, task_id, numerics)
                         global_loss = gd_loss = image.new_zeros(())
                         used_adversarial = False
                     if use_mib and stage > 0:
@@ -1050,7 +1157,7 @@ def main(project_scenario: str) -> None:
                             teacher_logits = logits_forward(teacher, image, None)
                         mib_kd = mib_distillation_loss(student_logits, teacher_logits)
                     else:
-                        partial_ce = pce_loss(outputs["pred_masks"], target)
+                        partial_ce = pce_loss(outputs, target)
                         mib_kd = image.new_zeros(())
                     loss = args.pce_loss_weight * partial_ce + args.zs_global_weight * global_loss
                     if use_mib:
@@ -1060,12 +1167,12 @@ def main(project_scenario: str) -> None:
                     der_penalty = der.penalty(model, device) if use_der else image.new_zeros(())
                     loss = loss + der_penalty
                     if use_derpp:
-                        derpp_feature, replay = derpp.feature_penalty(model, device)
+                        derpp_feature, replay = derpp.feature_penalty(model, device, numerics)
                         if replay is None:
                             derpp_pce = derpp_global = image.new_zeros(())
                         else:
                             derpp_pce, derpp_global = derpp_replay_losses(
-                                model, replay, project_scenario, args, device,
+                                model, replay, project_scenario, args, device, numerics,
                             )
                         loss = loss + derpp_feature + args.der_beta * (
                             derpp_pce + args.zs_global_weight * derpp_global
@@ -1081,9 +1188,18 @@ def main(project_scenario: str) -> None:
                         loss = loss + args.zs_spatial_loss_weight * spatial_loss
                     else:
                         spatial_loss, spatial_fraction = image.new_zeros(()), 0.0
-                    if not torch.isfinite(loss):
-                        raise FloatingPointError("non-finite training loss")
+                    for branch, name, value in (
+                        ("current_global", "pce_loss", partial_ce),
+                        ("current_global", "global_loss", global_loss),
+                        ("replay_feature", "feature_loss", derpp_feature),
+                        ("replay_global", "pce_loss", derpp_pce),
+                        ("replay_global", "global_loss", derpp_global),
+                        ("total_backward", "total_loss", loss),
+                    ):
+                        numerics.check(branch, name, value)
+                    numerics.flush()
                     loss.backward()
+                    numerics.check_gradients(model)
                     if use_gpm:
                         with torch.no_grad():
                             for parameter in model.parameters():
@@ -1098,6 +1214,7 @@ def main(project_scenario: str) -> None:
                             projection["gradient_norm_after"] / denominator
                         )
                     optimizer.step()
+                    numerics.check_model_state(model, optimizer)
                     if use_der:
                         with torch.no_grad():
                             der.add_data(image, model.backbone(image))
@@ -1106,9 +1223,11 @@ def main(project_scenario: str) -> None:
                             replay_task_ids = torch.full(
                                 (image.shape[0],), stage, device=image.device, dtype=torch.int64,
                             )
+                            feature_targets = stable_backbone_features(model, replay_image, no_grad=True)
+                            numerics.check("buffer_capture", "feature_targets", feature_targets)
                             derpp.add_data(
                                 replay_image,
-                                stable_backbone_features(model, replay_image, no_grad=True),
+                                feature_targets,
                                 replay_label,
                                 replay_task_ids,
                                 classes,
@@ -1190,8 +1309,8 @@ def main(project_scenario: str) -> None:
 
             def fisher_loss_fn(fisher_image: torch.Tensor, fisher_label: torch.Tensor) -> torch.Tensor:
                 fisher_target = native_target(fisher_label, classes)
-                probability = zs_forward(model, fisher_image, task_id)["pred_masks"]
-                return pce_loss(probability, fisher_target)
+                outputs = zs_forward(model, fisher_image, task_id)
+                return pce_loss(outputs, fisher_target)
 
             fisher, fisher_summary = estimate_sparse_fisher(
                 model, fisher_loader, device, fisher_loss_fn, args.fisher_batches,

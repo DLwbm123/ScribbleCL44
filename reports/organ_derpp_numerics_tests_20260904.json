@@ -1,0 +1,23 @@
+{
+  "scope": "Numerical repair checks; no test-based selection and no Organ retention claim.",
+  "server_environment": {
+    "python": "3.10.6",
+    "torch": "2.2.1+cu121",
+    "numpy": "1.26.4"
+  },
+  "checks": [
+    {"name": "compile_and_ruff", "status": "PASS"},
+    {"name": "numerical_safety_pytest", "status": "PASS", "tests": 24},
+    {"name": "installed_gco_2x2_exhaustive", "status": "PASS", "energy": 4.0, "exhaustive_optimum": 4.0, "nonfinite_cost_rejected": true},
+    {"name": "derpp_buffer_bn_coverage_smoke", "status": "PASS"},
+    {"name": "organ_runtime_audit", "status": "PASS"},
+    {"name": "organ_derpp_e2e_debug_smoke", "status": "PASS", "test_evaluation": false, "paired_best_buffer": true, "first_nonfinite": false}
+  ],
+  "t1_numerical_gate": {
+    "status": "RUNNING",
+    "tasks": 1,
+    "epochs": 20,
+    "seed": 42,
+    "test_evaluation": false
+  }
+}
