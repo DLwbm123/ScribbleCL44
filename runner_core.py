@@ -7,7 +7,7 @@ import copy
 import csv
 import json
 import random
-from contextlib import contextmanager
+from contextlib import contextmanager, nullcontext
 from dataclasses import dataclass
 from functools import partial
 from pathlib import Path
@@ -89,12 +89,14 @@ class H5Slices(Dataset):
         label_shift: int = 0,
         augment: bool = False,
         replay_source: bool = False,
+        diagnostic_trace: bool = False,
     ) -> None:
         self.path = str(path)
         self.split = split
         self.label_shift = int(label_shift)
         self.augment = augment
         self.replay_source = replay_source
+        self.diagnostic_trace = diagnostic_trace
         self._handle = None
         with h5py.File(self.path, "r") as handle:
             self.length = int(handle[f"{split}_images"].shape[2])
@@ -134,11 +136,13 @@ class H5Slices(Dataset):
                 label = np.where(label > 0, label + self.label_shift, 0)
         replay_image = image.copy()
         replay_label = label.copy()
+        transform_trace = np.array([0, 0, 0], dtype=np.int16)
         if self.augment:
             if random.random() > 0.5:
                 turns, axis = np.random.randint(0, 4), np.random.randint(0, 2)
                 image = np.flip(np.rot90(image, turns), axis).copy()
                 label = np.flip(np.rot90(label, turns), axis).copy()
+                transform_trace = np.array([1, turns, axis], dtype=np.int16)
             elif random.random() > 0.5:
                 angle = np.random.randint(-20, 20)
                 image = ndimage.rotate(image, angle, order=0, reshape=False)
@@ -151,16 +155,19 @@ class H5Slices(Dataset):
                     cval=IGNORE_INDEX,
                     prefilter=False,
                 )
+                transform_trace = np.array([2, angle, 0], dtype=np.int16)
         image = torch.from_numpy(image[None].copy())
         label = torch.from_numpy(label.copy()).long()
         if self.replay_source:
-            return (
+            result = (
                 image,
                 label,
                 torch.from_numpy(replay_image[None].copy()),
                 torch.from_numpy(replay_label.copy()).long(),
             )
-        return image, label
+            return (*result, torch.from_numpy(transform_trace)) if self.diagnostic_trace else result
+        result = (image, label)
+        return (*result, torch.from_numpy(transform_trace)) if self.diagnostic_trace else result
 
     def close(self) -> None:
         if self._handle is not None:
@@ -380,7 +387,9 @@ def _capture_numerical_failure(
             failure,
             model=model,
             optimizer=optimizer,
-            derpp_state=None if derpp is None else derpp.state_dict(),
+            # The debug capture retains the exact drawn replay minibatch; do
+            # not duplicate the full historical buffer into every snapshot.
+            derpp_state=None if derpp is None else derpp.summary(),
         )
         raise
 
@@ -482,7 +491,9 @@ def zs_cutout_invariance(
         audit.check_labels(branch, "target", _target_labels(target), target.shape[1])
     saliency_branch = f"{branch}_saliency" if saliency_branch is None else saliency_branch
     unary_image = working_image.detach().requires_grad_(True)
-    unary_outputs = zs_forward(model, unary_image, task_id, audit, saliency_branch)
+    bn_guard = freeze_batchnorm_stats(model.backbone) if args.zs_clean_bn_writer else nullcontext()
+    with bn_guard:
+        unary_outputs = zs_forward(model, unary_image, task_id, audit, saliency_branch)
     input_gradient = torch.autograd.grad(pce_loss(unary_outputs, target), unary_image)[0]
     if audit is not None:
         audit.check(saliency_branch, "input_gradient", input_gradient)
@@ -514,7 +525,9 @@ def zs_cutout_invariance(
     )
     cut_image, cut_target, cut_mask = Cutout(mixed_image, mixed_target, device)
     cut_image, cut_target, angles = rotate_invariant(cut_image, cut_target)
-    cut_outputs = zs_forward(model, cut_image, task_id, audit, branch)
+    bn_guard = freeze_batchnorm_stats(model.backbone) if args.zs_clean_bn_writer else nullcontext()
+    with bn_guard:
+        cut_outputs = zs_forward(model, cut_image, task_id, audit, branch)
     _, rotated_outputs, cut_target = rotate_back(
         cut_image, cut_outputs["pred_masks"], cut_target, angles,
     )
@@ -600,34 +613,35 @@ def evaluate(
     task_id: int | None,
     classes: tuple[int, ...],
 ) -> dict:
-    was_training = model.training
-    model.eval()
-    predictions, targets = [], []
-    for image, label in loader:
-        predictions.append(zs_forward(model, image.to(device), task_id)["pred_masks"].argmax(1).cpu().numpy())
-        targets.append(label.numpy())
-    prediction, target = np.concatenate(predictions), np.concatenate(targets)
-    starts = [0] + [int(value) + 1 for value in ends[:-1]]
-    stops = [int(value) + 1 for value in ends]
-    per_patient = []
-    for start, stop in zip(starts, stops):
-        per_class = []
-        for label in classes:
-            predicted = prediction[start:stop] == label
-            expected = target[start:stop] == label
-            per_class.append(float((2 * np.logical_and(predicted, expected).sum() + 1e-5) /
-                                   (predicted.sum() + expected.sum() + 1e-5)))
-        per_patient.append(per_class)
-    values = np.asarray(per_patient, dtype=float)
-    result = {
-        "benchmark_mean": float(values.mean()),
-        "per_class": values.mean(axis=0).tolist(),
-        "per_patient": values.tolist(),
-        "prediction_fg_fraction": float((prediction > 0).mean()),
-    }
-    if was_training:
-        model.train()
-    return result
+    modes = [(module, module.training) for module in model.modules()]
+    try:
+        model.eval()
+        predictions, targets = [], []
+        for image, label in loader:
+            predictions.append(zs_forward(model, image.to(device), task_id)["pred_masks"].argmax(1).cpu().numpy())
+            targets.append(label.numpy())
+        prediction, target = np.concatenate(predictions), np.concatenate(targets)
+        starts = [0] + [int(value) + 1 for value in ends[:-1]]
+        stops = [int(value) + 1 for value in ends]
+        per_patient = []
+        for start, stop in zip(starts, stops):
+            per_class = []
+            for label in classes:
+                predicted = prediction[start:stop] == label
+                expected = target[start:stop] == label
+                per_class.append(float((2 * np.logical_and(predicted, expected).sum() + 1e-5) /
+                                       (predicted.sum() + expected.sum() + 1e-5)))
+            per_patient.append(per_class)
+        values = np.asarray(per_patient, dtype=float)
+        return {
+            "benchmark_mean": float(values.mean()),
+            "per_class": values.mean(axis=0).tolist(),
+            "per_patient": values.tolist(),
+            "prediction_fg_fraction": float((prediction > 0).mean()),
+        }
+    finally:
+        for module, mode in modes:
+            module.training = mode
 
 
 def _worker_init(seed: int, worker_id: int) -> None:
@@ -857,6 +871,11 @@ def main(project_scenario: str) -> None:
     parser.add_argument("--method", choices=METHODS[project_scenario], default="pce-sequential")
     parser.add_argument("--pce-loss-weight", type=float, default=1.0)
     parser.add_argument("--zs-global-weight", type=float)
+    parser.add_argument(
+        "--zs-clean-bn-writer",
+        action="store_true",
+        help="only the primary current-image ZS forward updates shared-backbone BatchNorm statistics",
+    )
     parser.add_argument("--zs-gd-loss", action="store_true")
     parser.add_argument("--zs-adversarial-perturbation", action="store_true")
     parser.add_argument("--zs-spatial-loss-weight", type=float, default=0.0)
@@ -893,6 +912,7 @@ def main(project_scenario: str) -> None:
         args.zs_global_weight = 1.0 if use_zs else 0.0
     if not use_zs and (
         args.zs_global_weight != 0.0
+        or args.zs_clean_bn_writer
         or args.zs_gd_loss
         or args.zs_adversarial_perturbation
         or args.zs_spatial_loss_weight != 0.0
@@ -994,6 +1014,7 @@ def main(project_scenario: str) -> None:
         "sparse_root": "<external_data>",
         "pce_loss_weight": args.pce_loss_weight,
         "zs_global_weight": args.zs_global_weight,
+        "zs_clean_bn_writer": args.zs_clean_bn_writer,
         "zs_gd_loss": args.zs_gd_loss,
         "zs_adversarial_perturbation": args.zs_adversarial_perturbation,
         "zs_spatial_loss_weight": args.zs_spatial_loss_weight,
@@ -1055,6 +1076,7 @@ def main(project_scenario: str) -> None:
             _sparse_path(args.sparse_root, project_scenario, task, args.seed),
             augment=True,
             replay_source=use_derpp,
+            diagnostic_trace=args.numerical_debug,
         )
         val = H5Slices(
             args.data_root / task.folder / task.filename,
@@ -1108,12 +1130,19 @@ def main(project_scenario: str) -> None:
                 for batch_index, batch in enumerate(train_loader):
                     if args.max_train_batches is not None and batch_index >= args.max_train_batches:
                         break
+                    transform_trace = None
                     if use_derpp:
-                        image, label, replay_image, replay_label = batch
+                        if args.numerical_debug:
+                            image, label, replay_image, replay_label, transform_trace = batch
+                        else:
+                            image, label, replay_image, replay_label = batch
                         replay_image = replay_image.to(device)
                         replay_label = replay_label.to(device)
                     else:
-                        image, label = batch
+                        if args.numerical_debug:
+                            image, label, transform_trace = batch
+                        else:
+                            image, label = batch
                     image, label = image.to(device), label.to(device)
                     numerics.begin(
                         stage=stage,
@@ -1124,6 +1153,12 @@ def main(project_scenario: str) -> None:
                         label=label,
                         replay_image=replay_image if use_derpp else None,
                         replay_label=replay_label if use_derpp else None,
+                        transform_trace=transform_trace,
+                    )
+                    numerics.capture_pre_step(
+                        model,
+                        optimizer,
+                        derpp_summary=None if derpp is None else derpp.summary(),
                     )
                     target = native_target(label, classes)
                     optimizer.zero_grad(set_to_none=True)
@@ -1168,6 +1203,7 @@ def main(project_scenario: str) -> None:
                     loss = loss + der_penalty
                     if use_derpp:
                         derpp_feature, replay = derpp.feature_penalty(model, device, numerics)
+                        numerics.attach_replay(replay)
                         if replay is None:
                             derpp_pce = derpp_global = image.new_zeros(())
                         else:
@@ -1199,7 +1235,7 @@ def main(project_scenario: str) -> None:
                         numerics.check(branch, name, value)
                     numerics.flush()
                     loss.backward()
-                    numerics.check_gradients(model)
+                    gradient_norm = numerics.check_gradients(model)
                     if use_gpm:
                         with torch.no_grad():
                             for parameter in model.parameters():
@@ -1213,6 +1249,15 @@ def main(project_scenario: str) -> None:
                         totals["gpm_gradient_ratio"].append(
                             projection["gradient_norm_after"] / denominator
                         )
+                    numerics.capture_before_step(
+                        losses={
+                            "total": loss, "pce": partial_ce, "global": global_loss,
+                            "ewc": ewc_penalty, "der": der_penalty,
+                            "derpp_feature": derpp_feature, "derpp_pce": derpp_pce,
+                            "derpp_global": derpp_global, "gd": gd_loss, "spatial": spatial_loss,
+                        },
+                        gradient_norm=gradient_norm,
+                    )
                     optimizer.step()
                     numerics.check_model_state(model, optimizer)
                     if use_der:
@@ -1232,6 +1277,8 @@ def main(project_scenario: str) -> None:
                                 replay_task_ids,
                                 classes,
                             )
+                    numerics.flush()
+                    numerics.record_success()
                     iteration += 1
                     learning_rate = args.lr * max(0.0, 1.0 - iteration / max_iterations) ** 0.9
                     for group in optimizer.param_groups:

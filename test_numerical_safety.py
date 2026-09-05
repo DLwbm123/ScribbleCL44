@@ -161,3 +161,90 @@ def test_nonfinite_summary_keeps_scalar_metadata_json_safe():
     summary = tensor_summary(value)
     assert not summary["finite"]
     assert np.isfinite(summary["mean"])
+
+
+def test_non_debug_audit_still_rejects_nonfinite_optimizer_state(tmp_path):
+    model = torch.nn.Linear(2, 1)
+    optimizer = torch.optim.SGD(model.parameters(), lr=0.1)
+    with torch.no_grad():
+        model.weight.fill_(float("nan"))
+    with pytest.raises(NumericalFailure, match="optimizer_step/parameter/weight"):
+        NumericalAudit(tmp_path, enabled=False).check_model_state(model, optimizer)
+
+
+def test_gradient_norm_uses_fp64_accumulation(tmp_path):
+    model = torch.nn.Linear(2, 1, bias=False)
+    model.weight.grad = torch.full_like(model.weight, torch.finfo(torch.float32).max)
+    audit = NumericalAudit(tmp_path, enabled=True)
+    norm = audit.check_gradients(model)
+    assert np.isfinite(norm) and norm > torch.finfo(torch.float32).max
+
+
+def test_evaluate_roundtrip_preserves_modes_and_training_state_on_success_and_exception():
+    from runner_core import evaluate
+
+    class Probe(torch.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.backbone = torch.nn.BatchNorm2d(1)
+            self.heads = torch.nn.ModuleDict({"0": torch.nn.BatchNorm2d(1), "1": torch.nn.BatchNorm2d(1)})
+            self.active_stage = 1
+
+        def forward_logits(self, image, task_id=None):
+            feature = self.backbone(image)
+            return torch.cat((feature, -feature), dim=1)
+
+    model = Probe().train()
+    model.backbone.eval()
+    model.heads["0"].eval()
+    model.heads["0"].weight.requires_grad_(False)
+    optimizer = torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.9)
+    model.heads["1"].weight.sum().backward()
+    optimizer.step()
+
+    def snapshot():
+        return {
+            "parameters": {name: value.detach().clone() for name, value in model.named_parameters()},
+            "buffers": {name: value.detach().clone() for name, value in model.named_buffers()},
+            "requires_grad": {name: value.requires_grad for name, value in model.named_parameters()},
+            "modes": [module.training for module in model.modules()],
+            "active_stage": model.active_stage,
+            "heads": tuple(model.heads),
+            "optimizer": {
+                index: {name: value.detach().clone() for name, value in state.items() if isinstance(value, torch.Tensor)}
+                for index, state in enumerate(optimizer.state.values())
+            },
+        }
+
+    def unchanged(before):
+        assert model.active_stage == before["active_stage"] and tuple(model.heads) == before["heads"]
+        assert [module.training for module in model.modules()] == before["modes"]
+        assert {name: value.requires_grad for name, value in model.named_parameters()} == before["requires_grad"]
+        assert all(torch.equal(value, before["parameters"][name]) for name, value in model.named_parameters())
+        assert all(torch.equal(value, before["buffers"][name]) for name, value in model.named_buffers())
+        assert all(
+            torch.equal(value, before["optimizer"][index][name])
+            for index, state in enumerate(optimizer.state.values())
+            for name, value in state.items() if isinstance(value, torch.Tensor)
+        )
+
+    before = snapshot()
+    good = [(torch.ones(1, 1, 2, 2), torch.zeros(1, 2, 2, dtype=torch.long))]
+    evaluate(model, good, np.array([0]), torch.device("cpu"), None, (1,))
+    unchanged(before)
+    with pytest.raises(ValueError):
+        evaluate(model, [(torch.ones(1, 1, 2, 2),)], np.array([0]), torch.device("cpu"), None, (1,))
+    unchanged(before)
+
+
+def test_frozen_batchnorm_uses_running_statistics_without_writing_them():
+    from cl_methods import freeze_batchnorm_stats
+
+    layer = torch.nn.BatchNorm2d(1).train()
+    before_mean, before_var = layer.running_mean.clone(), layer.running_var.clone()
+    with freeze_batchnorm_stats(layer):
+        layer(torch.full((2, 1, 4, 4), 20.0))
+        assert not layer.training
+    assert layer.training
+    assert torch.equal(layer.running_mean, before_mean)
+    assert torch.equal(layer.running_var, before_var)
