@@ -7,7 +7,7 @@
   },
   "checks": [
     {"name": "compile_and_ruff", "status": "PASS"},
-    {"name": "numerical_safety_pytest", "status": "PASS", "tests": 24},
+    {"name": "numerical_safety_pytest", "status": "PASS", "tests": 25, "includes": ["deferred_first_nan", "gradient_guard", "optimizer_state_guard"]},
     {"name": "installed_gco_2x2_exhaustive", "status": "PASS", "energy": 4.0, "exhaustive_optimum": 4.0, "nonfinite_cost_rejected": true},
     {"name": "derpp_buffer_bn_coverage_smoke", "status": "PASS"},
     {"name": "organ_runtime_audit", "status": "PASS"},

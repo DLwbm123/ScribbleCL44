@@ -29,7 +29,7 @@ The existing server environment ran all checks below:
 | Check | Result |
 | --- | --- |
 | Compilation and Ruff on touched runtime/test files | PASS |
-| `test_numerical_safety.py` | PASS, 24 tests |
+| `test_numerical_safety.py` | PASS, 25 tests, including deferred first-NaN, gradient, and optimizer-state guards |
 | `gco_numerical_smoke.py` against the installed GCO backend | PASS; 2x2 solver energy matched exhaustive optimum and non-finite costs were rejected |
 | `zs_derpp_smoke.py` | PASS; exact feature target, finite replay PCE, frozen backbone BN, buffer coverage, and serialization restore |
 | `organ_derpp_runtime_audit.py` | PASS; Organ entry route, raw replay source, `-100` rotation border, and opt-in test evaluation |
