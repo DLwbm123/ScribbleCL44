@@ -26,6 +26,8 @@ def main() -> None:
     failures = []
     if manifest["method"] != args.method or summary["method"] != args.method:
         failures.append("method mismatch")
+    if manifest.get("dice_includes_background") is not True or summary.get("dice_includes_background") is not True:
+        failures.append("Dice metric does not include background")
     if summary["completed_stages"] != expected_stages or len(epoch_rows) != expected_epoch_rows:
         failures.append("stage completion mismatch")
     if manifest.get("selection_split") != "validation" or manifest.get("test_for_selection") is not False:

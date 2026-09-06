@@ -5,6 +5,10 @@ then brain tumor. It uses one shared ZScribbleSeg U-Net backbone and one frozen
 binary output head per observed task. Only `main.py` is a supported training
 entry.
 
+New evaluations use an unweighted patient/class macro-average over background
+class `0` and the task foreground classes. Existing reported values predate this
+metric change and must be recomputed from their checkpoints before comparison.
+
 Example static task-1 gate:
 
 ```bash
