@@ -1,0 +1,7 @@
+scenario,method,run_id,status,seed,epochs_per_task,foreground_only_dice,background_inclusive_dice,interpretation
+domain,ZS-GPM,m7v2q,complete,42,150,0.3246786311,0.6575883129,continual baseline
+domain,ZS-DER++,t4m7b,complete,42,80,0.5437475074,0.7687331014,current formal result
+domain,ZS-Joint,y9h4m,complete_short_run,42,5,0.5628221756,0.7760096049,diagnostic upper bound only
+class,ZS-MiB,zs_mib_global1_origscale_seed42,complete,42,150,0.7361629797,0.8057805999,independent retained method
+class,ZS-DER++ + MiB,v6c43,complete,42,80,0.6975305673,0.7793488020,current formal result
+organ,ZS-DER++,u5k2n,incomplete_t4_epoch21,42,80,0.5452755444,0.7683137410,diagnostic checkpoint only

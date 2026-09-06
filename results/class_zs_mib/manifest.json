@@ -1,0 +1,31 @@
+{
+  "backbone": "ZScribbleSeg_UNet",
+  "data_root": "<external_data>",
+  "epochs_per_task": 150,
+  "ewc_gamma": null,
+  "ewc_lambda": null,
+  "fisher_batches": null,
+  "history_images": false,
+  "ignore_index": -100,
+  "main_entry": "main.py",
+  "max_train_batches": null,
+  "method": "zs-mib",
+  "mib_kd_weight": 10.0,
+  "pce_loss_weight": 1.0,
+  "replay": false,
+  "scenario": "class",
+  "seed": 42,
+  "sparse_root": "<external_data>",
+  "task_count": 3,
+  "task_order": [
+    "T1",
+    "T2",
+    "T3"
+  ],
+  "test_for_selection": false,
+  "zs_adversarial_perturbation": false,
+  "zs_gd_loss": false,
+  "zs_global_weight": 1.0,
+  "zs_spatial_loss_weight": 0.0,
+  "zs_spatial_warmup_epochs": 60
+}

@@ -1,0 +1,15 @@
+{
+  "scenario": "organ",
+  "method": "zs-derpp",
+  "run_id": "u5k2n",
+  "checkpoint": "s04_best.pt",
+  "status": "incomplete_t4_epoch21",
+  "foreground_only": 0.5452755443601813,
+  "background_inclusive": 0.7683137410406043,
+  "tasks": {
+    "T1": {"foreground_only": 0.5352309102919894, "background": 0.9919064414535497, "background_inclusive": 0.7635686758727696},
+    "T2": {"foreground_only": 0.000664586716913536, "background": 0.9935885293109133, "background_inclusive": 0.4971265580139135},
+    "T3": {"foreground_only": 0.8533927515291797, "background": 0.9877728468752626, "background_inclusive": 0.9205827992022207},
+    "T4": {"foreground_only": 0.7918139289026426, "background": 0.9921399332443843, "background_inclusive": 0.8919769310735134}
+  }
+}

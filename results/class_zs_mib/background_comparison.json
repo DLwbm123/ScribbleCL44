@@ -1,0 +1,13 @@
+{
+  "scenario": "class",
+  "method": "zs-mib",
+  "checkpoint": "s03_best.pt",
+  "stage": 3,
+  "foreground_only": 0.7361629797194423,
+  "background_inclusive": 0.8057805998943842,
+  "tasks": {
+    "T1": {"foreground_only": 0.7734963870844853, "background": 0.96961197308359, "background_inclusive": 0.8225252835842615},
+    "T2": {"foreground_only": 0.7604693575792586, "background": 0.9622907750775855, "background_inclusive": 0.8277431634120345},
+    "T3": {"foreground_only": 0.6745231944945834, "background": 0.9521736690714021, "background_inclusive": 0.7670733526868565}
+  }
+}

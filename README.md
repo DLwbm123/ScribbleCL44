@@ -1,13 +1,18 @@
 # Continual sparse segmentation project
 
-This checkout is fixed to the Organ-CL protocol: left atrium, prostate, liver,
-then brain tumor. It uses one shared ZScribbleSeg U-Net backbone and one frozen
-binary output head per observed task. Only `main.py` is a supported training
-entry.
+This checkout contains the current public Class-CL and Organ-CL runtime plus
+aggregate, data-free experiment artifacts. Organ-CL follows left atrium,
+prostate, liver, then brain tumor with one shared ZScribbleSeg U-Net backbone
+and one frozen binary output head per observed task. Only `main.py` is a
+supported training entry.
 
-New evaluations use an unweighted patient/class macro-average over background
-class `0` and the task foreground classes. Existing reported values predate this
-metric change and must be recomputed from their checkpoints before comparison.
+Current evaluations use an unweighted patient/class macro-average over
+background class `0` and the task foreground classes. Foreground-only values
+remain beside them to expose failures hidden by easy background.
+
+See the [current complete experiment audit](reports/current_experiment_audit_20260906.md)
+for Domain-CL, Class-CL, and Organ-CL status, results, limitations, and questions
+for independent GPT Pro review.
 
 Example static task-1 gate:
 
