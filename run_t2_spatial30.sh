@@ -1,7 +1,7 @@
 #!/bin/bash
 # Exactly two fresh 80-epoch runs; no subsequent experiments are scheduled.
 set -u
-TASK_ROOT=/data_nas/jiangsuiyang/ScribbleCL/organ_T2_spatial_start30_20260908
+TASK_ROOT="${1:-/data_nas/jiangsuiyang/ScribbleCL/organ_T2_spatial_start30_20260908}"
 REFERENCE=/data_nas/jiangsuiyang/ScribbleCL/organ_T2_reference_recovery_20260908/reference_source
 PYTHON=/home/jiangsuiyang/anaconda3/envs/py38/bin/python
 cd "$REFERENCE" || exit 1
