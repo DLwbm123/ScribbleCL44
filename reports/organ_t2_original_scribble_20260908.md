@@ -1,6 +1,21 @@
 # Organ T2 original-scribble contrast
 
-Status: one 80-epoch run is running on GPU5 on 2026-09-08. Startup checks confirmed the Organ T2 annotation archive, matching baseline training hyperparameters, forward/backward execution and approximately 7.3 GiB GPU memory, with no immediate failure. No completed result is claimed.
+Status: **completed on 2026-09-08 at 17:26:05 Asia/Shanghai**, with exit code 0. The run completed 80 epochs / 3,360 updates with finite recorded training losses. Spatial first activated at epoch 30 and was active for 51 epochs. Best and last checkpoints were present and nonempty (103,133,057 bytes each). No additional experiment was launched at closeout.
+
+## Completed annotation contrast
+
+The following checkpoints were selected by validation foreground Dice; test was evaluated after selection.
+
+| Annotation protocol | Best validation Dice | Corresponding test Dice | Selected epoch |
+|---|---:|---:|---:|
+| Domain-D pattern_f5_b10 (existing baseline) | .6251718906 | .4905944283 | 69 |
+| Original Organ-T2 (new run) | .5592428351 | .5312447371 | 31 |
+
+Relative to the Domain-D scribbles, validation changed by -.0659290555 and test by +.0406503088. Thus the two splits give different rankings; this single-seed contrast does not establish that either annotation protocol is generally superior or that foreground coverage alone predicts performance. The protocols differ in foreground/background coverage and annotation placement. Changing annotations also changes model-dependent augmentation and subsequent training trajectories.
+
+With the same original Organ-T2 scribbles, the earlier conservative/numerically repaired training recipe produced validation/test .0710013605/.0495519224, whereas the present reference recipe produces .5592428351/.5312447371. The original annotation file can therefore support substantially better learning; its low foreground coverage alone is not a sufficient explanation for the earlier .07 result. The older and current recipes differ in LR, clipping, losses, execution settings and implementation, so their individual contributions remain unidentified. This result is independent T2 acquisition, not a completed continual-learning retention test.
+
+Public completion checks, metrics and validation curve: [completion.json](../results/organ_t2_original_scribble_20260908/completion.json). Execution metadata confirms the same enabled cuDNN determinism, disabled benchmarking, CuBLAS workspace and warn-only policy as the reference baseline. Raw data, annotation arrays, checkpoint tensors and patient-level outputs remain private on NAS.
 
 The experiment changes only the training scribble file relative to the [completed deterministic Organ baseline](organ_t2_deterministic_rerun_20260908.md). Both use the same UCL images, dense validation/test labels, split, model container, runtime adapter, reference training source and GPU5. The baseline's validation-selected checkpoint achieved validation Dice .6251718906 and test Dice .4905944283 at epoch 69 with Domain-D pattern_f5_b10 scribbles.
 
