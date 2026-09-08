@@ -1,6 +1,6 @@
 # Organ CL: half T1/T3 training sets, full T2
 
-Status: **paused at the user's request after T1 epoch 1 of the initial 80-epoch run**. The exact matching training and loader processes were terminated; previous outputs are preserved. The launcher is now configured for **60 epochs per task**, writing to new `run60`, `logs/train60.log` and `training60.exitcode` paths. **The 60-epoch run has not been started.** The original launcher is retained remotely as `run_organ_half_cl_80_launched.sh`.
+Status: **60 epochs per task launched on 2026-09-08 at 19:05:32 Asia/Shanghai on GPU7**, in tmux session `organ-t13-half-cl60-20260908`. The run starts from fresh initialization, reusing the verified T1/T3 subset. Configuration, training processes, log and GPU activity were checked at startup; no immediate traceback or exit marker was present. This is an active run, not a completed result. Outputs use `run60`, `logs/train60.log` and `training60.exitcode`. The stopped 80-epoch run and its original launcher remain preserved.
 
 Historical startup was 2026-09-08 at 18:50:32 Asia/Shanghai on GPU7. The completed first T1 epoch had 96 updates and took 116.89 seconds. The interruption is intentional, not a numerical training failure.
 
@@ -24,18 +24,18 @@ Validation selects each task's best paired checkpoint. Test metrics are reported
 
 Existing run root on the authorized NAS: `ScribbleCL/organ_T13_half_cl_20260908`.
 
-- Background session: `organ-t13-half-cl-20260908`.
+- Background session: `organ-t13-half-cl60-20260908`.
 - Next-run main log: `logs/train60.log`; old log: `logs/train.log`.
 - Epoch records: `run60/train.jsonl`; configuration after restart: `run60/manifest.json`.
 - First-T3-epoch T2 forgetting: `run60/t3_epoch1_t2_retention.json`.
 - Completion marker: `training60.exitcode`; final metrics: `run60/summary.json`.
 
-Approximate planning estimate: **5.5–7 hours total for 60 epochs/task**, with the first-T3-epoch retention result around **2.5–3.5 hours after restart**. The earlier 5.5–6.5 hour full-data estimate applied to T3 running only one epoch and is superseded. These are throughput extrapolations, not guarantees; Spatial-on T3 throughput and future storage contention were not directly measured. GPU7 had 24,121 MiB free before launch; the actual NAS mount had 30 TiB free and passed a write/read probe. No other process was stopped or modified.
+Approximate planning estimate: **5.5–7 hours total for 60 epochs/task**, with the first-T3-epoch retention result around **2.5–3.5 hours after restart**. The earlier 5.5–6.5 hour full-data estimate applied to T3 running only one epoch and is superseded. These are throughput extrapolations, not guarantees; Spatial-on T3 throughput and future storage contention were not directly measured. GPU7 had 24,124 MiB free before the 60-epoch launch; the actual NAS mount had 30 TiB free and passed a write/read probe. No other process was stopped or modified.
 
-The experiment is currently stopped. Once restarted, the background launcher runs independently of SSH/Codex. No recurring monitoring is scheduled. Its eventual completion must be checked before reporting final scores.
+The 60-epoch experiment runs independently of SSH/Codex. No recurring monitoring is scheduled. Its eventual completion must be checked before reporting final scores.
 
 ## Reproduction
 
 With the existing environment and data, prepare the subset with `prepare_organ_half_train.py --data-root "$DATA_ROOT" --sparse-root "$ORIGINAL_SPARSE_ROOT" --output "$RUN_ROOT/subset" --halve T1 T3`. Put the guarded source tree and launcher under `$RUN_ROOT/source`, then run `bash "$RUN_ROOT/source/run_organ_half_cl.sh" "$RUN_ROOT" "$PYTHON" 7` in tmux. The data-preparation self-check is `python prepare_organ_half_train.py --self-test`.
 
-Published scope: source changes, subset-generation/launch scripts, aggregate subset counts and this prospective protocol. Images, annotation arrays, patient identifiers/selected indices, checkpoints and patient-level runtime results remain private. Final training results are pending; the prepared 60-epoch run remains paused.
+Published scope: source changes, subset-generation/launch scripts, aggregate subset counts and this prospective protocol. Images, annotation arrays, patient identifiers/selected indices, checkpoints and patient-level runtime results remain private. Final training results are pending; the 60-epoch run is active as of the verified startup above.
