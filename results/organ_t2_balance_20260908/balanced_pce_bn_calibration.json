@@ -1,0 +1,52 @@
+{
+  "calibration_data": "T2 training images only; no augmentation; no labels used",
+  "optimizer_steps": 0,
+  "parameter_updates": 0,
+  "results": {
+    "none": {
+      "validation": {
+        "T1": 0.01525208146904497,
+        "T2": 3.332019979504167e-10
+      },
+      "prediction_fg_fraction": {
+        "T1": 0.0009903253293504903,
+        "T2": 0.0
+      },
+      "calibrated_bn_layers": 0
+    },
+    "head": {
+      "validation": {
+        "T1": 0.01525208146904497,
+        "T2": 3.332019979504167e-10
+      },
+      "prediction_fg_fraction": {
+        "T1": 0.0009903253293504903,
+        "T2": 0.0
+      },
+      "calibrated_bn_layers": 1
+    },
+    "backbone": {
+      "validation": {
+        "T1": 0.21366744497096457,
+        "T2": 0.0994993329912057
+      },
+      "prediction_fg_fraction": {
+        "T1": 0.06995396832235498,
+        "T2": 0.23657842782827523
+      },
+      "calibrated_bn_layers": 22
+    },
+    "both": {
+      "validation": {
+        "T1": 0.21366744497096457,
+        "T2": 0.11233863929104321
+      },
+      "prediction_fg_fraction": {
+        "T1": 0.06995396832235498,
+        "T2": 0.15541956974909857
+      },
+      "calibrated_bn_layers": 23
+    }
+  },
+  "scope": "diagnosis only; no calibrated model saved or formal training resumed"
+}

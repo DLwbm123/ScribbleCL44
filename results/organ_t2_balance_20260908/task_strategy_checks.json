@@ -1,0 +1,13 @@
+{
+  "status": "passed",
+  "formal_training_started": false,
+  "checks": [
+    "Python syntax compilation of changed Organ modules",
+    "Balanced PCE empty/single-class validation and unchanged backward gradients",
+    "Native Organ model CPU calibration changes only T2 head running buffers; restores modes and momentum",
+    "T1/T3 retain base policy; strict DER++ coefficient mismatch remains enforced",
+    "Native GPU shared loop: synthetic T1/T2/T3 each one epoch and one training batch; checkpoint selection and paired states",
+    "Native GPU T3-only resume from synthetic T2 paired state restores alpha from 0 to 0.5"
+  ],
+  "performance_claim": "none; synthetic smoke checks only verify execution and policy isolation"
+}

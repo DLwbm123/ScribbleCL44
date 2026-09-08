@@ -10,6 +10,37 @@ from pathlib import Path
 import sys
 
 
+def class_balanced_pce(logp, labels):
+    """Equal mean contribution of each present class; preserve ignored pixels."""
+    import torch
+    from numerical_safety import sparse_pce_from_log_probs
+    original = sparse_pce_from_log_probs(logp, labels)  # validates shape/range/finite inputs
+    terms = [sparse_pce_from_log_probs(logp, labels.masked_fill(labels.ne(k), -100))
+             for k in range(logp.shape[1]) if bool(labels.eq(k).any())]
+    return torch.stack(terms).mean() if terms else original
+
+
+def balance_probe(audit, model, current, feature, supervision, labels, replay):
+    """Compare weighted gradient contributions on the shared backbone only."""
+    import torch
+    parameters = [p for p in model.backbone.parameters() if p.requires_grad]
+    vectors = []
+    for loss in (current, feature, supervision):
+        gradients = torch.autograd.grad(loss, parameters, retain_graph=True, allow_unused=True)
+        vectors.append(torch.cat([(torch.zeros_like(p) if g is None else g.detach()).reshape(-1)
+                                  for p, g in zip(parameters, gradients)]))
+    norms = [float(torch.linalg.vector_norm(v, dtype=torch.float64)) for v in vectors]
+    cosine = [None if not norms[0] or not norms[k] else
+              float((vectors[0]/norms[0]).dot(vectors[k]/norms[k])) for k in (1, 2)]
+    audit.note('balance', 'backbone_gradient_contributions',
+               current_norm=norms[0], feature_norm=norms[1], replay_supervision_norm=norms[2],
+               current_feature_cosine=cosine[0], current_replay_supervision_cosine=cosine[1],
+               marked_foreground_pixels=int(labels.gt(0).sum()),
+               marked_background_pixels=int(labels.eq(0).sum()),
+               replay_T1_examples=0 if replay is None else int(replay[3].eq(0).sum()),
+               replay_T2_examples=0 if replay is None else int(replay[3].eq(1).sum()))
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--root', type=Path, required=True)
@@ -21,12 +52,18 @@ def main():
     parser.add_argument('--evaluate', action='store_true')
     parser.add_argument('--transition-seed', type=int, default=43)
     parser.add_argument('--freeze-backbone-bn', action='store_true')
+    parser.add_argument('--alpha', type=float, default=.5)
+    parser.add_argument('--beta', type=float, default=.5)
+    parser.add_argument('--balanced-current-pce', action='store_true')
+    parser.add_argument('--probe-balance', action='store_true')
+    parser.add_argument('--save-model', action='store_true')
     args = parser.parse_args()
     assert 1 <= args.steps <= 420
     assert 0 < args.lr <= .03
     assert args.clip is None or 0 < args.clip < float('inf')
     assert 0 <= args.transition_seed < 2**32
     assert not (args.clean_bn_writer and args.freeze_backbone_bn)
+    assert 0 <= args.alpha <= .5 and 0 <= args.beta <= .5
     root, output = args.root.resolve(), args.output.resolve()
     output.mkdir(exist_ok=False)
     probe = output/'write_probe'
@@ -75,6 +112,8 @@ def main():
                 result['validation_prediction_fg_fraction'] = {
                     task: row['prediction_fg_fraction'] for task, row in scores.items()}
             (output/'BOUNDED_FINITE.json').write_text(json.dumps(result)+'\n')
+            if args.save_model:
+                torch.save(live_model.state_dict(), output/'diagnostic_final_model.pt')
             raise SystemExit(0)
 
     numerical_safety.NumericalAudit.record_success = bounded_record
@@ -85,7 +124,11 @@ def main():
             saved = torch.load(DIAGNOSTIC_ROOT / "run60" / "s01_state.pt", map_location="cpu")
             assert saved["stage"] == 0 and saved["method"] == args.method
             model.load_state_dict(saved["model"], strict=True)
+            # Restore the historical buffer under its original coefficient contract,
+            # then apply the explicitly declared T2-only loss intervention.
+            derpp.alpha, derpp.beta = saved["continual"]["alpha"], saved["continual"]["beta"]
             derpp.load_state_dict(saved["continual"])
+            derpp.alpha, derpp.beta = args.der_alpha, args.der_beta
             del saved
             torch.manual_seed(DIAGNOSTIC_TRANSITION_SEED)
             np.random.seed(DIAGNOSTIC_TRANSITION_SEED)
@@ -93,11 +136,24 @@ def main():
             continue
 '''
     text = text.replace(entry, replacement)
+    if args.balanced_current_pce:
+        old = 'partial_ce = pce_loss(outputs, target)'
+        assert text.count(old) == 1
+        text = text.replace(old, 'partial_ce = DIAGNOSTIC_BALANCED_PCE(outputs["log_probabilities"], label)')
+    if args.probe_balance:
+        old = '                    loss.backward()\n                    gradient_norm = numerics.check_gradients(model)'
+        assert text.count(old) == 1
+        text = text.replace(old, '''                    if iteration + 1 in {1, 5, 42, 126, 420}:
+                        DIAGNOSTIC_BALANCE_PROBE(numerics, model,
+                            args.pce_loss_weight * partial_ce + args.zs_global_weight * global_loss,
+                            derpp_feature, args.der_beta * (derpp_pce + args.zs_global_weight * derpp_global),
+                            label, replay)
+''' + old)
     settings = ['--data-root', str(root/'subset/data'),
                 '--sparse-root', str(root/'subset/sparse'), '--output', str(output/'run'),
                 '--device', 'cuda:0', '--seed', '42', '--epochs-per-task', '60',
                 '--max-task', '2', '--batch-size', '4', '--workers', '8', '--lr', str(args.lr),
-                '--method', 'zs-derpp', '--der-alpha', '.5', '--der-beta', '.5',
+                '--method', 'zs-derpp', '--der-alpha', str(args.alpha), '--der-beta', str(args.beta),
                 '--der-buffer-size', '128', '--der-minibatch-size', '4',
                 '--pce-loss-weight', '1', '--zs-global-weight', '1',
                 '--zs-spatial-loss-weight', '.01', '--zs-spatial-warmup-epochs', '28',
@@ -112,11 +168,17 @@ def main():
                 'exact_original_rng_replay': False, 'maximum_steps': args.steps,
                 'lr': args.lr, 'clip': args.clip, 'clean_bn_writer': args.clean_bn_writer,
                 'freeze_backbone_bn': args.freeze_backbone_bn,
+                'alpha': args.alpha, 'beta': args.beta,
+                'balanced_current_pce': args.balanced_current_pce,
+                'probe_balance': args.probe_balance,
+                'replay_forwards_and_buffer_updates_retained': True,
                 'spatial_active': False, 'formal_training': False,
                 'evaluation': 'validation only' if args.evaluate else 'none'}
     (output/'diagnostic_protocol.json').write_text(json.dumps(metadata, indent=2)+'\n')
     namespace = {'__name__': 'diagnostic_runner', '__file__': str(source/'runner_core.py'),
-                 'DIAGNOSTIC_ROOT': root, 'DIAGNOSTIC_TRANSITION_SEED': args.transition_seed}
+                 'DIAGNOSTIC_ROOT': root, 'DIAGNOSTIC_TRANSITION_SEED': args.transition_seed,
+                 'DIAGNOSTIC_BALANCED_PCE': class_balanced_pce,
+                 'DIAGNOSTIC_BALANCE_PROBE': balance_probe}
     # Dataclasses resolve their defining module through sys.modules.
     import types
     module = types.ModuleType('diagnostic_runner')

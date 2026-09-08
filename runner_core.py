@@ -322,6 +322,46 @@ class OrganModel(nn.Module):
             yield f"backbone.{name}", parameter
 
 
+def organ_task_strategy(enabled: bool, task_code: str, alpha: float, beta: float,
+                        clip: float | None) -> dict:
+    candidate = enabled and task_code == "T2"
+    return {"der_alpha": 0.0 if candidate else alpha,
+            "der_beta": 0.5 if candidate else beta,
+            "grad_clip_norm": 5.0 if candidate else clip,
+            "calibrate_head_bn": candidate}
+
+
+def calibrate_organ_head_bn(model, loader, device, task_id: int) -> dict:
+    """Refresh only this head's running buffers using clean training images."""
+    modes = [(module, module.training) for module in model.modules()]
+    layers = [module for module in model.heads[str(task_id)].modules()
+              if isinstance(module, nn.modules.batchnorm._BatchNorm)]
+    momenta = [module.momentum for module in layers]
+    if not layers:
+        raise ValueError("Organ head has no BatchNorm to calibrate")
+    batches = 0
+    try:
+        model.eval()
+        for module in layers:
+            module.reset_running_stats()
+            module.momentum = None
+            module.train()
+        with torch.no_grad():
+            for image, *_ in loader:
+                logits = model.forward_logits(image.to(device), task_id)
+                if not torch.isfinite(logits).all():
+                    raise FloatingPointError("non-finite Organ head BN calibration output")
+                batches += 1
+        if not batches:
+            raise ValueError("empty Organ head BN calibration loader")
+    finally:
+        for module, momentum in zip(layers, momenta):
+            module.momentum = momentum
+        for module, mode in modes:
+            module.training = mode
+    return {"training_batches": batches, "bn_layers": len(layers), "task_id": task_id}
+
+
 class DomainModel(nn.Module):
     def __init__(self) -> None:
         super().__init__()
@@ -859,6 +899,8 @@ def main(project_scenario: str) -> None:
     parser.add_argument("--batch-size", type=int, default=4)
     parser.add_argument("--lr", type=float, default=0.03)
     parser.add_argument("--grad-clip-norm", type=float)
+    parser.add_argument("--organ-t2-supervision-strategy", action="store_true",
+                        help="Organ ZS-DER++ T2 only: alpha=0, beta=0.5, clip=5, train-image head BN calibration")
     parser.add_argument("--organ-task", choices=["T1", "T2", "T3", "T4"],
                         help="train one Organ task from scratch through the shared ZS loop")
     parser.add_argument("--t3-one-epoch-from", type=Path,
@@ -954,6 +996,9 @@ def main(project_scenario: str) -> None:
     tasks = TASKS[project_scenario]
     if args.grad_clip_norm is not None and not 0 < args.grad_clip_norm < float("inf"):
         parser.error("--grad-clip-norm must be finite and positive")
+    if args.organ_t2_supervision_strategy and (project_scenario != "organ" or args.method != "zs-derpp"
+                                              or args.organ_task):
+        parser.error("--organ-t2-supervision-strategy requires continual Organ zs-derpp")
     if args.organ_task:
         if project_scenario != "organ" or args.method != "zs-sequential" or args.max_task is not None:
             parser.error("--organ-task requires Organ zs-sequential without --max-task")
@@ -1027,6 +1072,10 @@ def main(project_scenario: str) -> None:
         "test_evaluation": args.test_evaluation,
         "initial_lr": args.lr,
         "grad_clip_norm": args.grad_clip_norm,
+        "organ_t2_supervision_strategy": args.organ_t2_supervision_strategy,
+        "task_strategies": {task.code: organ_task_strategy(
+            args.organ_t2_supervision_strategy, task.code, args.der_alpha, args.der_beta,
+            args.grad_clip_norm) for task in tasks[:last_stage + 1]},
         "batch_size": args.batch_size,
         "workers": args.workers,
         "optimizer_weight_decay": 0.0 if use_gpm else 1e-4,
@@ -1079,6 +1128,12 @@ def main(project_scenario: str) -> None:
             raise ValueError("resume source must be the completed T2 paired model/replay checkpoint")
         model.activate_stage(1)
         model.load_state_dict(saved["model"], strict=True)
+        # Restore the declared source policy strictly; the next stage resets its coefficients.
+        if args.organ_t2_supervision_strategy:
+            expected = organ_task_strategy(True, "T2", args.der_alpha, args.der_beta, args.grad_clip_norm)
+            if saved.get("task_strategy") != expected:
+                raise ValueError("T3 source does not contain the requested T2 strategy")
+            derpp.alpha, derpp.beta = expected["der_alpha"], expected["der_beta"]
         derpp.load_state_dict(saved["continual"])
         del saved
         stage_rows = json.loads((source / "stages.json").read_text())[:2]
@@ -1113,6 +1168,12 @@ def main(project_scenario: str) -> None:
     for stage, task in enumerate(tasks[:last_stage + 1]):
         if args.t3_one_epoch_from and stage < 2:
             continue
+        task_strategy = organ_task_strategy(args.organ_t2_supervision_strategy, task.code,
+                                             args.der_alpha, args.der_beta, args.grad_clip_norm)
+        replay_beta = task_strategy["der_beta"]
+        clip_norm = task_strategy["grad_clip_norm"]
+        if derpp is not None:
+            derpp.alpha, derpp.beta = task_strategy["der_alpha"], replay_beta
         teacher = None
         old_class_count = None
         if use_mib and stage > 0:
@@ -1156,6 +1217,21 @@ def main(project_scenario: str) -> None:
         best_path = args.output / f"s{stage + 1:02d}_best.pt"
         best_state_path = args.output / f"s{stage + 1:02d}_best_state.pt"
         task_id = stage if project_scenario == "organ" else None
+        calibration_data = None
+        calibration_loader = None
+        calibrated_iteration = -1
+        if task_strategy["calibrate_head_bn"]:
+            calibration_data = H5Slices(args.data_root / task.folder / task.filename, "train",
+                _sparse_path(args.sparse_root, project_scenario, task, args.seed), augment=False)
+            calibration_loader = _loader(calibration_data, args.batch_size, False, 0, args.seed)
+
+        def validate_current_task():
+            nonlocal calibrated_iteration
+            if calibration_loader is not None and calibrated_iteration != iteration:
+                calibrate_organ_head_bn(model, calibration_loader, device, task_id)
+                calibrated_iteration = iteration
+            return evaluate(model, val_loader, val.ends, device, task_id, task.classes)
+
         classes = model.output_channels(stage)
 
         def save_best_checkpoint() -> None:
@@ -1265,7 +1341,7 @@ def main(project_scenario: str) -> None:
                             derpp_pce, derpp_global = derpp_replay_losses(
                                 model, replay, project_scenario, args, device, numerics,
                             )
-                        loss = loss + derpp_feature + args.der_beta * (
+                        loss = loss + derpp_feature + replay_beta * (
                             derpp_pce + args.zs_global_weight * derpp_global
                         )
                     else:
@@ -1291,10 +1367,10 @@ def main(project_scenario: str) -> None:
                     numerics.flush()
                     loss.backward()
                     gradient_norm = numerics.check_gradients(model)
-                    if args.grad_clip_norm is not None:
+                    if clip_norm is not None:
                         # Reject non-finite norms instead of silently zeroing an update.
                         gradient_norm = float(torch.nn.utils.clip_grad_norm_(
-                            model.parameters(), args.grad_clip_norm, error_if_nonfinite=True,
+                            model.parameters(), clip_norm, error_if_nonfinite=True,
                         ))
                     totals["gradient_norm"].append(gradient_norm)
                     if use_gpm:
@@ -1358,7 +1434,7 @@ def main(project_scenario: str) -> None:
                     adversarial_batches += int(used_adversarial)
                     if ((args.validate_each_epoch and batch_index + 1 == batches_per_epoch)
                             or (not args.validate_each_epoch and iteration % args.validate_every == 0)):
-                        validation = evaluate(model, val_loader, val.ends, device, task_id, task.classes)
+                        validation = validate_current_task()
                         stream.write(json.dumps({
                             "stage": stage,
                             "epoch": epoch,
@@ -1375,8 +1451,8 @@ def main(project_scenario: str) -> None:
                     "epoch": epoch,
                     "epoch_seconds": time.monotonic() - epoch_started,
                     "gradient_norm_max_before_clip": max(totals["gradient_norm"]),
-                    "gradient_clip_fraction": (None if args.grad_clip_norm is None else
-                        float(np.mean(np.asarray(totals["gradient_norm"]) > args.grad_clip_norm))),
+                    "gradient_clip_fraction": (None if clip_norm is None else
+                        float(np.mean(np.asarray(totals["gradient_norm"]) > clip_norm))),
                     "iteration": iteration,
                     "loss": float(np.mean(totals["loss"])),
                     "pce_loss": float(np.mean(totals["pce"])),
@@ -1417,7 +1493,7 @@ def main(project_scenario: str) -> None:
                     (args.output / "t3_epoch1_t2_retention.json").write_text(
                         json.dumps(retention, indent=2, sort_keys=True) + "\n")
                     print(json.dumps({"t3_epoch1_t2_retention": retention}), flush=True)
-        final_validation = evaluate(model, val_loader, val.ends, device, task_id, task.classes)
+        final_validation = validate_current_task()
         if final_validation["benchmark_mean"] > best["benchmark_mean"]:
             best = {**final_validation, "epoch": executed_epochs - 1, "iteration": iteration}
             save_best_checkpoint()
@@ -1496,6 +1572,7 @@ def main(project_scenario: str) -> None:
                 ),
                 "stage": stage,
                 "method": args.method,
+                "task_strategy": task_strategy,
             },
             args.output / f"s{stage + 1:02d}_state.pt",
         )
@@ -1532,6 +1609,7 @@ def main(project_scenario: str) -> None:
         stage_row = {
             "stage": stage,
             "best_validation": best,
+            "task_strategy": task_strategy,
             "validation_evaluated": validation_evaluated,
             "evaluated": evaluated,
             "fisher": fisher_summary,
@@ -1547,6 +1625,8 @@ def main(project_scenario: str) -> None:
             _write_matrix(args.output / "performance_matrix.csv", matrix, tasks)
         train.close()
         val.close()
+        if calibration_data is not None:
+            calibration_data.close()
 
     serializable_matrix = [
         [None if np.isnan(value) else float(value) for value in row]

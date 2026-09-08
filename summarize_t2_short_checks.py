@@ -25,6 +25,14 @@ def main():
                       'max_replay_feature_loss': max(v['losses']['derpp_feature'] for v in values),
                       'first_pce': values[0]['losses']['pce'], 'last_pce': values[-1]['losses']['pce'],
                       'spatial_nonzero_steps': sum(v['losses']['spatial'] != 0 for v in values)}
+            result['balance_probes'] = [
+                {'step': row['iteration_one_based'], **event}
+                for row in rows for event in row['events'] if event.get('branch') == 'balance']
+            for probe in result['balance_probes']:
+                assert all(math.isfinite(probe[key]) for key in
+                           ['current_norm', 'feature_norm', 'replay_supervision_norm'])
+            model = directory/'diagnostic_final_model.pt'
+            result['diagnostic_model_bytes'] = model.stat().st_size if model.exists() else None
             clip = protocol.get('clip')
             result['clipped_steps'] = None if clip is None else sum(v['gradient_norm'] > clip for v in values)
             success, failure = directory/'BOUNDED_FINITE.json', directory/'run/FIRST_NONFINITE.json'
