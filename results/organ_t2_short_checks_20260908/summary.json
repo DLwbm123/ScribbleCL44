@@ -1,0 +1,438 @@
+{
+  "scope": "bounded T2 transition diagnosis; validation only; formal training not started",
+  "source_T1_validation_dice": 0.7593914365346025,
+  "all_checks_finished": true,
+  "cases": [
+    {
+      "name": "lr003",
+      "gpu": 4,
+      "planned_steps": 42,
+      "successful_steps": 42,
+      "protocol": {
+        "source_checkpoint": "run60/s01_state.pt",
+        "transition_seed": 43,
+        "exact_original_rng_replay": false,
+        "maximum_steps": 42,
+        "lr": 0.003,
+        "clip": null,
+        "clean_bn_writer": false,
+        "spatial_active": false,
+        "formal_training": false,
+        "evaluation": "validation only"
+      },
+      "status": "passed",
+      "max_gradient_norm": 12.75432682154398,
+      "max_replay_feature_loss": 0.07994293421506882,
+      "first_pce": 0.8311286568641663,
+      "last_pce": 0.2516939640045166,
+      "spatial_nonzero_steps": 0,
+      "clipped_steps": null,
+      "completion": {
+        "stage_zero_based": 1,
+        "epoch_zero_based": 0,
+        "iteration_one_based": 42,
+        "task_id": 1,
+        "steps_completed": 42,
+        "validation": {
+          "T1": 0.6863804025348295,
+          "T2": 2.0329267706308523e-10
+        }
+      }
+    },
+    {
+      "name": "clip5",
+      "gpu": 5,
+      "planned_steps": 42,
+      "successful_steps": 42,
+      "protocol": {
+        "source_checkpoint": "run60/s01_state.pt",
+        "transition_seed": 43,
+        "exact_original_rng_replay": false,
+        "maximum_steps": 42,
+        "lr": 0.03,
+        "clip": 5.0,
+        "clean_bn_writer": false,
+        "spatial_active": false,
+        "formal_training": false,
+        "evaluation": "validation only"
+      },
+      "status": "passed",
+      "max_gradient_norm": 27.18688201904297,
+      "max_replay_feature_loss": 2.158290147781372,
+      "first_pce": 0.8311286568641663,
+      "last_pce": 0.044554922729730606,
+      "spatial_nonzero_steps": 0,
+      "clipped_steps": 8,
+      "completion": {
+        "stage_zero_based": 1,
+        "epoch_zero_based": 0,
+        "iteration_one_based": 42,
+        "task_id": 1,
+        "steps_completed": 42,
+        "validation": {
+          "T1": 0.48327967841685215,
+          "T2": 3.332019979504167e-10
+        }
+      }
+    },
+    {
+      "name": "clean_bn",
+      "gpu": 6,
+      "planned_steps": 42,
+      "successful_steps": 12,
+      "protocol": {
+        "source_checkpoint": "run60/s01_state.pt",
+        "transition_seed": 43,
+        "exact_original_rng_replay": false,
+        "maximum_steps": 42,
+        "lr": 0.03,
+        "clip": null,
+        "clean_bn_writer": true,
+        "spatial_active": false,
+        "formal_training": false,
+        "evaluation": "validation only"
+      },
+      "status": "numerical_failure",
+      "max_gradient_norm": 19224.64924648328,
+      "max_replay_feature_loss": 241.13157653808594,
+      "first_pce": 0.8311286568641663,
+      "last_pce": 0.33842936158180237,
+      "spatial_nonzero_steps": 0,
+      "clipped_steps": null,
+      "failure_step": 13,
+      "failure_branch": "buffer_capture/feature_targets: non-finite value"
+    },
+    {
+      "name": "lr003_clip5",
+      "gpu": 7,
+      "planned_steps": 42,
+      "successful_steps": 42,
+      "protocol": {
+        "source_checkpoint": "run60/s01_state.pt",
+        "transition_seed": 43,
+        "exact_original_rng_replay": false,
+        "maximum_steps": 42,
+        "lr": 0.003,
+        "clip": 5.0,
+        "clean_bn_writer": false,
+        "spatial_active": false,
+        "formal_training": false,
+        "evaluation": "validation only"
+      },
+      "status": "passed",
+      "max_gradient_norm": 67.89134216308594,
+      "max_replay_feature_loss": 0.23971989750862122,
+      "first_pce": 0.8311286568641663,
+      "last_pce": 0.300388365983963,
+      "spatial_nonzero_steps": 0,
+      "clipped_steps": 7,
+      "completion": {
+        "stage_zero_based": 1,
+        "epoch_zero_based": 0,
+        "iteration_one_based": 42,
+        "task_id": 1,
+        "steps_completed": 42,
+        "validation": {
+          "T1": 0.6465485493613682,
+          "T2": 8.496291939749556e-11
+        }
+      }
+    },
+    {
+      "name": "lr003_126",
+      "gpu": 4,
+      "planned_steps": 126,
+      "successful_steps": 126,
+      "protocol": {
+        "source_checkpoint": "run60/s01_state.pt",
+        "transition_seed": 43,
+        "exact_original_rng_replay": false,
+        "maximum_steps": 126,
+        "lr": 0.003,
+        "clip": null,
+        "clean_bn_writer": false,
+        "spatial_active": false,
+        "formal_training": false,
+        "evaluation": "validation only"
+      },
+      "status": "passed",
+      "max_gradient_norm": 12.75432682154398,
+      "max_replay_feature_loss": 0.07994293421506882,
+      "first_pce": 0.8311286568641663,
+      "last_pce": 0.15231458842754364,
+      "spatial_nonzero_steps": 0,
+      "clipped_steps": null,
+      "completion": {
+        "stage_zero_based": 1,
+        "epoch_zero_based": 2,
+        "iteration_one_based": 126,
+        "task_id": 1,
+        "steps_completed": 126,
+        "validation": {
+          "T1": 0.5373687824724123,
+          "T2": 9.199791346750179e-11
+        }
+      }
+    },
+    {
+      "name": "clip5_126",
+      "gpu": 5,
+      "planned_steps": 126,
+      "successful_steps": 126,
+      "protocol": {
+        "source_checkpoint": "run60/s01_state.pt",
+        "transition_seed": 43,
+        "exact_original_rng_replay": false,
+        "maximum_steps": 126,
+        "lr": 0.03,
+        "clip": 5.0,
+        "clean_bn_writer": false,
+        "spatial_active": false,
+        "formal_training": false,
+        "evaluation": "validation only"
+      },
+      "status": "passed",
+      "max_gradient_norm": 27.18688201904297,
+      "max_replay_feature_loss": 2.3031492233276367,
+      "first_pce": 0.8311286568641663,
+      "last_pce": 0.11245420575141907,
+      "spatial_nonzero_steps": 0,
+      "clipped_steps": 10,
+      "completion": {
+        "stage_zero_based": 1,
+        "epoch_zero_based": 2,
+        "iteration_one_based": 126,
+        "task_id": 1,
+        "steps_completed": 126,
+        "validation": {
+          "T1": 0.6497336587951106,
+          "T2": 3.332019979504167e-10
+        }
+      }
+    },
+    {
+      "name": "clean_bn_clip5_126",
+      "gpu": 6,
+      "planned_steps": 126,
+      "successful_steps": 126,
+      "protocol": {
+        "source_checkpoint": "run60/s01_state.pt",
+        "transition_seed": 43,
+        "exact_original_rng_replay": false,
+        "maximum_steps": 126,
+        "lr": 0.03,
+        "clip": 5.0,
+        "clean_bn_writer": true,
+        "spatial_active": false,
+        "formal_training": false,
+        "evaluation": "validation only"
+      },
+      "status": "passed",
+      "max_gradient_norm": 388.2366638183594,
+      "max_replay_feature_loss": 14.046150207519531,
+      "first_pce": 0.8311286568641663,
+      "last_pce": 0.11788734048604965,
+      "spatial_nonzero_steps": 0,
+      "clipped_steps": 16,
+      "completion": {
+        "stage_zero_based": 1,
+        "epoch_zero_based": 2,
+        "iteration_one_based": 126,
+        "task_id": 1,
+        "steps_completed": 126,
+        "validation": {
+          "T1": 0.5076754559725523,
+          "T2": 3.332019979504167e-10
+        }
+      }
+    },
+    {
+      "name": "lr003_clip5_126",
+      "gpu": 7,
+      "planned_steps": 126,
+      "successful_steps": 126,
+      "protocol": {
+        "source_checkpoint": "run60/s01_state.pt",
+        "transition_seed": 43,
+        "exact_original_rng_replay": false,
+        "maximum_steps": 126,
+        "lr": 0.003,
+        "clip": 5.0,
+        "clean_bn_writer": false,
+        "spatial_active": false,
+        "formal_training": false,
+        "evaluation": "validation only"
+      },
+      "status": "passed",
+      "max_gradient_norm": 67.89134216308594,
+      "max_replay_feature_loss": 0.23971989750862122,
+      "first_pce": 0.8311286568641663,
+      "last_pce": 0.1550806611776352,
+      "spatial_nonzero_steps": 0,
+      "clipped_steps": 7,
+      "completion": {
+        "stage_zero_based": 1,
+        "epoch_zero_based": 2,
+        "iteration_one_based": 126,
+        "task_id": 1,
+        "steps_completed": 126,
+        "validation": {
+          "T1": 0.5201157590802061,
+          "T2": 5.1401200688162616e-11
+        }
+      }
+    },
+    {
+      "name": "frozen_bn_126",
+      "gpu": 4,
+      "planned_steps": 126,
+      "successful_steps": 3,
+      "protocol": {
+        "source_checkpoint": "run60/s01_state.pt",
+        "transition_seed": 43,
+        "exact_original_rng_replay": false,
+        "maximum_steps": 126,
+        "lr": 0.03,
+        "clip": null,
+        "clean_bn_writer": false,
+        "freeze_backbone_bn": true,
+        "spatial_active": false,
+        "formal_training": false,
+        "evaluation": "validation only"
+      },
+      "status": "numerical_failure",
+      "max_gradient_norm": 6807.2626505449225,
+      "max_replay_feature_loss": 50.169158935546875,
+      "first_pce": 0.7238010764122009,
+      "last_pce": 0.7417686581611633,
+      "spatial_nonzero_steps": 0,
+      "clipped_steps": null,
+      "failure_step": 4,
+      "failure_branch": "replay_feature/unweighted_mse: non-finite value"
+    },
+    {
+      "name": "clip5_seed44_126",
+      "gpu": 5,
+      "planned_steps": 126,
+      "successful_steps": 126,
+      "protocol": {
+        "source_checkpoint": "run60/s01_state.pt",
+        "transition_seed": 44,
+        "exact_original_rng_replay": false,
+        "maximum_steps": 126,
+        "lr": 0.03,
+        "clip": 5.0,
+        "clean_bn_writer": false,
+        "freeze_backbone_bn": false,
+        "spatial_active": false,
+        "formal_training": false,
+        "evaluation": "validation only"
+      },
+      "status": "passed",
+      "max_gradient_norm": 2587.891357421875,
+      "max_replay_feature_loss": 18.862890243530273,
+      "first_pce": 0.5978524684906006,
+      "last_pce": 0.12908966839313507,
+      "spatial_nonzero_steps": 0,
+      "clipped_steps": 8,
+      "completion": {
+        "stage_zero_based": 1,
+        "epoch_zero_based": 2,
+        "iteration_one_based": 126,
+        "task_id": 1,
+        "steps_completed": 126,
+        "validation": {
+          "T1": 0.47165079449293285,
+          "T2": 3.332019979504167e-10
+        },
+        "validation_prediction_fg_fraction": {
+          "T1": 0.006135030509599673,
+          "T2": 0.0
+        }
+      }
+    },
+    {
+      "name": "frozen_bn_clip5_126",
+      "gpu": 6,
+      "planned_steps": 126,
+      "successful_steps": 126,
+      "protocol": {
+        "source_checkpoint": "run60/s01_state.pt",
+        "transition_seed": 43,
+        "exact_original_rng_replay": false,
+        "maximum_steps": 126,
+        "lr": 0.03,
+        "clip": 5.0,
+        "clean_bn_writer": false,
+        "freeze_backbone_bn": true,
+        "spatial_active": false,
+        "formal_training": false,
+        "evaluation": "validation only"
+      },
+      "status": "passed",
+      "max_gradient_norm": 625193.25,
+      "max_replay_feature_loss": 3145.22900390625,
+      "first_pce": 0.7238010764122009,
+      "last_pce": 0.14340849220752716,
+      "spatial_nonzero_steps": 0,
+      "clipped_steps": 18,
+      "completion": {
+        "stage_zero_based": 1,
+        "epoch_zero_based": 2,
+        "iteration_one_based": 126,
+        "task_id": 1,
+        "steps_completed": 126,
+        "backbone_buffers_unchanged": true,
+        "validation": {
+          "T1": 5.73069407503036e-10,
+          "T2": 3.332019979504167e-10
+        },
+        "validation_prediction_fg_fraction": {
+          "T1": 0.0,
+          "T2": 0.0
+        }
+      }
+    },
+    {
+      "name": "clip5_420",
+      "gpu": 7,
+      "planned_steps": 420,
+      "successful_steps": 420,
+      "protocol": {
+        "source_checkpoint": "run60/s01_state.pt",
+        "transition_seed": 43,
+        "exact_original_rng_replay": false,
+        "maximum_steps": 420,
+        "lr": 0.03,
+        "clip": 5.0,
+        "clean_bn_writer": false,
+        "freeze_backbone_bn": false,
+        "spatial_active": false,
+        "formal_training": false,
+        "evaluation": "validation only"
+      },
+      "status": "passed",
+      "max_gradient_norm": 27.18688201904297,
+      "max_replay_feature_loss": 2.3031492233276367,
+      "first_pce": 0.8311286568641663,
+      "last_pce": 0.03407223895192146,
+      "spatial_nonzero_steps": 0,
+      "clipped_steps": 11,
+      "completion": {
+        "stage_zero_based": 1,
+        "epoch_zero_based": 9,
+        "iteration_one_based": 420,
+        "task_id": 1,
+        "steps_completed": 420,
+        "validation": {
+          "T1": 0.7026519037156315,
+          "T2": 3.332019979504167e-10
+        },
+        "validation_prediction_fg_fraction": {
+          "T1": 0.015578525518280229,
+          "T2": 0.0
+        }
+      }
+    }
+  ]
+}
