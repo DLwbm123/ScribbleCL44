@@ -1,6 +1,21 @@
-# Organ T2 small feature-replay coefficients — running protocol
+# Organ T2 small feature-replay coefficients — completed sweep
 
-Status at publication: three bounded checks are running; no coefficient has been selected and formal training has not yet started. A detached controller will apply the declared gate and start one formal run only if a candidate passes. This document does not claim completed experiment results.
+Live verification on 2026-09-08 at approximately 22:53 China time: all three bounded checks and BN probes exited successfully. Alpha **0.05** passed the declared gate and was selected. Formal T2/T3 training started automatically on GPU 7 at 22:51:36 (PID 167733); it is **not completed**. The process was alive, 59 finite updates were recorded, and no numerical-failure snapshot was present. Training code is commit `65ab7ef8783a687ac9787f5419563f5491422b4e`.
+
+## Completed 10-epoch validation results
+
+| Feature alpha | T1 Dice | T2 before head calibration | T2 after head calibration | Passed gate |
+|---|---:|---:|---:|---|
+| 0 (previous matched reference) | 0.627003 | 0.170430 | 0.352248 | Reference only |
+| 0.01 | 0.660669 | 0.007061 | 0.116762 | No |
+| **0.05** | **0.718936** | **0.234027** | **0.386023** | **Yes; selected** |
+| 0.1 | 0.656914 | 0.074227 | 0.339222 | Yes |
+
+All new candidates completed 420 numerically finite updates. Head-only calibration leaves T1 predictions unchanged. Relative to the alpha-zero reference, alpha 0.05 improves T1 by 0.091933 and calibrated T2 by 0.033775. T1 still falls 0.040455 below its pre-T2 validation score of 0.759391. Small feature replay is therefore viable in this short check; the results do not establish that full-run forgetting is solved. The non-monotonic coefficient response also rules out inferring a simple smaller-is-better trend.
+
+These are endpoint validation scores, not test scores or completed formal-run results. Formal epoch 1 T2 validation was approximately zero; this early point is not comparable to the 10-epoch endpoint. The formal loop recalibrates before every validation, so its subsequent trajectory may differ from the sweep's post-hoc calibration.
+
+Scalar evidence: `results/organ_t2_small_alpha_20260908/selection.json` and `completion_summary.json`. The latter includes numerical summaries and all BN scope probes; the gate uses only the head-only variant.
 
 ## Short checks
 
@@ -35,4 +50,4 @@ Remote root: `/data_nas/jiangsuiyang/ScribbleCL/organ_T13_half_cl_20260908`.
 - Conditional formal log: `formal.log`; exact command/PID/GPU: `formal_launch.json`.
 - Conditional formal outputs: `formal_small_alpha_20260908/` under the remote root.
 
-Mount/free space and write/read probes passed before launch. The controller checks free space and GPU memory again before formal launch, allows sharing when at least 16,000 MiB is free, and does not modify unrelated processes. Data, model files, raw numerical snapshots, and large logs stay on NAS. Public delivery currently contains source and protocol only; completed metrics will be exported after a subsequent completion check.
+Mount/free space and write/read probes passed before launch. The controller checks free space and GPU memory again before formal launch, allows sharing when at least 16,000 MiB is free, and does not modify unrelated processes. Data, model files, raw numerical snapshots, and large logs stay on NAS. Public delivery contains source, protocol, completed sweep scalar metrics, BN probe tables, and verification summaries. Formal outputs are still running and have not been presented as completed results.

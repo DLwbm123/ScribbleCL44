@@ -1,0 +1,59 @@
+{
+  "records": [
+    {
+      "name": "alpha_0.01",
+      "alpha": 0.01,
+      "exit_code": 0,
+      "steps": 420,
+      "T1": 0.6606691833576093,
+      "T2": 0.1167622582968582,
+      "before_calibration": {
+        "T1": 0.6606691833576093,
+        "T2": 0.007061380014951898
+      }
+    },
+    {
+      "name": "alpha_0.05",
+      "alpha": 0.05,
+      "exit_code": 0,
+      "steps": 420,
+      "T1": 0.7189359830416682,
+      "T2": 0.3860232958968398,
+      "before_calibration": {
+        "T1": 0.7189359830416682,
+        "T2": 0.23402693364289176
+      }
+    },
+    {
+      "name": "alpha_0.1",
+      "alpha": 0.1,
+      "exit_code": 0,
+      "steps": 420,
+      "T1": 0.6569138463415634,
+      "T2": 0.3392217144824711,
+      "before_calibration": {
+        "T1": 0.6569138463415634,
+        "T2": 0.07422714441579746
+      }
+    }
+  ],
+  "selected": {
+    "name": "alpha_0.05",
+    "alpha": 0.05,
+    "exit_code": 0,
+    "steps": 420,
+    "T1": 0.7189359830416682,
+    "T2": 0.3860232958968398,
+    "before_calibration": {
+      "T1": 0.7189359830416682,
+      "T2": 0.23402693364289176
+    }
+  },
+  "rule": {
+    "min_t1": 0.65,
+    "min_t2": 0.33,
+    "metric": "validation after T2-head-only BN calibration",
+    "rank": "highest T2 Dice among passing candidates, then T1",
+    "requires_finite_completion": true
+  }
+}

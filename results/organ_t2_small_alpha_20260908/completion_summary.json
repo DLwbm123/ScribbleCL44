@@ -1,0 +1,179 @@
+{
+  "status": "all_three_sweep_checks_completed",
+  "records": [
+    {
+      "name": "alpha_0.01",
+      "steps": 420,
+      "max_gradient_norm": 13.941507339477539,
+      "max_weighted_feature_mse": 0.03538375347852707,
+      "bn_probe": {
+        "calibration_data": "T2 training images only; no augmentation; no labels used",
+        "optimizer_steps": 0,
+        "parameter_updates": 0,
+        "results": {
+          "none": {
+            "validation": {
+              "T1": 0.6606691833576093,
+              "T2": 0.007061380014951898
+            },
+            "prediction_fg_fraction": {
+              "T1": 0.020358814912683824,
+              "T2": 6.866455078125e-05
+            },
+            "calibrated_bn_layers": 0
+          },
+          "head": {
+            "validation": {
+              "T1": 0.6606691833576093,
+              "T2": 0.1167622582968582
+            },
+            "prediction_fg_fraction": {
+              "T1": 0.020358814912683824,
+              "T2": 0.0012297997107872595
+            },
+            "calibrated_bn_layers": 1
+          },
+          "backbone": {
+            "validation": {
+              "T1": 0.5773275052158414,
+              "T2": 0.5197192640665458
+            },
+            "prediction_fg_fraction": {
+              "T1": 0.025211807949091093,
+              "T2": 0.01809545663686899
+            },
+            "calibrated_bn_layers": 22
+          },
+          "both": {
+            "validation": {
+              "T1": 0.5773275052158414,
+              "T2": 0.5219389671572827
+            },
+            "prediction_fg_fraction": {
+              "T1": 0.025211807949091093,
+              "T2": 0.015720954308143027
+            },
+            "calibrated_bn_layers": 23
+          }
+        },
+        "scope": "diagnosis only; no calibrated model saved or formal training resumed"
+      }
+    },
+    {
+      "name": "alpha_0.05",
+      "steps": 420,
+      "max_gradient_norm": 36.22459030151367,
+      "max_weighted_feature_mse": 0.1709822714328766,
+      "bn_probe": {
+        "calibration_data": "T2 training images only; no augmentation; no labels used",
+        "optimizer_steps": 0,
+        "parameter_updates": 0,
+        "results": {
+          "none": {
+            "validation": {
+              "T1": 0.7189359830416682,
+              "T2": 0.23402693364289176
+            },
+            "prediction_fg_fraction": {
+              "T1": 0.01548098894505719,
+              "T2": 0.003135387714092548
+            },
+            "calibrated_bn_layers": 0
+          },
+          "head": {
+            "validation": {
+              "T1": 0.7189359830416682,
+              "T2": 0.3860232958968398
+            },
+            "prediction_fg_fraction": {
+              "T1": 0.01548098894505719,
+              "T2": 0.007617657001201923
+            },
+            "calibrated_bn_layers": 1
+          },
+          "backbone": {
+            "validation": {
+              "T1": 0.5826175351810325,
+              "T2": 0.50945609275651
+            },
+            "prediction_fg_fraction": {
+              "T1": 0.02348407421236724,
+              "T2": 0.011112506573016826
+            },
+            "calibrated_bn_layers": 22
+          },
+          "both": {
+            "validation": {
+              "T1": 0.5826175351810325,
+              "T2": 0.4971893118176528
+            },
+            "prediction_fg_fraction": {
+              "T1": 0.02348407421236724,
+              "T2": 0.010222801795372596
+            },
+            "calibrated_bn_layers": 23
+          }
+        },
+        "scope": "diagnosis only; no calibrated model saved or formal training resumed"
+      }
+    },
+    {
+      "name": "alpha_0.1",
+      "steps": 420,
+      "max_gradient_norm": 48.665916442871094,
+      "max_weighted_feature_mse": 0.32375821471214294,
+      "bn_probe": {
+        "calibration_data": "T2 training images only; no augmentation; no labels used",
+        "optimizer_steps": 0,
+        "parameter_updates": 0,
+        "results": {
+          "none": {
+            "validation": {
+              "T1": 0.6569138463415634,
+              "T2": 0.07422714441579746
+            },
+            "prediction_fg_fraction": {
+              "T1": 0.02091092377706291,
+              "T2": 0.0007702754094050481
+            },
+            "calibrated_bn_layers": 0
+          },
+          "head": {
+            "validation": {
+              "T1": 0.6569138463415634,
+              "T2": 0.3392217144824711
+            },
+            "prediction_fg_fraction": {
+              "T1": 0.02091092377706291,
+              "T2": 0.007261422964242788
+            },
+            "calibrated_bn_layers": 1
+          },
+          "backbone": {
+            "validation": {
+              "T1": 0.6376940634268873,
+              "T2": 0.6262301608592987
+            },
+            "prediction_fg_fraction": {
+              "T1": 0.02123355242161969,
+              "T2": 0.012629875769981971
+            },
+            "calibrated_bn_layers": 22
+          },
+          "both": {
+            "validation": {
+              "T1": 0.6376940634268873,
+              "T2": 0.6194616734851436
+            },
+            "prediction_fg_fraction": {
+              "T1": 0.02123355242161969,
+              "T2": 0.011467860295222355
+            },
+            "calibrated_bn_layers": 23
+          }
+        },
+        "scope": "diagnosis only; no calibrated model saved or formal training resumed"
+      }
+    }
+  ]
+}

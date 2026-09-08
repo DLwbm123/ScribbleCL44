@@ -1,7 +1,10 @@
 {
-  "experiment_status": "running; no performance result yet",
+  "experiment_status": "sweep completed; formal T2/T3 training running",
   "native_cpu_check": "passed",
   "native_gpu_synthetic_check": "passed; T2 alpha 0.05 restore preserves T1 and resets T3 to 0.5",
   "controller_selection_check": "passed; thresholds, finite/complete/exit checks, ranking",
-  "formal_training_started_at_publication": false
+  "formal_training_started_at_publication": true,
+  "verified_at": "2026-09-08 approximately 22:53 +08:00",
+  "formal_verified_updates": 59,
+  "formal_numerical_failure_snapshot": false
 }
