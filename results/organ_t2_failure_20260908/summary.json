@@ -1,0 +1,242 @@
+{
+  "experiment": "Organ T1 half, T2 full, T3 half; 60 epochs each",
+  "original_failure": {
+    "stage": "T2",
+    "epoch_one_based": 1,
+    "exact_step_unavailable": true,
+    "branch": "buffer_capture/feature_targets",
+    "numerical_debug": false,
+    "T1_best_epoch": 17,
+    "T1_validation_dice": 0.7593914365346025,
+    "T1_test_dice": 0.6648380769470472
+  },
+  "diagnostic_protocol": {
+    "source_checkpoint": "run60/s01_state.pt",
+    "transition_seed": 43,
+    "exact_original_rng_replay": false,
+    "maximum_steps": 42,
+    "lr": 0.03,
+    "spatial_active": false,
+    "formal_training": false
+  },
+  "reproduced_failure_step": 5,
+  "steps": [
+    {
+      "step": 1,
+      "gradient_norm": 12.75432682154398,
+      "learning_rates": [
+        0.03
+      ],
+      "losses": {
+        "der": 0.0,
+        "derpp_feature": 0.00831057969480753,
+        "derpp_global": 0.15087199211120605,
+        "derpp_pce": 0.012290477752685547,
+        "ewc": 0.0,
+        "gd": 0.0,
+        "global": 0.20630764961242676,
+        "pce": 0.8311286568641663,
+        "spatial": 0.0,
+        "total": 1.1273280382156372
+      }
+    },
+    {
+      "step": 2,
+      "gradient_norm": 6.105802558562797,
+      "learning_rates": [
+        0.02998928550166974
+      ],
+      "losses": {
+        "der": 0.0,
+        "derpp_feature": 0.13734537363052368,
+        "derpp_global": 0.13624751567840576,
+        "derpp_pce": 0.002979657845571637,
+        "ewc": 0.0,
+        "gd": 0.0,
+        "global": 0.17771553993225098,
+        "pce": 0.71714848279953,
+        "spatial": 0.0,
+        "total": 1.1018229722976685
+      }
+    },
+    {
+      "step": 3,
+      "gradient_norm": 6.8224319142112835,
+      "learning_rates": [
+        0.029978570577983737
+      ],
+      "losses": {
+        "der": 0.0,
+        "derpp_feature": 0.24020707607269287,
+        "derpp_global": 0.14487862586975098,
+        "derpp_pce": 0.004659537225961685,
+        "ewc": 0.0,
+        "gd": 0.0,
+        "global": 0.18972420692443848,
+        "pce": 0.7818699479103088,
+        "spatial": 0.0,
+        "total": 1.2865703105926514
+      }
+    },
+    {
+      "step": 4,
+      "gradient_norm": 4819.836897321917,
+      "learning_rates": [
+        0.029967855228756158
+      ],
+      "losses": {
+        "der": 0.0,
+        "derpp_feature": 29.098344802856445,
+        "derpp_global": 0.19793719053268433,
+        "derpp_pce": 0.609061062335968,
+        "ewc": 0.0,
+        "gd": 0.0,
+        "global": 0.1717740297317505,
+        "pce": 0.5351029634475708,
+        "spatial": 0.0,
+        "total": 30.208721160888672
+      }
+    },
+    {
+      "step": 5,
+      "losses": {
+        "total": 8147847680.0,
+        "pce": 0.6437061429023743,
+        "global": 0.25936365127563477,
+        "ewc": 0.0,
+        "der": 0.0,
+        "derpp_feature": 8147532288.0,
+        "derpp_pce": 630542.125,
+        "derpp_global": 0.13622665405273438,
+        "gd": 0.0,
+        "spatial": 0.0
+      },
+      "gradient_norm": 476192881402.7255,
+      "learning_rates": [
+        0.029957139453801032
+      ]
+    }
+  ],
+  "model_state": {
+    "all_saved_model_tensors_finite": true,
+    "pre_step_absmax": 132.54373168945312,
+    "post_step_absmax": 1607360640.0
+  },
+  "input_checks": {
+    "augmented_current": {
+      "absmax": 6.049750328063965,
+      "dtype": "torch.float32",
+      "finite": true,
+      "fp64_rms": 0.9991105905310346,
+      "maximum": 6.049750328063965,
+      "mean": -0.004759631230697156,
+      "minimum": -1.0285102128982544,
+      "nonfinite": 0,
+      "shape": [
+        4,
+        1,
+        256,
+        256
+      ]
+    },
+    "raw_replay": {
+      "absmax": 6.049750328063965,
+      "dtype": "torch.float32",
+      "finite": true,
+      "fp64_rms": 0.9991105905310346,
+      "maximum": 6.049750328063965,
+      "mean": -0.004759631230697156,
+      "minimum": -1.0285102128982544,
+      "nonfinite": 0,
+      "shape": [
+        4,
+        1,
+        256,
+        256
+      ]
+    }
+  },
+  "feature_probes": {
+    "batch_stat_buffers_unchanged": true,
+    "batch_stat_raw_no_write": {
+      "absmax": 2726.3876953125,
+      "dtype": "torch.float32",
+      "finite": true,
+      "fp64_rms": 162.2606719942643,
+      "maximum": 626.3499755859375,
+      "mean": -8.615333655840145,
+      "minimum": -2726.3876953125,
+      "nonfinite": 0,
+      "shape": [
+        4,
+        64,
+        244,
+        244
+      ]
+    },
+    "running_stat_augmented": {
+      "dtype": "torch.float32",
+      "finite": false,
+      "nonfinite": 15241216,
+      "shape": [
+        4,
+        64,
+        244,
+        244
+      ]
+    },
+    "running_stat_raw": {
+      "dtype": "torch.float32",
+      "finite": false,
+      "nonfinite": 15241216,
+      "shape": [
+        4,
+        64,
+        244,
+        244
+      ]
+    }
+  },
+  "first_bad_operation": {
+    "direction": "output",
+    "kind": "Conv2d",
+    "module": "Conv2.conv.0",
+    "tensor": {
+      "absmax": 3.4028234663852886e+38,
+      "dtype": "torch.float32",
+      "finite": false,
+      "fp64_rms": 4.782133113569096e+37,
+      "maximum": 3.4028234663852886e+38,
+      "mean": -7.970020631192099e+35,
+      "minimum": -3.4028108912913343e+38,
+      "nonfinite": 568156,
+      "shape": [
+        4,
+        128,
+        216,
+        216
+      ]
+    }
+  },
+  "fp64_first_bad_operation": {
+    "available": true,
+    "module": "Conv2.conv.0",
+    "output": {
+      "absmax": 1.1382209665722123e+40,
+      "dtype": "torch.float64",
+      "finite": true,
+      "fp64_rms": 1.5259049100527722e+38,
+      "maximum": 1.1382209665722123e+40,
+      "mean": 6.104847577319736e+36,
+      "minimum": -1.7926669883962492e+39,
+      "nonfinite": 0,
+      "shape": [
+        4,
+        128,
+        216,
+        216
+      ]
+    }
+  },
+  "scope": "Diagnosis only; no formal restart, no new hyperparameter sweep, no repair efficacy claim"
+}
