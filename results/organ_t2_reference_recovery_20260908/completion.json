@@ -1,0 +1,1033 @@
+{
+  "pipeline": {
+    "status": "stopped_at_recovery_gate",
+    "runs": [
+      {
+        "name": "domain_control",
+        "model": "domain",
+        "gpu": 4,
+        "validation_dice": 0.6242106280275151,
+        "test_dice": 0.49670822344154153
+      },
+      {
+        "name": "organ_reference",
+        "model": "organ",
+        "gpu": 5,
+        "validation_dice": 0.55327666396049,
+        "test_dice": 0.47119459004218256
+      }
+    ],
+    "max_training_runs": 4,
+    "selection_split": "val",
+    "recovery_min_val": 0.45,
+    "container_max_gap": 0.05,
+    "automatic_CL_training": false,
+    "reason": "Baseline recovery or container agreement failed; no annotation contrasts launched"
+  },
+  "coordinator_exitcode": 0,
+  "runs": [
+    {
+      "name": "domain_control",
+      "model": "domain",
+      "gpu": 4,
+      "validation_dice": 0.6242106280275151,
+      "test_dice": 0.49670822344154153,
+      "completed_epochs": 80,
+      "iterations": 3360,
+      "exitcode": 0,
+      "selected_epoch_one_based": 65,
+      "selected_iteration": 2730,
+      "selection_split": "val",
+      "validation_prediction_fg_fraction": 0.0190582275390625,
+      "test_prediction_fg_fraction": 0.015065155029296874,
+      "epoch_rows": 80,
+      "finite_training_losses": true,
+      "started_at": "2026-09-08T14:17:37.218534+08:00",
+      "completed_at": "2026-09-08T14:39:41.586522+08:00",
+      "validation_curve": [
+        {
+          "epoch_one_based": 1,
+          "iteration": 42,
+          "foreground_dice": 3.332019979504167e-10,
+          "prediction_fg_fraction": 0.0
+        },
+        {
+          "epoch_one_based": 2,
+          "iteration": 84,
+          "foreground_dice": 0.0037540224880122136,
+          "prediction_fg_fraction": 0.0006470313439002404
+        },
+        {
+          "epoch_one_based": 3,
+          "iteration": 126,
+          "foreground_dice": 0.13325567819649223,
+          "prediction_fg_fraction": 0.13984826894906852
+        },
+        {
+          "epoch_one_based": 4,
+          "iteration": 168,
+          "foreground_dice": 0.2813054228359748,
+          "prediction_fg_fraction": 0.06394811776968148
+        },
+        {
+          "epoch_one_based": 5,
+          "iteration": 210,
+          "foreground_dice": 0.13431585331544535,
+          "prediction_fg_fraction": 0.18059833233173078
+        },
+        {
+          "epoch_one_based": 6,
+          "iteration": 252,
+          "foreground_dice": 0.27143833205435414,
+          "prediction_fg_fraction": 0.10033416748046875
+        },
+        {
+          "epoch_one_based": 7,
+          "iteration": 294,
+          "foreground_dice": 0.08037063423796463,
+          "prediction_fg_fraction": 0.36658565814678484
+        },
+        {
+          "epoch_one_based": 8,
+          "iteration": 336,
+          "foreground_dice": 0.3244082239587952,
+          "prediction_fg_fraction": 0.024220393254206732
+        },
+        {
+          "epoch_one_based": 9,
+          "iteration": 378,
+          "foreground_dice": 0.396451155678203,
+          "prediction_fg_fraction": 0.014299245981069712
+        },
+        {
+          "epoch_one_based": 10,
+          "iteration": 420,
+          "foreground_dice": 0.33054708537717004,
+          "prediction_fg_fraction": 0.03840285081129808
+        },
+        {
+          "epoch_one_based": 11,
+          "iteration": 462,
+          "foreground_dice": 0.4337671746731052,
+          "prediction_fg_fraction": 0.030640235314002402
+        },
+        {
+          "epoch_one_based": 12,
+          "iteration": 504,
+          "foreground_dice": 0.520182370436637,
+          "prediction_fg_fraction": 0.032959277813251205
+        },
+        {
+          "epoch_one_based": 13,
+          "iteration": 546,
+          "foreground_dice": 3.2527944945365255e-10,
+          "prediction_fg_fraction": 0.000370025634765625
+        },
+        {
+          "epoch_one_based": 14,
+          "iteration": 588,
+          "foreground_dice": 3.332019979504167e-10,
+          "prediction_fg_fraction": 0.0
+        },
+        {
+          "epoch_one_based": 15,
+          "iteration": 630,
+          "foreground_dice": 0.2691312231661847,
+          "prediction_fg_fraction": 0.009232741135817308
+        },
+        {
+          "epoch_one_based": 16,
+          "iteration": 672,
+          "foreground_dice": 3.332019979504167e-10,
+          "prediction_fg_fraction": 0.0
+        },
+        {
+          "epoch_one_based": 17,
+          "iteration": 714,
+          "foreground_dice": 0.2818941909245577,
+          "prediction_fg_fraction": 0.033736889178936295
+        },
+        {
+          "epoch_one_based": 18,
+          "iteration": 756,
+          "foreground_dice": 0.34519187022876224,
+          "prediction_fg_fraction": 0.03212943443885216
+        },
+        {
+          "epoch_one_based": 19,
+          "iteration": 798,
+          "foreground_dice": 0.34353194505542267,
+          "prediction_fg_fraction": 0.017081627478966348
+        },
+        {
+          "epoch_one_based": 20,
+          "iteration": 840,
+          "foreground_dice": 0.2513448560154726,
+          "prediction_fg_fraction": 0.0800933837890625
+        },
+        {
+          "epoch_one_based": 21,
+          "iteration": 882,
+          "foreground_dice": 1.828115024854109e-10,
+          "prediction_fg_fraction": 0.03945717444786659
+        },
+        {
+          "epoch_one_based": 22,
+          "iteration": 924,
+          "foreground_dice": 0.07878146389112484,
+          "prediction_fg_fraction": 0.013398390549879808
+        },
+        {
+          "epoch_one_based": 23,
+          "iteration": 966,
+          "foreground_dice": 0.30164626662554356,
+          "prediction_fg_fraction": 0.05052625215970553
+        },
+        {
+          "epoch_one_based": 24,
+          "iteration": 1008,
+          "foreground_dice": 0.14466786542947555,
+          "prediction_fg_fraction": 0.004026266244741587
+        },
+        {
+          "epoch_one_based": 25,
+          "iteration": 1050,
+          "foreground_dice": 0.39294272114398643,
+          "prediction_fg_fraction": 0.03383959256685697
+        },
+        {
+          "epoch_one_based": 26,
+          "iteration": 1092,
+          "foreground_dice": 0.40290551484082904,
+          "prediction_fg_fraction": 0.011678548959585337
+        },
+        {
+          "epoch_one_based": 27,
+          "iteration": 1134,
+          "foreground_dice": 0.5077244400927061,
+          "prediction_fg_fraction": 0.024660257192758415
+        },
+        {
+          "epoch_one_based": 28,
+          "iteration": 1176,
+          "foreground_dice": 0.5339082325065962,
+          "prediction_fg_fraction": 0.016417576716496393
+        },
+        {
+          "epoch_one_based": 29,
+          "iteration": 1218,
+          "foreground_dice": 0.47470162197627164,
+          "prediction_fg_fraction": 0.01797661414513221
+        },
+        {
+          "epoch_one_based": 30,
+          "iteration": 1260,
+          "foreground_dice": 0.47557334088778047,
+          "prediction_fg_fraction": 0.0236514164851262
+        },
+        {
+          "epoch_one_based": 31,
+          "iteration": 1302,
+          "foreground_dice": 0.22180858026091105,
+          "prediction_fg_fraction": 0.027790949894831732
+        },
+        {
+          "epoch_one_based": 32,
+          "iteration": 1344,
+          "foreground_dice": 0.2689224878925533,
+          "prediction_fg_fraction": 0.027337294358473558
+        },
+        {
+          "epoch_one_based": 33,
+          "iteration": 1386,
+          "foreground_dice": 0.27423115018688127,
+          "prediction_fg_fraction": 0.018666194035456732
+        },
+        {
+          "epoch_one_based": 34,
+          "iteration": 1428,
+          "foreground_dice": 0.3364359481870007,
+          "prediction_fg_fraction": 0.013174497164212741
+        },
+        {
+          "epoch_one_based": 35,
+          "iteration": 1470,
+          "foreground_dice": 0.40928031741289667,
+          "prediction_fg_fraction": 0.012050041785606971
+        },
+        {
+          "epoch_one_based": 36,
+          "iteration": 1512,
+          "foreground_dice": 0.4752273770347505,
+          "prediction_fg_fraction": 0.023122640756460335
+        },
+        {
+          "epoch_one_based": 37,
+          "iteration": 1554,
+          "foreground_dice": 0.435102208772992,
+          "prediction_fg_fraction": 0.01702147263746995
+        },
+        {
+          "epoch_one_based": 38,
+          "iteration": 1596,
+          "foreground_dice": 0.37713014699920944,
+          "prediction_fg_fraction": 0.011219024658203125
+        },
+        {
+          "epoch_one_based": 39,
+          "iteration": 1638,
+          "foreground_dice": 0.323455754581066,
+          "prediction_fg_fraction": 0.016476264366736777
+        },
+        {
+          "epoch_one_based": 40,
+          "iteration": 1680,
+          "foreground_dice": 0.1758699090103761,
+          "prediction_fg_fraction": 0.025199303260216348
+        },
+        {
+          "epoch_one_based": 41,
+          "iteration": 1722,
+          "foreground_dice": 0.34805601595259383,
+          "prediction_fg_fraction": 0.03420345599834736
+        },
+        {
+          "epoch_one_based": 42,
+          "iteration": 1764,
+          "foreground_dice": 0.41023168260649506,
+          "prediction_fg_fraction": 0.03654773418719952
+        },
+        {
+          "epoch_one_based": 43,
+          "iteration": 1806,
+          "foreground_dice": 0.4681140795783,
+          "prediction_fg_fraction": 0.017908243032602165
+        },
+        {
+          "epoch_one_based": 44,
+          "iteration": 1848,
+          "foreground_dice": 0.45355686903156767,
+          "prediction_fg_fraction": 0.032043750469501205
+        },
+        {
+          "epoch_one_based": 45,
+          "iteration": 1890,
+          "foreground_dice": 0.5051421693425346,
+          "prediction_fg_fraction": 0.014760530911959134
+        },
+        {
+          "epoch_one_based": 46,
+          "iteration": 1932,
+          "foreground_dice": 0.5880332830794137,
+          "prediction_fg_fraction": 0.01758604783278245
+        },
+        {
+          "epoch_one_based": 47,
+          "iteration": 1974,
+          "foreground_dice": 0.37968142180794007,
+          "prediction_fg_fraction": 0.042816162109375
+        },
+        {
+          "epoch_one_based": 48,
+          "iteration": 2016,
+          "foreground_dice": 0.5480597100590994,
+          "prediction_fg_fraction": 0.021036588228665866
+        },
+        {
+          "epoch_one_based": 49,
+          "iteration": 2058,
+          "foreground_dice": 0.514849311671947,
+          "prediction_fg_fraction": 0.015658745398888223
+        },
+        {
+          "epoch_one_based": 50,
+          "iteration": 2100,
+          "foreground_dice": 0.5612232419168689,
+          "prediction_fg_fraction": 0.019135108360877402
+        },
+        {
+          "epoch_one_based": 51,
+          "iteration": 2142,
+          "foreground_dice": 0.5741852040565671,
+          "prediction_fg_fraction": 0.017554649939903848
+        },
+        {
+          "epoch_one_based": 52,
+          "iteration": 2184,
+          "foreground_dice": 0.12145151222118003,
+          "prediction_fg_fraction": 0.028728485107421875
+        },
+        {
+          "epoch_one_based": 53,
+          "iteration": 2226,
+          "foreground_dice": 0.5469260537681071,
+          "prediction_fg_fraction": 0.015595949613131009
+        },
+        {
+          "epoch_one_based": 54,
+          "iteration": 2268,
+          "foreground_dice": 0.5678453022876226,
+          "prediction_fg_fraction": 0.012855236346905049
+        },
+        {
+          "epoch_one_based": 55,
+          "iteration": 2310,
+          "foreground_dice": 0.4655937433857046,
+          "prediction_fg_fraction": 0.009753594031700721
+        },
+        {
+          "epoch_one_based": 56,
+          "iteration": 2352,
+          "foreground_dice": 0.38221451395497885,
+          "prediction_fg_fraction": 0.03403120774489183
+        },
+        {
+          "epoch_one_based": 57,
+          "iteration": 2394,
+          "foreground_dice": 0.5098410145557633,
+          "prediction_fg_fraction": 0.01479633037860577
+        },
+        {
+          "epoch_one_based": 58,
+          "iteration": 2436,
+          "foreground_dice": 0.5733227425298718,
+          "prediction_fg_fraction": 0.016657902644230768
+        },
+        {
+          "epoch_one_based": 59,
+          "iteration": 2478,
+          "foreground_dice": 0.5464489401316012,
+          "prediction_fg_fraction": 0.014595618614783654
+        },
+        {
+          "epoch_one_based": 60,
+          "iteration": 2520,
+          "foreground_dice": 0.5951669361773891,
+          "prediction_fg_fraction": 0.018498347355769232
+        },
+        {
+          "epoch_one_based": 61,
+          "iteration": 2562,
+          "foreground_dice": 0.5924292988012086,
+          "prediction_fg_fraction": 0.014186272254356971
+        },
+        {
+          "epoch_one_based": 62,
+          "iteration": 2604,
+          "foreground_dice": 0.5556879886892537,
+          "prediction_fg_fraction": 0.013405433067908654
+        },
+        {
+          "epoch_one_based": 63,
+          "iteration": 2646,
+          "foreground_dice": 0.37597161136485757,
+          "prediction_fg_fraction": 0.007313948411207933
+        },
+        {
+          "epoch_one_based": 64,
+          "iteration": 2688,
+          "foreground_dice": 0.42433298203296,
+          "prediction_fg_fraction": 0.02298736572265625
+        },
+        {
+          "epoch_one_based": 65,
+          "iteration": 2730,
+          "foreground_dice": 0.6242106280275151,
+          "prediction_fg_fraction": 0.0190582275390625
+        },
+        {
+          "epoch_one_based": 66,
+          "iteration": 2772,
+          "foreground_dice": 0.4999624629827264,
+          "prediction_fg_fraction": 0.014708005464993991
+        },
+        {
+          "epoch_one_based": 67,
+          "iteration": 2814,
+          "foreground_dice": 0.5585258205634264,
+          "prediction_fg_fraction": 0.014207693246694712
+        },
+        {
+          "epoch_one_based": 68,
+          "iteration": 2856,
+          "foreground_dice": 0.5847760751531853,
+          "prediction_fg_fraction": 0.02141600388746995
+        },
+        {
+          "epoch_one_based": 69,
+          "iteration": 2898,
+          "foreground_dice": 0.6100700213798405,
+          "prediction_fg_fraction": 0.020735520582932692
+        },
+        {
+          "epoch_one_based": 70,
+          "iteration": 2940,
+          "foreground_dice": 0.5020405663966875,
+          "prediction_fg_fraction": 0.012811514047475962
+        },
+        {
+          "epoch_one_based": 71,
+          "iteration": 2982,
+          "foreground_dice": 0.4826058094755983,
+          "prediction_fg_fraction": 0.012826185960036058
+        },
+        {
+          "epoch_one_based": 72,
+          "iteration": 3024,
+          "foreground_dice": 0.5822087603707814,
+          "prediction_fg_fraction": 0.015326866736778846
+        },
+        {
+          "epoch_one_based": 73,
+          "iteration": 3066,
+          "foreground_dice": 0.5849977037038961,
+          "prediction_fg_fraction": 0.016646165114182692
+        },
+        {
+          "epoch_one_based": 74,
+          "iteration": 3108,
+          "foreground_dice": 0.5942844486941169,
+          "prediction_fg_fraction": 0.01596978994516226
+        },
+        {
+          "epoch_one_based": 75,
+          "iteration": 3150,
+          "foreground_dice": 0.5945205396312918,
+          "prediction_fg_fraction": 0.016215397761418268
+        },
+        {
+          "epoch_one_based": 76,
+          "iteration": 3192,
+          "foreground_dice": 0.5898599447169639,
+          "prediction_fg_fraction": 0.016942831186147835
+        },
+        {
+          "epoch_one_based": 77,
+          "iteration": 3234,
+          "foreground_dice": 0.5781194609239408,
+          "prediction_fg_fraction": 0.016999171330378607
+        },
+        {
+          "epoch_one_based": 78,
+          "iteration": 3276,
+          "foreground_dice": 0.559237525038052,
+          "prediction_fg_fraction": 0.015865619365985576
+        },
+        {
+          "epoch_one_based": 79,
+          "iteration": 3318,
+          "foreground_dice": 0.5631943723808019,
+          "prediction_fg_fraction": 0.01626000037560096
+        },
+        {
+          "epoch_one_based": 80,
+          "iteration": 3360,
+          "foreground_dice": 0.588757854464143,
+          "prediction_fg_fraction": 0.016513531024639424
+        }
+      ]
+    },
+    {
+      "name": "organ_reference",
+      "model": "organ",
+      "gpu": 5,
+      "validation_dice": 0.55327666396049,
+      "test_dice": 0.47119459004218256,
+      "completed_epochs": 80,
+      "iterations": 3360,
+      "exitcode": 0,
+      "selected_epoch_one_based": 68,
+      "selected_iteration": 2856,
+      "selection_split": "val",
+      "validation_prediction_fg_fraction": 0.017697554368239183,
+      "test_prediction_fg_fraction": 0.012704620361328125,
+      "epoch_rows": 80,
+      "finite_training_losses": true,
+      "started_at": "2026-09-08T14:17:37.361534+08:00",
+      "completed_at": "2026-09-08T14:39:40.839522+08:00",
+      "validation_curve": [
+        {
+          "epoch_one_based": 1,
+          "iteration": 42,
+          "foreground_dice": 0.06702693112747228,
+          "prediction_fg_fraction": 0.00403594970703125
+        },
+        {
+          "epoch_one_based": 2,
+          "iteration": 84,
+          "foreground_dice": 3.332019979504167e-10,
+          "prediction_fg_fraction": 0.0
+        },
+        {
+          "epoch_one_based": 3,
+          "iteration": 126,
+          "foreground_dice": 0.11877954582580763,
+          "prediction_fg_fraction": 0.055013216458834134
+        },
+        {
+          "epoch_one_based": 4,
+          "iteration": 168,
+          "foreground_dice": 0.2689895244255384,
+          "prediction_fg_fraction": 0.013128427358774038
+        },
+        {
+          "epoch_one_based": 5,
+          "iteration": 210,
+          "foreground_dice": 0.2682906752732587,
+          "prediction_fg_fraction": 0.020016303429236777
+        },
+        {
+          "epoch_one_based": 6,
+          "iteration": 252,
+          "foreground_dice": 0.2285627580931185,
+          "prediction_fg_fraction": 0.05813246506911058
+        },
+        {
+          "epoch_one_based": 7,
+          "iteration": 294,
+          "foreground_dice": 0.046393309845848135,
+          "prediction_fg_fraction": 0.3413857680100661
+        },
+        {
+          "epoch_one_based": 8,
+          "iteration": 336,
+          "foreground_dice": 0.2637611894609497,
+          "prediction_fg_fraction": 0.011543567364032451
+        },
+        {
+          "epoch_one_based": 9,
+          "iteration": 378,
+          "foreground_dice": 0.2462047961472351,
+          "prediction_fg_fraction": 0.009496248685396634
+        },
+        {
+          "epoch_one_based": 10,
+          "iteration": 420,
+          "foreground_dice": 0.36699057776718097,
+          "prediction_fg_fraction": 0.011849623460036058
+        },
+        {
+          "epoch_one_based": 11,
+          "iteration": 462,
+          "foreground_dice": 0.404337716242888,
+          "prediction_fg_fraction": 0.014644916240985576
+        },
+        {
+          "epoch_one_based": 12,
+          "iteration": 504,
+          "foreground_dice": 0.4246957445710897,
+          "prediction_fg_fraction": 0.019253950852614183
+        },
+        {
+          "epoch_one_based": 13,
+          "iteration": 546,
+          "foreground_dice": 0.057399024478944946,
+          "prediction_fg_fraction": 0.026456392728365384
+        },
+        {
+          "epoch_one_based": 14,
+          "iteration": 588,
+          "foreground_dice": 0.07494447745180023,
+          "prediction_fg_fraction": 0.0035112821138822115
+        },
+        {
+          "epoch_one_based": 15,
+          "iteration": 630,
+          "foreground_dice": 0.26861001726598976,
+          "prediction_fg_fraction": 0.02758612999549279
+        },
+        {
+          "epoch_one_based": 16,
+          "iteration": 672,
+          "foreground_dice": 0.2371868745814132,
+          "prediction_fg_fraction": 0.023966569166917067
+        },
+        {
+          "epoch_one_based": 17,
+          "iteration": 714,
+          "foreground_dice": 0.2669828470407288,
+          "prediction_fg_fraction": 0.021200033334585335
+        },
+        {
+          "epoch_one_based": 18,
+          "iteration": 756,
+          "foreground_dice": 0.3240387889012899,
+          "prediction_fg_fraction": 0.014746152437650241
+        },
+        {
+          "epoch_one_based": 19,
+          "iteration": 798,
+          "foreground_dice": 0.3204356835691823,
+          "prediction_fg_fraction": 0.03619032639723558
+        },
+        {
+          "epoch_one_based": 20,
+          "iteration": 840,
+          "foreground_dice": 0.17452433888106228,
+          "prediction_fg_fraction": 0.16031881479116586
+        },
+        {
+          "epoch_one_based": 21,
+          "iteration": 882,
+          "foreground_dice": 0.26070981796512294,
+          "prediction_fg_fraction": 0.018284724308894232
+        },
+        {
+          "epoch_one_based": 22,
+          "iteration": 924,
+          "foreground_dice": 2.6683804183892366e-10,
+          "prediction_fg_fraction": 0.005413348858173077
+        },
+        {
+          "epoch_one_based": 23,
+          "iteration": 966,
+          "foreground_dice": 0.23286350567214456,
+          "prediction_fg_fraction": 0.008942824143629808
+        },
+        {
+          "epoch_one_based": 24,
+          "iteration": 1008,
+          "foreground_dice": 0.029630142631214215,
+          "prediction_fg_fraction": 0.002383305476262019
+        },
+        {
+          "epoch_one_based": 25,
+          "iteration": 1050,
+          "foreground_dice": 0.3389713615848634,
+          "prediction_fg_fraction": 0.012774247389573317
+        },
+        {
+          "epoch_one_based": 26,
+          "iteration": 1092,
+          "foreground_dice": 0.3484299859967034,
+          "prediction_fg_fraction": 0.01357738788311298
+        },
+        {
+          "epoch_one_based": 27,
+          "iteration": 1134,
+          "foreground_dice": 0.33446761284719007,
+          "prediction_fg_fraction": 0.013453850379356971
+        },
+        {
+          "epoch_one_based": 28,
+          "iteration": 1176,
+          "foreground_dice": 0.35999002209297626,
+          "prediction_fg_fraction": 0.014528127817007212
+        },
+        {
+          "epoch_one_based": 29,
+          "iteration": 1218,
+          "foreground_dice": 0.3863853851092024,
+          "prediction_fg_fraction": 0.021852640005258415
+        },
+        {
+          "epoch_one_based": 30,
+          "iteration": 1260,
+          "foreground_dice": 0.32914466381616175,
+          "prediction_fg_fraction": 0.015276688795823317
+        },
+        {
+          "epoch_one_based": 31,
+          "iteration": 1302,
+          "foreground_dice": 2.805860169246506e-10,
+          "prediction_fg_fraction": 0.004860217754657452
+        },
+        {
+          "epoch_one_based": 32,
+          "iteration": 1344,
+          "foreground_dice": 0.27419080712931304,
+          "prediction_fg_fraction": 0.006987351637620192
+        },
+        {
+          "epoch_one_based": 33,
+          "iteration": 1386,
+          "foreground_dice": 0.1923843465952098,
+          "prediction_fg_fraction": 0.03325741107647236
+        },
+        {
+          "epoch_one_based": 34,
+          "iteration": 1428,
+          "foreground_dice": 0.310869189511736,
+          "prediction_fg_fraction": 0.022797217735877402
+        },
+        {
+          "epoch_one_based": 35,
+          "iteration": 1470,
+          "foreground_dice": 0.3135363890204734,
+          "prediction_fg_fraction": 0.013455024132361779
+        },
+        {
+          "epoch_one_based": 36,
+          "iteration": 1512,
+          "foreground_dice": 0.3871853410619846,
+          "prediction_fg_fraction": 0.022763765775240384
+        },
+        {
+          "epoch_one_based": 37,
+          "iteration": 1554,
+          "foreground_dice": 0.18859599198498417,
+          "prediction_fg_fraction": 0.010132129375751201
+        },
+        {
+          "epoch_one_based": 38,
+          "iteration": 1596,
+          "foreground_dice": 0.32884203151544406,
+          "prediction_fg_fraction": 0.015423407921424279
+        },
+        {
+          "epoch_one_based": 39,
+          "iteration": 1638,
+          "foreground_dice": 0.21734809854503323,
+          "prediction_fg_fraction": 0.028055631197415866
+        },
+        {
+          "epoch_one_based": 40,
+          "iteration": 1680,
+          "foreground_dice": 0.013192693579137561,
+          "prediction_fg_fraction": 0.0595392080453726
+        },
+        {
+          "epoch_one_based": 41,
+          "iteration": 1722,
+          "foreground_dice": 0.33639591208072356,
+          "prediction_fg_fraction": 0.008794931265024038
+        },
+        {
+          "epoch_one_based": 42,
+          "iteration": 1764,
+          "foreground_dice": 0.39796887702496375,
+          "prediction_fg_fraction": 0.013095562274639424
+        },
+        {
+          "epoch_one_based": 43,
+          "iteration": 1806,
+          "foreground_dice": 0.3643354199599753,
+          "prediction_fg_fraction": 0.010117750901442308
+        },
+        {
+          "epoch_one_based": 44,
+          "iteration": 1848,
+          "foreground_dice": 0.4561961489827645,
+          "prediction_fg_fraction": 0.028212914100060098
+        },
+        {
+          "epoch_one_based": 45,
+          "iteration": 1890,
+          "foreground_dice": 0.40288187086382493,
+          "prediction_fg_fraction": 0.01107494647686298
+        },
+        {
+          "epoch_one_based": 46,
+          "iteration": 1932,
+          "foreground_dice": 0.49661894879312135,
+          "prediction_fg_fraction": 0.019449380727914665
+        },
+        {
+          "epoch_one_based": 47,
+          "iteration": 1974,
+          "foreground_dice": 0.3637707455053987,
+          "prediction_fg_fraction": 0.02055505605844351
+        },
+        {
+          "epoch_one_based": 48,
+          "iteration": 2016,
+          "foreground_dice": 0.3353125687706551,
+          "prediction_fg_fraction": 0.017375652606670674
+        },
+        {
+          "epoch_one_based": 49,
+          "iteration": 2058,
+          "foreground_dice": 0.34206515717277963,
+          "prediction_fg_fraction": 0.01189716045673077
+        },
+        {
+          "epoch_one_based": 50,
+          "iteration": 2100,
+          "foreground_dice": 0.47091253243341946,
+          "prediction_fg_fraction": 0.017642974853515625
+        },
+        {
+          "epoch_one_based": 51,
+          "iteration": 2142,
+          "foreground_dice": 0.4011279515268985,
+          "prediction_fg_fraction": 0.010702866774338942
+        },
+        {
+          "epoch_one_based": 52,
+          "iteration": 2184,
+          "foreground_dice": 0.40256544062762234,
+          "prediction_fg_fraction": 0.011498671311598558
+        },
+        {
+          "epoch_one_based": 53,
+          "iteration": 2226,
+          "foreground_dice": 0.4706829340074134,
+          "prediction_fg_fraction": 0.01340484619140625
+        },
+        {
+          "epoch_one_based": 54,
+          "iteration": 2268,
+          "foreground_dice": 0.4717560806120158,
+          "prediction_fg_fraction": 0.01642432579627404
+        },
+        {
+          "epoch_one_based": 55,
+          "iteration": 2310,
+          "foreground_dice": 0.5308676049421825,
+          "prediction_fg_fraction": 0.015125274658203125
+        },
+        {
+          "epoch_one_based": 56,
+          "iteration": 2352,
+          "foreground_dice": 0.24272039134337542,
+          "prediction_fg_fraction": 0.024311065673828125
+        },
+        {
+          "epoch_one_based": 57,
+          "iteration": 2394,
+          "foreground_dice": 0.3829468152121994,
+          "prediction_fg_fraction": 0.010255080003004808
+        },
+        {
+          "epoch_one_based": 58,
+          "iteration": 2436,
+          "foreground_dice": 0.46238300953755584,
+          "prediction_fg_fraction": 0.011382469764122596
+        },
+        {
+          "epoch_one_based": 59,
+          "iteration": 2478,
+          "foreground_dice": 0.4168539413608662,
+          "prediction_fg_fraction": 0.010061410757211538
+        },
+        {
+          "epoch_one_based": 60,
+          "iteration": 2520,
+          "foreground_dice": 0.523781762974584,
+          "prediction_fg_fraction": 0.013170682466947116
+        },
+        {
+          "epoch_one_based": 61,
+          "iteration": 2562,
+          "foreground_dice": 0.5316560947134279,
+          "prediction_fg_fraction": 0.013688014103816105
+        },
+        {
+          "epoch_one_based": 62,
+          "iteration": 2604,
+          "foreground_dice": 0.4842539476490354,
+          "prediction_fg_fraction": 0.009939927321213942
+        },
+        {
+          "epoch_one_based": 63,
+          "iteration": 2646,
+          "foreground_dice": 0.37336671762989415,
+          "prediction_fg_fraction": 0.012954418475811299
+        },
+        {
+          "epoch_one_based": 64,
+          "iteration": 2688,
+          "foreground_dice": 0.4041532685447567,
+          "prediction_fg_fraction": 0.014099707970252404
+        },
+        {
+          "epoch_one_based": 65,
+          "iteration": 2730,
+          "foreground_dice": 0.5521633507799999,
+          "prediction_fg_fraction": 0.015234433687650241
+        },
+        {
+          "epoch_one_based": 66,
+          "iteration": 2772,
+          "foreground_dice": 0.4702481020910654,
+          "prediction_fg_fraction": 0.013458251953125
+        },
+        {
+          "epoch_one_based": 67,
+          "iteration": 2814,
+          "foreground_dice": 0.5056367911139721,
+          "prediction_fg_fraction": 0.014013437124399038
+        },
+        {
+          "epoch_one_based": 68,
+          "iteration": 2856,
+          "foreground_dice": 0.55327666396049,
+          "prediction_fg_fraction": 0.017697554368239183
+        },
+        {
+          "epoch_one_based": 69,
+          "iteration": 2898,
+          "foreground_dice": 0.5505868146783576,
+          "prediction_fg_fraction": 0.014484992394080529
+        },
+        {
+          "epoch_one_based": 70,
+          "iteration": 2940,
+          "foreground_dice": 0.3826239349307263,
+          "prediction_fg_fraction": 0.008653787466195913
+        },
+        {
+          "epoch_one_based": 71,
+          "iteration": 2982,
+          "foreground_dice": 0.4671394118655304,
+          "prediction_fg_fraction": 0.012154505803034855
+        },
+        {
+          "epoch_one_based": 72,
+          "iteration": 3024,
+          "foreground_dice": 0.5096871966214104,
+          "prediction_fg_fraction": 0.013370220477764424
+        },
+        {
+          "epoch_one_based": 73,
+          "iteration": 3066,
+          "foreground_dice": 0.45455073085736697,
+          "prediction_fg_fraction": 0.009718674879807692
+        },
+        {
+          "epoch_one_based": 74,
+          "iteration": 3108,
+          "foreground_dice": 0.428240397069694,
+          "prediction_fg_fraction": 0.010013580322265625
+        },
+        {
+          "epoch_one_based": 75,
+          "iteration": 3150,
+          "foreground_dice": 0.47020222950786406,
+          "prediction_fg_fraction": 0.011319673978365384
+        },
+        {
+          "epoch_one_based": 76,
+          "iteration": 3192,
+          "foreground_dice": 0.48185136092345293,
+          "prediction_fg_fraction": 0.011867229755108174
+        },
+        {
+          "epoch_one_based": 77,
+          "iteration": 3234,
+          "foreground_dice": 0.4720293594924923,
+          "prediction_fg_fraction": 0.012704995962289663
+        },
+        {
+          "epoch_one_based": 78,
+          "iteration": 3276,
+          "foreground_dice": 0.4802150286597798,
+          "prediction_fg_fraction": 0.013466468224158654
+        },
+        {
+          "epoch_one_based": 79,
+          "iteration": 3318,
+          "foreground_dice": 0.5031791665088415,
+          "prediction_fg_fraction": 0.015106788048377404
+        },
+        {
+          "epoch_one_based": 80,
+          "iteration": 3360,
+          "foreground_dice": 0.5058686445873999,
+          "prediction_fg_fraction": 0.013222621037409855
+        }
+      ]
+    }
+  ],
+  "phase2_started": false
+}

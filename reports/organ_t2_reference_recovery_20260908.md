@@ -1,6 +1,21 @@
 # Organ T2: recover the existing UCL independent baseline
 
-Status: first-step parity passed; two baseline runs launched on GPUs 4/5 and reached the training forward path with approximately 7.2 GiB GPU memory each. No completed recovery result is claimed.
+Status: **phase 1 completed on 2026-09-08 at 14:39:41 Asia/Shanghai; pipeline stopped at the predeclared recovery gate. Phase 2 did not start.** Both baseline jobs completed 80 epochs / 3,360 updates with exit code 0. The coordinator also exited 0 because this was an intentional gate stop, not a training crash. Elapsed baseline wall time was approximately 22 minutes.
+
+## Completed baseline results
+
+| Run | Best validation foreground Dice | Test foreground Dice at that checkpoint | Selected epoch (one-based) |
+|---|---:|---:|---:|
+| domain_control | 0.6242106280 | 0.4967082234 | 65 |
+| organ_reference | 0.5532766640 | 0.4711945900 | 68 |
+
+Both validation scores exceed the minimum recovery threshold .45. Their absolute difference is **.0709339641**, exceeding the allowed container gap .05. Accordingly neither `organ_fg20_reference_recipe` nor `organ_fg40_reference_recipe` was launched. No automatic retry, threshold change, or CL training was performed.
+
+The Organ adapter recovered substantially from the earlier .0710013605 validation / .0495519224 test result. This supports the conclusion that UCL can be learned through the Organ model container with the reference implementation and annotation protocol. It does not isolate learning rate, clipping, Global, Spatial, annotation structure, or numerical implementation: these differed together from the failed run. Since phase 2 did not start, this batch provides no new controlled estimate of the Organ annotation effect.
+
+The first-step parity result still holds, but a single matched update does not establish full-trajectory equivalence. The full-run validation difference must not be attributed to the model container alone: CUDA training can be nondeterministic and only one run per container was performed. The historical .5370 test-selected demonstration result is also not directly comparable to these validation-selected test scores.
+
+Both epoch logs contain 80 finite loss records. Best and last checkpoints were present and nonempty for both runs (approximately 103 MB each). Public aggregate metrics, selection epochs, completion times and validation curves are in [completion.json](../results/organ_t2_reference_recovery_20260908/completion.json); model tensors, annotations, medical images and patient-level metrics remain private on NAS.
 
 The Domain-D and Organ-T2 UCL H5 images, dense labels, and patient split arrays were compared directly on the server and match. Loading the historical Domain-D formal checkpoint into the Organ model reproduced validation foreground Dice 0.5988888759 and test Dice 0.5370209892. That historical checkpoint was selected on test for a platform demo. It is not a held-out baseline.
 
