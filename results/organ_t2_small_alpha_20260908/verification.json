@@ -1,0 +1,7 @@
+{
+  "experiment_status": "running; no performance result yet",
+  "native_cpu_check": "passed",
+  "native_gpu_synthetic_check": "passed; T2 alpha 0.05 restore preserves T1 and resets T3 to 0.5",
+  "controller_selection_check": "passed; thresholds, finite/complete/exit checks, ranking",
+  "formal_training_started_at_publication": false
+}

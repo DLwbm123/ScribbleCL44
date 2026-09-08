@@ -323,9 +323,9 @@ class OrganModel(nn.Module):
 
 
 def organ_task_strategy(enabled: bool, task_code: str, alpha: float, beta: float,
-                        clip: float | None) -> dict:
+                        clip: float | None, t2_alpha: float = 0.0) -> dict:
     candidate = enabled and task_code == "T2"
-    return {"der_alpha": 0.0 if candidate else alpha,
+    return {"der_alpha": t2_alpha if candidate else alpha,
             "der_beta": 0.5 if candidate else beta,
             "grad_clip_norm": 5.0 if candidate else clip,
             "calibrate_head_bn": candidate}
@@ -900,7 +900,11 @@ def main(project_scenario: str) -> None:
     parser.add_argument("--lr", type=float, default=0.03)
     parser.add_argument("--grad-clip-norm", type=float)
     parser.add_argument("--organ-t2-supervision-strategy", action="store_true",
-                        help="Organ ZS-DER++ T2 only: alpha=0, beta=0.5, clip=5, train-image head BN calibration")
+                        help="Organ ZS-DER++ T2 only: configurable feature alpha, beta=0.5, clip=5, train-image head BN calibration")
+    parser.add_argument("--organ-t2-feature-alpha", type=float, default=0.0,
+                        help="T2 feature MSE weight for --organ-t2-supervision-strategy")
+    parser.add_argument("--t2-from", type=Path,
+                        help="reuse the completed T1 paired checkpoint and run T2 onward")
     parser.add_argument("--organ-task", choices=["T1", "T2", "T3", "T4"],
                         help="train one Organ task from scratch through the shared ZS loop")
     parser.add_argument("--t3-one-epoch-from", type=Path,
@@ -996,6 +1000,10 @@ def main(project_scenario: str) -> None:
     tasks = TASKS[project_scenario]
     if args.grad_clip_norm is not None and not 0 < args.grad_clip_norm < float("inf"):
         parser.error("--grad-clip-norm must be finite and positive")
+    if not 0 <= args.organ_t2_feature_alpha < float("inf"):
+        parser.error("--organ-t2-feature-alpha must be finite and non-negative")
+    if args.organ_t2_feature_alpha and not args.organ_t2_supervision_strategy:
+        parser.error("--organ-t2-feature-alpha requires --organ-t2-supervision-strategy")
     if args.organ_t2_supervision_strategy and (project_scenario != "organ" or args.method != "zs-derpp"
                                               or args.organ_task):
         parser.error("--organ-t2-supervision-strategy requires continual Organ zs-derpp")
@@ -1008,6 +1016,9 @@ def main(project_scenario: str) -> None:
     last_stage = len(tasks) - 1 if args.max_task is None else args.max_task - 1
     if args.t3_first_epoch_evaluation and (project_scenario != "organ" or last_stage < 2 or args.organ_task):
         parser.error("--t3-first-epoch-evaluation requires Organ T1/T2/T3")
+    if args.t2_from and (project_scenario != "organ" or args.method != "zs-derpp"
+                         or last_stage < 1 or args.organ_task or args.t3_one_epoch_from):
+        parser.error("--t2-from requires continual Organ ZS-DER++ T2 onward, without T3-only resume")
     if args.t3_one_epoch_from and (project_scenario != "organ" or args.method != "zs-derpp"
                                   or last_stage != 2 or args.organ_task):
         parser.error("--t3-one-epoch-from requires Organ ZS-DER++ T1/T2/T3")
@@ -1075,7 +1086,9 @@ def main(project_scenario: str) -> None:
         "organ_t2_supervision_strategy": args.organ_t2_supervision_strategy,
         "task_strategies": {task.code: organ_task_strategy(
             args.organ_t2_supervision_strategy, task.code, args.der_alpha, args.der_beta,
-            args.grad_clip_norm) for task in tasks[:last_stage + 1]},
+            args.grad_clip_norm, args.organ_t2_feature_alpha) for task in tasks[:last_stage + 1]},
+        "t2_source": None if args.t2_from is None else args.t2_from.name,
+        "t2_transition_seed": None if args.t2_from is None else args.seed + 1,
         "batch_size": args.batch_size,
         "workers": args.workers,
         "optimizer_weight_decay": 0.0 if use_gpm else 1e-4,
@@ -1121,32 +1134,36 @@ def main(project_scenario: str) -> None:
     matrix = np.full((len(tasks), len(tasks)), np.nan)
     validation_matrix = np.full((len(tasks), len(tasks)), np.nan)
     stage_rows = []
-    if args.t3_one_epoch_from:
-        source = args.t3_one_epoch_from
-        saved = torch.load(source / "s02_state.pt", map_location="cpu")
-        if saved["stage"] != 1 or saved["method"] != args.method:
-            raise ValueError("resume source must be the completed T2 paired model/replay checkpoint")
-        model.activate_stage(1)
+    first_stage = 1 if args.t2_from else 2 if args.t3_one_epoch_from else 0
+    if first_stage:
+        source = args.t2_from or args.t3_one_epoch_from
+        saved = torch.load(source / f"s{first_stage:02d}_state.pt", map_location="cpu")
+        if saved["stage"] != first_stage - 1 or saved["method"] != args.method:
+            raise ValueError("resume source must be the completed previous-task paired model/replay checkpoint")
+        model.activate_stage(first_stage - 1)
         model.load_state_dict(saved["model"], strict=True)
         # Restore the declared source policy strictly; the next stage resets its coefficients.
-        if args.organ_t2_supervision_strategy:
-            expected = organ_task_strategy(True, "T2", args.der_alpha, args.der_beta, args.grad_clip_norm)
+        if first_stage == 2 and args.organ_t2_supervision_strategy:
+            expected = organ_task_strategy(True, "T2", args.der_alpha, args.der_beta,
+                                           args.grad_clip_norm, args.organ_t2_feature_alpha)
             if saved.get("task_strategy") != expected:
                 raise ValueError("T3 source does not contain the requested T2 strategy")
             derpp.alpha, derpp.beta = expected["der_alpha"], expected["der_beta"]
         derpp.load_state_dict(saved["continual"])
         del saved
-        stage_rows = json.loads((source / "stages.json").read_text())[:2]
-        if len(stage_rows) != 2 or [row["stage"] for row in stage_rows] != [0, 1]:
-            raise ValueError("source lacks completed T1/T2 evaluation records")
+        stage_rows = json.loads((source / "stages.json").read_text())[:first_stage]
+        if len(stage_rows) != first_stage or [row["stage"] for row in stage_rows] != list(range(first_stage)):
+            raise ValueError("source lacks completed previous-task evaluation records")
         for row in stage_rows:
             for index, task in enumerate(tasks[:row["stage"] + 1]):
                 validation_matrix[row["stage"], index] = row["validation_evaluated"][task.code]["benchmark_mean"]
+                if args.test_evaluation and task.code in row["evaluated"]:
+                    matrix[row["stage"], index] = row["evaluated"][task.code]["benchmark_mean"]
         # The old checkpoints omit RNG state. Use one declared transition seed
         # for every candidate instead of claiming exact historical continuation.
-        torch.manual_seed(args.seed + 2)
-        np.random.seed(args.seed + 2)
-        random.seed(args.seed + 2)
+        torch.manual_seed(args.seed + first_stage)
+        np.random.seed(args.seed + first_stage)
+        random.seed(args.seed + first_stage)
     fisher_rows = []
     gpm_rows = []
     train_log = args.output / "train.jsonl"
@@ -1166,10 +1183,11 @@ def main(project_scenario: str) -> None:
         }, indent=2, sort_keys=True) + "\n")
 
     for stage, task in enumerate(tasks[:last_stage + 1]):
-        if args.t3_one_epoch_from and stage < 2:
+        if stage < first_stage:
             continue
         task_strategy = organ_task_strategy(args.organ_t2_supervision_strategy, task.code,
-                                             args.der_alpha, args.der_beta, args.grad_clip_norm)
+                                             args.der_alpha, args.der_beta, args.grad_clip_norm,
+                                             args.organ_t2_feature_alpha)
         replay_beta = task_strategy["der_beta"]
         clip_norm = task_strategy["grad_clip_norm"]
         if derpp is not None:

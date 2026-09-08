@@ -10,6 +10,9 @@ def main():
     base = organ_task_strategy(False, 'T2', .5, .5, None)
     for task in ('T1', 'T3'):
         assert organ_task_strategy(True, task, .5, .5, None) == base
+    for task in ('T1', 'T3'):
+        assert organ_task_strategy(True, task, .5, .5, None, .05) == base
+    assert organ_task_strategy(True, 'T2', .5, .5, None, .05)['der_alpha'] == .05
     t2 = organ_task_strategy(True, 'T2', .5, .5, None)
     assert t2 == dict(der_alpha=0., der_beta=.5, grad_clip_norm=5., calibrate_head_bn=True)
     model = OrganModel()
@@ -86,4 +89,10 @@ if __name__ == '__main__' and len(__import__('sys').argv) > 1:
     runner.main('organ')
     resumed = json.loads((root / 'resume/stages.json').read_text())
     assert resumed[2]['derpp']['alpha'] == .5
-    print('PASS: native T1/T2/T3 training, selection, paired saves, and T3-only resume on synthetic data')
+    sys.argv = common + ['--output', str(root / 'resume_t2'), '--t2-from', str(root / 'run'),
+                         '--organ-t2-feature-alpha', '.05']
+    runner.main('organ')
+    resumed_t2 = json.loads((root / 'resume_t2/stages.json').read_text())
+    assert [r['derpp']['alpha'] for r in resumed_t2] == [.5, .05, .5]
+    assert resumed_t2[0] == rows[0]
+    print('PASS: native T1/T2/T3, paired selection, T3 resume, and T2 resume with small alpha; preserved T1 record')
