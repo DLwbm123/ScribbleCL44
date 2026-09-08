@@ -1,0 +1,54 @@
+{
+  "scope": "fixed augmented UCL batch through real loops; no test access",
+  "actual_batches_per_epoch": 42,
+  "capture_helper_batches_per_epoch": 76,
+  "note": "Existing capture helper uses synthetic length 76 for both models; production uses 42.",
+  "limits": {
+    "initial": 0,
+    "gradients": 1e-05,
+    "updated": 1e-06
+  },
+  "passed": true,
+  "initial": {
+    "organ_max_abs_diff": 0.0,
+    "domain_repeat_max_abs_diff": 0.0
+  },
+  "gradients": {
+    "organ_max_abs_diff": 0.0,
+    "domain_repeat_max_abs_diff": 0.0
+  },
+  "updated": {
+    "organ_max_abs_diff": 0.0,
+    "domain_repeat_max_abs_diff": 0.0
+  },
+  "pce_loss": [
+    0.8066117167472839,
+    0.8066117167472839,
+    0.8066117167472839
+  ],
+  "global_loss": [
+    0.1874822974205017,
+    0.1874822974205017,
+    0.1874822974205017
+  ],
+  "total_loss": [
+    0.9940940141677856,
+    0.9940940141677856,
+    0.9940940141677856
+  ],
+  "lr_before": [
+    0.03,
+    0.03,
+    0.03
+  ],
+  "lr_after": [
+    0.029995559174004458,
+    0.029995559174004458,
+    0.029995559174004458
+  ],
+  "optimizer_weight_decay": [
+    0.0,
+    0.0,
+    0.0
+  ]
+}
