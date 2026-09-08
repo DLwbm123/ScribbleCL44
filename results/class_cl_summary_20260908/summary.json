@@ -1,0 +1,449 @@
+{
+  "verified_date": "2026-09-08",
+  "runs": {
+    "v6c43": {
+      "manifest": {
+        "backbone": "ZScribbleSeg_UNet",
+        "data_root": "<external_data>",
+        "der_alpha": 0.5,
+        "der_beta": 0.5,
+        "der_buffer_size": 64,
+        "der_minibatch_size": 4,
+        "der_target": null,
+        "derpp_target": "backbone_features_plus_sparse_pce_global",
+        "epochs_per_task": 80,
+        "ewc_gamma": null,
+        "ewc_lambda": null,
+        "fisher_batches": null,
+        "gpm_examples": null,
+        "gpm_max_matrix_elements": null,
+        "gpm_max_patches_per_layer": null,
+        "gpm_threshold": null,
+        "gpm_threshold_step": null,
+        "history_images": true,
+        "ignore_index": -100,
+        "independent_scores": null,
+        "main_entry": "main.py",
+        "max_train_batches": null,
+        "method": "zs-derpp-mib",
+        "mib_kd_weight": 1.0,
+        "pce_loss_weight": 1.0,
+        "replay": true,
+        "scenario": "class",
+        "seed": 42,
+        "sparse_root": "<external_data>",
+        "task_count": 3,
+        "task_order": [
+          "T1",
+          "T2",
+          "T3"
+        ],
+        "test_for_selection": false,
+        "zs_adversarial_perturbation": false,
+        "zs_gd_loss": false,
+        "zs_global_weight": 0.1,
+        "zs_spatial_loss_weight": 0.0,
+        "zs_spatial_warmup_epochs": 60
+      },
+      "completed_stages": 3,
+      "training_checks": [
+        {
+          "stage": 0,
+          "epochs": 80,
+          "updates": 30000
+        },
+        {
+          "stage": 1,
+          "epochs": 80,
+          "updates": 30000
+        },
+        {
+          "stage": 2,
+          "epochs": 80,
+          "updates": 30000
+        }
+      ],
+      "finite_recorded_losses": true,
+      "test_matrix": [
+        [
+          0.7114326217067827,
+          null,
+          null
+        ],
+        [
+          0.759840199456243,
+          0.7263763100620166,
+          null
+        ],
+        [
+          0.7382244407601914,
+          0.6957124991587053,
+          0.6586547618319678
+        ]
+      ],
+      "final_seen_test_mean": 0.6975305672502881,
+      "final_seen_validation_mean": 0.7422334817069314,
+      "stages": [
+        {
+          "stage": 0,
+          "best_validation": {
+            "benchmark_mean": 0.7574352971709538,
+            "epoch": 78,
+            "iteration": 29400
+          },
+          "seen_validation": {
+            "T1": 0.7574352971709538
+          },
+          "test": {
+            "T1": {
+              "benchmark_mean": 0.7114326217067827,
+              "per_class": [
+                0.6506935270714262,
+                0.7313641747858054,
+                0.7522401632631164
+              ]
+            }
+          }
+        },
+        {
+          "stage": 1,
+          "best_validation": {
+            "benchmark_mean": 0.6658614864970904,
+            "epoch": 6,
+            "iteration": 2400
+          },
+          "seen_validation": {
+            "T1": 0.7583570565791083,
+            "T2": 0.6658614864970904
+          },
+          "test": {
+            "T1": {
+              "benchmark_mean": 0.759840199456243,
+              "per_class": [
+                0.6917768009770754,
+                0.7694870002264725,
+                0.818256797165181
+              ]
+            },
+            "T2": {
+              "benchmark_mean": 0.7263763100620166,
+              "per_class": [
+                0.6522242550004105,
+                0.8005283651236227
+              ]
+            }
+          }
+        },
+        {
+          "stage": 2,
+          "best_validation": {
+            "benchmark_mean": 0.7381673023744065,
+            "epoch": 26,
+            "iteration": 9800
+          },
+          "seen_validation": {
+            "T1": 0.7749878267459467,
+            "T2": 0.7135453160004408,
+            "T3": 0.7381673023744065
+          },
+          "test": {
+            "T1": {
+              "benchmark_mean": 0.7382244407601914,
+              "per_class": [
+                0.6733268884581165,
+                0.7738353426552845,
+                0.7675110911671736
+              ]
+            },
+            "T2": {
+              "benchmark_mean": 0.6957124991587053,
+              "per_class": [
+                0.6412078305519114,
+                0.7502171677654988
+              ]
+            },
+            "T3": {
+              "benchmark_mean": 0.6586547618319678,
+              "per_class": [
+                0.7779053635853864,
+                0.5394041600785491
+              ]
+            }
+          }
+        }
+      ],
+      "whole_class_test": {
+        "benchmark_mean": 0.6918442369782543,
+        "per_class": [
+          0.6587831187266061,
+          0.7646527390150256,
+          0.7631206711646477,
+          0.647567743882665,
+          0.7255041256785483,
+          0.7293963849531327,
+          0.5538848754271553
+        ]
+      }
+    },
+    "c6m3": {
+      "manifest": {
+        "backbone": "ZScribbleSeg_UNet",
+        "data_root": "<external_data>",
+        "der_alpha": 0.5,
+        "der_beta": 0.5,
+        "der_buffer_size": 64,
+        "der_minibatch_size": 4,
+        "der_target": null,
+        "derpp_target": "backbone_features_plus_sparse_pce_global",
+        "epochs_per_task": 20,
+        "ewc_gamma": null,
+        "ewc_lambda": null,
+        "fisher_batches": null,
+        "gpm_examples": null,
+        "gpm_max_matrix_elements": null,
+        "gpm_max_patches_per_layer": null,
+        "gpm_threshold": null,
+        "gpm_threshold_step": null,
+        "history_images": true,
+        "ignore_index": -100,
+        "independent_scores": null,
+        "main_entry": "main.py",
+        "max_train_batches": null,
+        "method": "zs-derpp-mib",
+        "mib_kd_weight": 1.0,
+        "pce_loss_weight": 1.0,
+        "replay": true,
+        "scenario": "class",
+        "seed": 42,
+        "sparse_root": "<external_data>",
+        "task_count": 2,
+        "task_order": [
+          "T1",
+          "T2"
+        ],
+        "test_for_selection": false,
+        "zs_adversarial_perturbation": false,
+        "zs_gd_loss": false,
+        "zs_global_weight": 0.1,
+        "zs_spatial_loss_weight": 0.0,
+        "zs_spatial_warmup_epochs": 60
+      },
+      "completed_stages": 2,
+      "training_checks": [
+        {
+          "stage": 0,
+          "epochs": 20,
+          "updates": 7500
+        },
+        {
+          "stage": 1,
+          "epochs": 20,
+          "updates": 7500
+        }
+      ],
+      "finite_recorded_losses": true,
+      "test_matrix": [
+        [
+          0.6662067935637132,
+          null,
+          null
+        ],
+        [
+          0.6330578576867164,
+          0.6137980584767362,
+          null
+        ],
+        [
+          null,
+          null,
+          null
+        ]
+      ],
+      "final_seen_test_mean": 0.6234279580817264,
+      "final_seen_validation_mean": 0.5981354095962985,
+      "stages": [
+        {
+          "stage": 0,
+          "best_validation": {
+            "benchmark_mean": 0.6757496498019031,
+            "epoch": 19,
+            "iteration": 7200
+          },
+          "seen_validation": {
+            "T1": 0.6757496498019031
+          },
+          "test": {
+            "T1": {
+              "benchmark_mean": 0.6662067935637132,
+              "per_class": [
+                0.616254206332944,
+                0.6769689046486181,
+                0.7053972697095772
+              ]
+            }
+          }
+        },
+        {
+          "stage": 1,
+          "best_validation": {
+            "benchmark_mean": 0.5469441499277454,
+            "epoch": 3,
+            "iteration": 1200
+          },
+          "seen_validation": {
+            "T1": 0.6493266692648517,
+            "T2": 0.5469441499277454
+          },
+          "test": {
+            "T1": {
+              "benchmark_mean": 0.6330578576867164,
+              "per_class": [
+                0.5855902967565352,
+                0.6991288045798478,
+                0.6144544717237665
+              ]
+            },
+            "T2": {
+              "benchmark_mean": 0.6137980584767362,
+              "per_class": [
+                0.5479741219481427,
+                0.6796219950053299
+              ]
+            }
+          }
+        }
+      ],
+      "whole_class_test": null
+    },
+    "c7m4": {
+      "manifest": {
+        "backbone": "ZScribbleSeg_UNet",
+        "data_root": "<external_data>",
+        "der_alpha": 0.5,
+        "der_beta": 0.5,
+        "der_buffer_size": 64,
+        "der_minibatch_size": 4,
+        "der_target": null,
+        "derpp_target": "backbone_features_plus_sparse_pce_global",
+        "epochs_per_task": 20,
+        "ewc_gamma": null,
+        "ewc_lambda": null,
+        "fisher_batches": null,
+        "gpm_examples": null,
+        "gpm_max_matrix_elements": null,
+        "gpm_max_patches_per_layer": null,
+        "gpm_threshold": null,
+        "gpm_threshold_step": null,
+        "history_images": true,
+        "ignore_index": -100,
+        "independent_scores": null,
+        "main_entry": "main.py",
+        "max_train_batches": null,
+        "method": "zs-derpp-mib",
+        "mib_kd_weight": 10.0,
+        "pce_loss_weight": 1.0,
+        "replay": true,
+        "scenario": "class",
+        "seed": 42,
+        "sparse_root": "<external_data>",
+        "task_count": 2,
+        "task_order": [
+          "T1",
+          "T2"
+        ],
+        "test_for_selection": false,
+        "zs_adversarial_perturbation": false,
+        "zs_gd_loss": false,
+        "zs_global_weight": 0.1,
+        "zs_spatial_loss_weight": 0.0,
+        "zs_spatial_warmup_epochs": 60
+      },
+      "completed_stages": 2,
+      "training_checks": [
+        {
+          "stage": 0,
+          "epochs": 20,
+          "updates": 7500
+        },
+        {
+          "stage": 1,
+          "epochs": 20,
+          "updates": 7500
+        }
+      ],
+      "finite_recorded_losses": true,
+      "test_matrix": [
+        [
+          0.6548366555693863,
+          null,
+          null
+        ],
+        [
+          0.6788241693841232,
+          0.6398912289333484,
+          null
+        ],
+        [
+          null,
+          null,
+          null
+        ]
+      ],
+      "final_seen_test_mean": 0.6593576991587358,
+      "final_seen_validation_mean": 0.5657593063710217,
+      "stages": [
+        {
+          "stage": 0,
+          "best_validation": {
+            "benchmark_mean": 0.6271135869054963,
+            "epoch": 19,
+            "iteration": 7200
+          },
+          "seen_validation": {
+            "T1": 0.6271135869054963
+          },
+          "test": {
+            "T1": {
+              "benchmark_mean": 0.6548366555693863,
+              "per_class": [
+                0.6175778967098601,
+                0.6514220115821708,
+                0.695510058416128
+              ]
+            }
+          }
+        },
+        {
+          "stage": 1,
+          "best_validation": {
+            "benchmark_mean": 0.5028549182808492,
+            "epoch": 19,
+            "iteration": 7500
+          },
+          "seen_validation": {
+            "T1": 0.6286636944611942,
+            "T2": 0.5028549182808492
+          },
+          "test": {
+            "T1": {
+              "benchmark_mean": 0.6788241693841232,
+              "per_class": [
+                0.6739674246346798,
+                0.6739609801571151,
+                0.6885441033605749
+              ]
+            },
+            "T2": {
+              "benchmark_mean": 0.6398912289333484,
+              "per_class": [
+                0.6069483864066048,
+                0.6728340714600922
+              ]
+            }
+          }
+        }
+      ],
+      "whole_class_test": null
+    }
+  }
+}
