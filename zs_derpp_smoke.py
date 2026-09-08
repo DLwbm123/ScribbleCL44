@@ -34,6 +34,7 @@ def main() -> None:
     labels[:, 2:4, 2:4] = 1
     labels[:, 5:6, 5:7] = 0
     task_ids = torch.tensor([0] * 6 + [1] * 6, dtype=torch.int64)
+    model.backbone[1].running_var.zero_()
     targets = stable_backbone_features(model, examples, no_grad=True)
     memory.add_data(examples, targets, labels, task_ids, 2)
     bn = model.backbone[1]
@@ -47,6 +48,23 @@ def main() -> None:
     pce_loss = -probabilities.gather(1, replay_labels.long().clamp_min(0).unsqueeze(1)).squeeze(1)[known].log().mean()
     total = feature_loss + memory.beta * pce_loss
     total.backward()
+    with torch.no_grad():
+        model.backbone[0].weight.add_(0.01)
+    optimizer = torch.optim.SGD(model.parameters(), lr=0.03)
+    mismatch_losses = []
+    for _ in range(2):
+        optimizer.zero_grad(set_to_none=True)
+        mismatch, _ = memory.feature_penalty(model, torch.device("cpu"))
+        assert torch.isfinite(mismatch) and float(mismatch) > 0
+        mismatch.backward()
+        assert all(parameter.grad is None or bool(torch.isfinite(parameter.grad).all()) for parameter in model.parameters())
+        optimizer.step()
+        mismatch_losses.append(float(mismatch.detach()))
+    nan_rejected = False
+    try:
+        memory.add_data(torch.full_like(examples[:1], float("nan")), targets[:1], labels[:1], task_ids[:1], 2)
+    except FloatingPointError:
+        nan_rejected = True
     restored = DarkExperienceReplayPlus(buffer_size=8, minibatch_size=4, alpha=0.5, beta=0.5)
     restored.load_state_dict(memory.state_dict())
     coverage = restored.coverage()
@@ -62,9 +80,12 @@ def main() -> None:
         and float(pce_loss) > 0
         and finite
         and bn_unchanged
+        and len(mismatch_losses) == 2
+        and all(np.isfinite(mismatch_losses))
+        and nan_rejected
         and sum(coverage["stored_examples_by_task"].values()) == 8
-        and sum(coverage["replay_examples_by_task"].values()) == 4
-        and coverage["replay_batches"] == 1
+        and coverage["replay_batches"] == 1 + len(mismatch_losses)
+        and sum(coverage["replay_examples_by_task"].values()) == 4 * (1 + len(mismatch_losses))
         and replay_tasks.shape == (4,)
         and replay_classes.shape == (4,)
     )
@@ -75,6 +96,8 @@ def main() -> None:
         "feature_loss_exact_target": float(feature_loss.detach()),
         "replay_pce_loss": float(pce_loss.detach()),
         "batchnorm_unchanged_by_feature_replay": bn_unchanged,
+        "low_variance_bn_finite_multistep_feature_losses": mismatch_losses,
+        "nonfinite_buffer_capture_rejected": nan_rejected,
         "coverage": coverage,
     }
     print(json.dumps(result, indent=2, sort_keys=True))

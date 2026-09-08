@@ -12,6 +12,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+from numerical_safety import NumericalAudit, require_finite
+
 
 @contextmanager
 def freeze_batchnorm_stats(module: nn.Module):
@@ -572,6 +574,10 @@ class DarkExperienceReplayPlus:
         batch = examples.shape[0]
         if any(value.shape[0] != batch for value in (feature_targets, sparse_labels, task_ids)):
             raise ValueError("DER++ buffer fields have different batch sizes")
+        require_finite("buffer_capture/examples", examples)
+        require_finite("buffer_capture/feature_targets", feature_targets)
+        if bool((sparse_labels.ne(-100) & sparse_labels.lt(0)).any()):
+            raise ValueError("DER++ sparse labels must be -100 or non-negative")
         for example, target, label, task_id in zip(
             examples.detach(), feature_targets.detach(), sparse_labels.detach(), task_ids.detach()
         ):
@@ -607,13 +613,20 @@ class DarkExperienceReplayPlus:
         examples = torch.stack([self.examples[index] for index in indices]).to(device)
         targets = torch.stack([self.feature_targets[index] for index in indices]).to(device)
         labels = torch.stack([self.sparse_labels[index] for index in indices]).to(device)
+        require_finite("replay_feature/examples", examples)
+        require_finite("replay_feature/stored_targets", targets)
         task_ids = torch.tensor([self.task_ids[index] for index in indices], device=device)
         class_counts = torch.tensor([self.class_counts[index] for index in indices], device=device)
         self.replay_batches += 1
         self.replay_draw_counts.update(int(value) for value in task_ids.tolist())
         return examples, targets, labels, task_ids, class_counts
 
-    def feature_penalty(self, model, device: torch.device) -> tuple[torch.Tensor, tuple[torch.Tensor, ...] | None]:
+    def feature_penalty(
+        self,
+        model,
+        device: torch.device,
+        audit: NumericalAudit | None = None,
+    ) -> tuple[torch.Tensor, tuple[torch.Tensor, ...] | None]:
         if not self.examples:
             zero = next(model.parameters()).sum() * 0.0
             return zero, None
@@ -622,7 +635,16 @@ class DarkExperienceReplayPlus:
         features = stable_backbone_features(model, examples)
         if features.shape != targets.shape:
             raise ValueError("DER++ replay feature shape mismatch")
-        return self.alpha * F.mse_loss(features, targets), replay
+        if audit is not None:
+            audit.check("replay_feature", "features", features)
+            audit.check("replay_feature", "stored_targets", targets)
+        mismatch = F.mse_loss(features, targets)
+        if audit is not None:
+            audit.check("replay_feature", "unweighted_mse", mismatch)
+        penalty = self.alpha * mismatch
+        if audit is not None:
+            audit.check("replay_feature", "weighted_mse", penalty)
+        return penalty, replay
 
     def coverage(self) -> dict:
         stored = Counter(self.task_ids)

@@ -1,0 +1,3 @@
+run,validation_dice,test_dice,best_epoch_one_based,initial_lr,global_weight,grad_clip_norm,epochs
+ind_fg20,0.07100136049526189,0.04955192240699324,74,0.003,0.1,1.0,80
+ind_fg40,0.06897997465917904,0.04884466365436115,65,0.003,0.1,1.0,80

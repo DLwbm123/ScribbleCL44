@@ -1,0 +1,209 @@
+{
+  "coverage": {
+    "baseline": {
+      "foreground_pixels": 28887,
+      "background_pixels": 1115520,
+      "dense_foreground_pixels": 146926,
+      "foreground_coverage": 0.19660917740903583,
+      "all_pixel_coverage": 0.10519436755812311,
+      "train_slices": 166,
+      "total_pixels": 10878976
+    },
+    "expanded": {
+      "foreground_pixels": 59410,
+      "background_pixels": 1115520,
+      "dense_foreground_pixels": 146926,
+      "foreground_coverage": 0.40435321182091666,
+      "all_pixel_coverage": 0.1080000544168863,
+      "train_slices": 166,
+      "total_pixels": 10878976
+    },
+    "added_foreground_pixels": 30523,
+    "background_unchanged": true,
+    "original_labels_preserved": true
+  },
+  "forgetting": [
+    {
+      "run": "sw_lr01_g0",
+      "status": "completed",
+      "t3_epochs": 1,
+      "transition_seed": 44,
+      "evaluation_split": "validation",
+      "t2_before": 0.17474133775274128,
+      "t2_after": 0.05189222965743689,
+      "absolute_drop": 0.12284910809530439,
+      "retention_ratio": 0.2969659630903382,
+      "initial_lr": 0.01,
+      "global_weight": 0.0
+    },
+    {
+      "run": "sw_lr03_g0",
+      "status": "completed",
+      "t3_epochs": 1,
+      "transition_seed": 44,
+      "evaluation_split": "validation",
+      "t2_before": 0.3004959185088815,
+      "t2_after": 0.20214425574240957,
+      "absolute_drop": 0.09835166276647195,
+      "retention_ratio": 0.6727021676217374,
+      "initial_lr": 0.03,
+      "global_weight": 0.0
+    },
+    {
+      "run": "sw_lr01_g01",
+      "status": "completed",
+      "t3_epochs": 1,
+      "transition_seed": 44,
+      "evaluation_split": "validation",
+      "t2_before": 0.0744553561428395,
+      "t2_after": 0.1423969970288671,
+      "absolute_drop": -0.0679416408860276,
+      "retention_ratio": 1.9125151554669133,
+      "initial_lr": 0.01,
+      "global_weight": 0.1
+    },
+    {
+      "run": "sw_lr03_g01",
+      "status": "completed",
+      "t3_epochs": 1,
+      "transition_seed": 44,
+      "evaluation_split": "validation",
+      "t2_before": 0.39789849741577027,
+      "t2_after": 3.332019979504167e-10,
+      "absolute_drop": 0.39789849708256825,
+      "retention_ratio": 8.374045142529121e-10,
+      "initial_lr": 0.03,
+      "global_weight": 0.1
+    }
+  ],
+  "independent": [
+    {
+      "run": "ind_fg20",
+      "validation_dice": 0.07100136049526189,
+      "test_dice": 0.04955192240699324,
+      "best_epoch_one_based": 74,
+      "initial_lr": 0.003,
+      "global_weight": 0.1,
+      "grad_clip_norm": 1.0,
+      "epochs": 80
+    },
+    {
+      "run": "ind_fg40",
+      "validation_dice": 0.06897997465917904,
+      "test_dice": 0.04884466365436115,
+      "best_epoch_one_based": 65,
+      "initial_lr": 0.003,
+      "global_weight": 0.1,
+      "grad_clip_norm": 1.0,
+      "epochs": 80
+    }
+  ],
+  "validation_matrices": {
+    "sw_lr01_g0": [
+      [
+        0.7256563693649692,
+        null,
+        null,
+        null
+      ],
+      [
+        0.5830230561963319,
+        0.17474133775274128,
+        null,
+        null
+      ],
+      [
+        0.3326781845033352,
+        0.05189222965743689,
+        2.507956891648392e-11,
+        null
+      ],
+      [
+        null,
+        null,
+        null,
+        null
+      ]
+    ],
+    "sw_lr03_g0": [
+      [
+        0.7609150768285535,
+        null,
+        null,
+        null
+      ],
+      [
+        0.5712190314343857,
+        0.3004959185088815,
+        null,
+        null
+      ],
+      [
+        0.3111847003169929,
+        0.20214425574240957,
+        0.3452077254659564,
+        null
+      ],
+      [
+        null,
+        null,
+        null,
+        null
+      ]
+    ],
+    "sw_lr01_g01": [
+      [
+        0.7100216095744125,
+        null,
+        null,
+        null
+      ],
+      [
+        0.4985472704246846,
+        0.0744553561428395,
+        null,
+        null
+      ],
+      [
+        0.44033210526042954,
+        0.1423969970288671,
+        0.6473714841878964,
+        null
+      ],
+      [
+        null,
+        null,
+        null,
+        null
+      ]
+    ],
+    "sw_lr03_g01": [
+      [
+        0.7746297534300189,
+        null,
+        null,
+        null
+      ],
+      [
+        0.6609558579567322,
+        0.39789849741577027,
+        null,
+        null
+      ],
+      [
+        0.6690035862363718,
+        3.332019979504167e-10,
+        0.4036881402687245,
+        null
+      ],
+      [
+        null,
+        null,
+        null,
+        null
+      ]
+    ]
+  },
+  "automatic_formal_launch": false,
+  "checks": "PASS: four single-epoch T3 branches, exact persisted matrix agreement, two 80-epoch independent runs"
+}
