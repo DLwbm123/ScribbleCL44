@@ -6,6 +6,7 @@ Only the model container and annotation path vary. Validation selects checkpoint
 import argparse
 import importlib
 import json
+import os
 from pathlib import Path
 import sys
 
@@ -81,6 +82,14 @@ def main():
     args = parser.parse_args()
     if not 1 <= args.spatial_start_epoch <= 80:
         parser.error("spatial-start-epoch must be between 1 and 80")
+    # Set this before importing the reference (and therefore before CUDA setup).
+    os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":4096:8"
+    import torch
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+    # grid_sample backward has no deterministic CUDA implementation in this
+    # environment; keep the diagnostic's warn-only policy explicit.
+    torch.use_deterministic_algorithms(True, warn_only=True)
     sys.path.insert(0, str(args.reference_source.resolve()))
     reference = importlib.import_module("runner_core")
     assert Path(reference.__file__).resolve() == (args.reference_source / "runner_core.py").resolve()
@@ -89,7 +98,6 @@ def main():
         parity(reference, args)
         return
 
-    import torch
     real_sgd = torch.optim.SGD
     class FiniteSGD(real_sgd):
         def step(self, closure=None):
@@ -110,6 +118,8 @@ def main():
         "training_dispatcher": "Domain independent shared stage loop",
         "reference_source": str(args.reference_source), "annotation": str(args.annotation),
         "selection_split": "val", "finite_checks_only": True, "gradient_clipping": False,
+        "cudnn_deterministic": True, "cudnn_benchmark": False,
+        "deterministic_algorithms_warn_only": True, "cublas_workspace_config": ":4096:8",
         "command": argv,
     }, indent=2) + "\n")
 

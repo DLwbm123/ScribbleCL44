@@ -1,0 +1,325 @@
+{
+  "scope": "six eight-update runs on one GPU; real training loader; no validation or test",
+  "conditions": [
+    {
+      "cudnn_deterministic": false,
+      "deterministic_warn_only": false,
+      "domain_repeat": {
+        "name": "production_defaults_domain_repeat",
+        "steps": [
+          {
+            "step": 1,
+            "batch_identical": true,
+            "mix_mask_identical": true,
+            "loss": 0.9940940141677856,
+            "loss_abs_diff": 0.0,
+            "gradient_max_abs_diff": 1.6219913959503174e-05,
+            "state_max_abs_diff": 4.866160452365875e-07
+          },
+          {
+            "step": 2,
+            "batch_identical": true,
+            "mix_mask_identical": true,
+            "loss": 0.8002473711967468,
+            "loss_abs_diff": 5.245208740234375e-06,
+            "gradient_max_abs_diff": 0.004197284579277039,
+            "state_max_abs_diff": 0.0001259446144104004
+          },
+          {
+            "step": 3,
+            "batch_identical": true,
+            "mix_mask_identical": true,
+            "loss": 0.7075544595718384,
+            "loss_abs_diff": 0.0007495880126953125,
+            "gradient_max_abs_diff": 0.028944585472345352,
+            "state_max_abs_diff": 0.004174947738647461
+          },
+          {
+            "step": 4,
+            "batch_identical": true,
+            "mix_mask_identical": true,
+            "loss": 0.7964819669723511,
+            "loss_abs_diff": 0.0009754300117492676,
+            "gradient_max_abs_diff": 0.0417473423294723,
+            "state_max_abs_diff": 0.023399770259857178
+          },
+          {
+            "step": 5,
+            "batch_identical": true,
+            "mix_mask_identical": true,
+            "loss": 0.5505070686340332,
+            "loss_abs_diff": 9.799003601074219e-05,
+            "gradient_max_abs_diff": 0.031765458174049854,
+            "state_max_abs_diff": 0.06428152322769165
+          },
+          {
+            "step": 6,
+            "batch_identical": true,
+            "mix_mask_identical": true,
+            "loss": 0.6539759039878845,
+            "loss_abs_diff": 0.017240464687347412,
+            "gradient_max_abs_diff": 0.04452756838873029,
+            "state_max_abs_diff": 0.12496256828308105
+          },
+          {
+            "step": 7,
+            "batch_identical": true,
+            "mix_mask_identical": true,
+            "loss": 0.766758143901825,
+            "loss_abs_diff": 0.008622467517852783,
+            "gradient_max_abs_diff": 0.04314593970775604,
+            "state_max_abs_diff": 0.229034423828125
+          },
+          {
+            "step": 8,
+            "batch_identical": true,
+            "mix_mask_identical": true,
+            "loss": 0.4605523347854614,
+            "loss_abs_diff": 0.009169071912765503,
+            "gradient_max_abs_diff": 0.03356721252202988,
+            "state_max_abs_diff": 0.4300267696380615
+          }
+        ],
+        "initial_max_abs_diff": 0.0
+      },
+      "organ": {
+        "name": "production_defaults_organ",
+        "steps": [
+          {
+            "step": 1,
+            "batch_identical": true,
+            "mix_mask_identical": true,
+            "loss": 0.9940940141677856,
+            "loss_abs_diff": 0.0,
+            "gradient_max_abs_diff": 4.7460198402404785e-06,
+            "state_max_abs_diff": 1.424923539161682e-07
+          },
+          {
+            "step": 2,
+            "batch_identical": true,
+            "mix_mask_identical": true,
+            "loss": 0.8002529144287109,
+            "loss_abs_diff": 1.0788440704345703e-05,
+            "gradient_max_abs_diff": 0.0031625007977709174,
+            "state_max_abs_diff": 9.47415828704834e-05
+          },
+          {
+            "step": 3,
+            "batch_identical": true,
+            "mix_mask_identical": true,
+            "loss": 0.7069715857505798,
+            "loss_abs_diff": 0.00016671419143676758,
+            "gradient_max_abs_diff": 0.02022298239171505,
+            "state_max_abs_diff": 0.002378791570663452
+          },
+          {
+            "step": 4,
+            "batch_identical": true,
+            "mix_mask_identical": true,
+            "loss": 0.7978721857070923,
+            "loss_abs_diff": 0.00041478872299194336,
+            "gradient_max_abs_diff": 0.034552089622593485,
+            "state_max_abs_diff": 0.013451457023620605
+          },
+          {
+            "step": 5,
+            "batch_identical": true,
+            "mix_mask_identical": true,
+            "loss": 0.5516436100006104,
+            "loss_abs_diff": 0.0012345314025878906,
+            "gradient_max_abs_diff": 0.0338364876806736,
+            "state_max_abs_diff": 0.041284799575805664
+          },
+          {
+            "step": 6,
+            "batch_identical": true,
+            "mix_mask_identical": true,
+            "loss": 0.6407206058502197,
+            "loss_abs_diff": 0.003985166549682617,
+            "gradient_max_abs_diff": 0.03597507067024708,
+            "state_max_abs_diff": 0.09006398916244507
+          },
+          {
+            "step": 7,
+            "batch_identical": true,
+            "mix_mask_identical": false,
+            "loss": 0.771989643573761,
+            "loss_abs_diff": 0.013853967189788818,
+            "gradient_max_abs_diff": 0.05477515608072281,
+            "state_max_abs_diff": 0.1540532112121582
+          },
+          {
+            "step": 8,
+            "batch_identical": true,
+            "mix_mask_identical": true,
+            "loss": 0.4636892080307007,
+            "loss_abs_diff": 0.006032198667526245,
+            "gradient_max_abs_diff": 0.03921052999794483,
+            "state_max_abs_diff": 0.20514577627182007
+          }
+        ],
+        "initial_max_abs_diff": 0.0
+      }
+    },
+    {
+      "cudnn_deterministic": true,
+      "deterministic_warn_only": true,
+      "domain_repeat": {
+        "name": "deterministic_domain_repeat",
+        "steps": [
+          {
+            "step": 1,
+            "batch_identical": true,
+            "mix_mask_identical": true,
+            "loss": 0.9940940141677856,
+            "loss_abs_diff": 0.0,
+            "gradient_max_abs_diff": 0.0,
+            "state_max_abs_diff": 0.0
+          },
+          {
+            "step": 2,
+            "batch_identical": true,
+            "mix_mask_identical": true,
+            "loss": 0.8002292513847351,
+            "loss_abs_diff": 0.0,
+            "gradient_max_abs_diff": 0.0,
+            "state_max_abs_diff": 0.0
+          },
+          {
+            "step": 3,
+            "batch_identical": true,
+            "mix_mask_identical": true,
+            "loss": 0.707217276096344,
+            "loss_abs_diff": 0.0,
+            "gradient_max_abs_diff": 0.0,
+            "state_max_abs_diff": 0.0
+          },
+          {
+            "step": 4,
+            "batch_identical": true,
+            "mix_mask_identical": true,
+            "loss": 0.7931196689605713,
+            "loss_abs_diff": 0.0,
+            "gradient_max_abs_diff": 0.0,
+            "state_max_abs_diff": 0.0
+          },
+          {
+            "step": 5,
+            "batch_identical": true,
+            "mix_mask_identical": true,
+            "loss": 0.550272524356842,
+            "loss_abs_diff": 0.0,
+            "gradient_max_abs_diff": 0.0,
+            "state_max_abs_diff": 0.0
+          },
+          {
+            "step": 6,
+            "batch_identical": true,
+            "mix_mask_identical": true,
+            "loss": 0.6367344856262207,
+            "loss_abs_diff": 0.0,
+            "gradient_max_abs_diff": 0.0,
+            "state_max_abs_diff": 0.0
+          },
+          {
+            "step": 7,
+            "batch_identical": true,
+            "mix_mask_identical": true,
+            "loss": 0.7702510952949524,
+            "loss_abs_diff": 0.0,
+            "gradient_max_abs_diff": 0.0,
+            "state_max_abs_diff": 0.0
+          },
+          {
+            "step": 8,
+            "batch_identical": true,
+            "mix_mask_identical": true,
+            "loss": 0.45168861746788025,
+            "loss_abs_diff": 0.0,
+            "gradient_max_abs_diff": 0.0,
+            "state_max_abs_diff": 0.0
+          }
+        ],
+        "initial_max_abs_diff": 0.0
+      },
+      "organ": {
+        "name": "deterministic_organ",
+        "steps": [
+          {
+            "step": 1,
+            "batch_identical": true,
+            "mix_mask_identical": true,
+            "loss": 0.9940940141677856,
+            "loss_abs_diff": 0.0,
+            "gradient_max_abs_diff": 0.0,
+            "state_max_abs_diff": 0.0
+          },
+          {
+            "step": 2,
+            "batch_identical": true,
+            "mix_mask_identical": true,
+            "loss": 0.8002292513847351,
+            "loss_abs_diff": 0.0,
+            "gradient_max_abs_diff": 0.0,
+            "state_max_abs_diff": 0.0
+          },
+          {
+            "step": 3,
+            "batch_identical": true,
+            "mix_mask_identical": true,
+            "loss": 0.707217276096344,
+            "loss_abs_diff": 0.0,
+            "gradient_max_abs_diff": 0.0,
+            "state_max_abs_diff": 0.0
+          },
+          {
+            "step": 4,
+            "batch_identical": true,
+            "mix_mask_identical": true,
+            "loss": 0.7931196689605713,
+            "loss_abs_diff": 0.0,
+            "gradient_max_abs_diff": 0.0,
+            "state_max_abs_diff": 0.0
+          },
+          {
+            "step": 5,
+            "batch_identical": true,
+            "mix_mask_identical": true,
+            "loss": 0.550272524356842,
+            "loss_abs_diff": 0.0,
+            "gradient_max_abs_diff": 0.0,
+            "state_max_abs_diff": 0.0
+          },
+          {
+            "step": 6,
+            "batch_identical": true,
+            "mix_mask_identical": true,
+            "loss": 0.6367344856262207,
+            "loss_abs_diff": 0.0,
+            "gradient_max_abs_diff": 0.0,
+            "state_max_abs_diff": 0.0
+          },
+          {
+            "step": 7,
+            "batch_identical": true,
+            "mix_mask_identical": true,
+            "loss": 0.7702510952949524,
+            "loss_abs_diff": 0.0,
+            "gradient_max_abs_diff": 0.0,
+            "state_max_abs_diff": 0.0
+          },
+          {
+            "step": 8,
+            "batch_identical": true,
+            "mix_mask_identical": true,
+            "loss": 0.45168861746788025,
+            "loss_abs_diff": 0.0,
+            "gradient_max_abs_diff": 0.0,
+            "state_max_abs_diff": 0.0
+          }
+        ],
+        "initial_max_abs_diff": 0.0
+      }
+    }
+  ]
+}
