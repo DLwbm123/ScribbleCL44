@@ -23,7 +23,7 @@ def arguments(args, output):
             "--independent-reference", "--independent-task", "1", "--method", "zs-sequential",
             "--epochs-per-task", "80", "--batch-size", "4", "--lr", ".03", "--workers", "8",
             "--validate-every", "42", "--pce-loss-weight", "1", "--zs-global-weight", "1",
-            "--zs-spatial-loss-weight", ".01", "--zs-spatial-warmup-epochs", "9"]
+            "--zs-spatial-loss-weight", ".01", "--zs-spatial-warmup-epochs", str(args.spatial_start_epoch - 2)]
 
 
 def canonical(state):
@@ -76,7 +76,11 @@ def main():
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--model", choices=["domain", "organ"], default="organ")
     parser.add_argument("--check-parity", action="store_true")
+    parser.add_argument("--spatial-start-epoch", type=int, default=11,
+                        help="First spatial-active epoch, one-based; reference uses zero-based epoch > warmup")
     args = parser.parse_args()
+    if not 1 <= args.spatial_start_epoch <= 80:
+        parser.error("spatial-start-epoch must be between 1 and 80")
     sys.path.insert(0, str(args.reference_source.resolve()))
     reference = importlib.import_module("runner_core")
     assert Path(reference.__file__).resolve() == (args.reference_source / "runner_core.py").resolve()
