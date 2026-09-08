@@ -18,7 +18,13 @@ def main():
     p.add_argument('--sparse-root', type=Path, required=True)
     p.add_argument('--physical-gpu', type=int, required=True)
     p.add_argument('--spatial', choices=['off', 'on'], required=True)
+    p.add_argument('--batch-size', type=int, default=4)
+    p.add_argument('--train-batches', type=int, default=12)
+    p.add_argument('--max-task', type=int, choices=[1, 2, 3])
+    p.add_argument('--full-buffer-only', action='store_true')
     args = p.parse_args()
+    if args.batch_size < 1 or args.train_batches < 5:
+        p.error('batch-size must be positive and train-batches at least 5')
     os.environ['CUDA_VISIBLE_DEVICES'] = str(args.physical_gpu)
     os.environ['CUBLAS_WORKSPACE_CONFIG'] = ':4096:8'
     import torch
@@ -92,12 +98,12 @@ def main():
         evaluations.append({'slices': len(a[1].dataset), 'seconds': time.monotonic()-start})
         return result
 
-    max_task = 3 if args.spatial == 'off' else 2
+    max_task = args.max_task or (3 if args.spatial == 'off' else 2)
     argv = ['benchmark', '--data-root', str(args.data_root),
         '--sparse-root', str(args.sparse_root),
         '--output', str(args.output/'run'), '--device', 'cuda:0', '--seed', '42',
-        '--epochs-per-task', '1', '--max-task', str(max_task), '--max-train-batches', '12',
-        '--batch-size', '4', '--workers', '8', '--lr', '.03', '--method', 'zs-derpp',
+        '--epochs-per-task', '1', '--max-task', str(max_task), '--max-train-batches', str(args.train_batches),
+        '--batch-size', str(args.batch_size), '--workers', '8', '--lr', '.03', '--method', 'zs-derpp',
         '--der-alpha', '.5', '--der-beta', '.5', '--der-buffer-size', '128', '--der-minibatch-size', '4',
         '--pce-loss-weight', '1', '--zs-global-weight', '1', '--zs-spatial-loss-weight', '.01',
         '--zs-spatial-warmup-epochs', '80' if args.spatial == 'off' else '-1', '--validate-each-epoch']
@@ -107,6 +113,8 @@ def main():
         telemetry = subprocess.Popen(['nvidia-smi', 'pmon', '-i', str(args.physical_gpu), '-s', 'u', '-d', '1'],
                                       stdout=stream, stderr=subprocess.STDOUT)
         failure = None
+        torch.cuda.init()
+        torch.cuda.reset_peak_memory_stats()
         try:
             with patch.object(r, '_loader', loader), patch.object(r, 'evaluate', evaluate), \
                  patch.object(r.DarkExperienceReplayPlus, 'add_data', add), \
@@ -126,7 +134,7 @@ def main():
     stages = []
     for stage in range(max_task):
         rows = [x for x in measurements if x['stage'] == stage]
-        steady = rows[4:]
+        steady = [x for x in rows[4:] if not args.full_buffer_only or x['buffer_before'] == 128]
         if steady:
             stages.append({'task': f'T{stage+1}', 'updates_completed': len(rows), 'timed_updates_after_warmup': len(steady),
                 'mean_step_seconds': statistics.mean(x['seconds'] for x in steady),
@@ -134,8 +142,13 @@ def main():
                 'mean_replay_task_groups': statistics.mean(len(x['replay_tasks']) for x in steady),
                 'buffer_size_before_last_insert': rows[-1]['buffer_before']})
     report = {'status': 'failed' if failure else 'complete', 'failure': failure,
+        'batch_size': args.batch_size, 'replay_batch_size': 4,
+        'full_buffer_only': args.full_buffer_only, 'completed_updates': len(measurements),
+        'largest_buffer_before_completed_update': max((x['buffer_before'] for x in measurements), default=0),
+        'peak_cuda_allocated_gib': torch.cuda.max_memory_allocated()/2**30,
+        'peak_cuda_reserved_gib': torch.cuda.max_memory_reserved()/2**30,
         'spatial': args.spatial, 'physical_gpu': args.physical_gpu, 'elapsed_seconds': time.monotonic()-start,
-        'scope': 'real CL loop; 1 short epoch x 12 updates per task; validation-only; no formal training',
+        'scope': f'real CL loop; 1 short epoch x {args.train_batches} updates per task; validation-only; no formal training',
         'checkpoint_storage': 'selected paired states in CPU RAM; final tensor exports skipped for timing',
         'timing_scope': 'batch retrieval through feature-target capture and buffer insertion; excludes evaluation/checkpoint writes',
         'other_process_sm_mean_when_observed': statistics.mean(other_sm) if other_sm else 0,
@@ -144,7 +157,7 @@ def main():
     print(json.dumps(report), flush=True)
     if failure:
         raise RuntimeError(failure)
-    assert all(row['updates_completed'] == 12 for row in stages) and len(stages) == max_task
+    assert all(row['updates_completed'] == args.train_batches for row in stages) and len(stages) == max_task
 
 
 if __name__ == '__main__':
