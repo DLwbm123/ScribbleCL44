@@ -1,6 +1,21 @@
 # Organ T2: Spatial starts at epoch 30
 
-Status: two fresh 80-epoch runs are running on GPUs 4/5. Startup checks confirmed both manifests have warmup 28 (first active epoch 30), LR .03, Spatial .01 and validation selection; both processes reached training and allocated 7,360 MiB each with no immediate error. This is a prospective timing contrast, not a completed result.
+Status: **both runs completed on 2026-09-08, by 15:48:03 Asia/Shanghai**. Both jobs and the coordinator exited 0. Each run completed 80 epochs / 3,360 updates with finite recorded training losses. Logs confirm Spatial first activated at epoch 30 and was active for 51 epochs. Best and last checkpoints were present and nonempty (approximately 103 MB each). No additional training was launched at closeout.
+
+## Completed timing contrast
+
+All test scores below are from validation-selected checkpoints.
+
+| Model | Spatial first epoch | Best validation Dice | Corresponding test Dice | Selected epoch |
+|---|---:|---:|---:|---:|
+| DomainModel | 11 (previous run) | .6242106280 | .4967082234 | 65 |
+| DomainModel | 30 | .4891008044 | .4244587529 | 10 |
+| OrganModel | 11 (previous run) | .5532766640 | .4711945900 | 68 |
+| OrganModel | 30 | .5490601126 | .5046705230 | 69 |
+
+For Organ, validation changed by -.0042165513 while test changed by +.0334759330. For Domain, validation changed by -.1351098237 and test by -.0722494706. These observations do not establish that later activation is generally better: only one trajectory was run for each condition, and validation did not improve for either model. The Domain epoch-30 run selected epoch 10, before Spatial was enabled, so its selected checkpoint does not demonstrate a benefit from Spatial. The two new model trajectories already differed before epoch 30; their difference cannot be caused entirely by Spatial activation.
+
+The full training runs finished as requested, but neither new annotation contrasts nor CL runs were scheduled. Public aggregate results, first-active-epoch checks and validation curves are in [completion.json](../results/organ_t2_spatial_start30_20260908/completion.json). Patient-level metrics, data, annotations and checkpoints remain on NAS and are excluded from the public release.
 
 The requested "30" is interpreted as the first active epoch: Spatial is off for epochs 1-29 and has weight .01 for epochs 30-80 (51 active epochs). The reference condition `zero_based_epoch > warmup` therefore receives warmup 28. The adapter now exposes `--spatial-start-epoch`; its default remains 11, preserving prior launch behavior. An argument-boundary check verified starts 11 and 30 and their active-epoch counts 70 and 51.
 
