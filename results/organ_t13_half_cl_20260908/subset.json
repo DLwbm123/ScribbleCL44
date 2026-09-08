@@ -1,0 +1,37 @@
+{
+  "seed": 42,
+  "halved_tasks": [
+    "T1",
+    "T3"
+  ],
+  "selection": "fixed random sampling within each training patient, half rounded up globally",
+  "validation_test_unchanged": true,
+  "tasks": {
+    "T1": {
+      "original_train_slices": 762,
+      "selected_train_slices": 381,
+      "train_patients": 25,
+      "all_train_patients_retained": true,
+      "original_foreground_slices": 762,
+      "selected_foreground_slices": 381,
+      "selected_foreground_pixels": 140962,
+      "selected_background_pixels": 2560320
+    },
+    "T2": {
+      "original_train_slices": 166,
+      "selected_train_slices": 166,
+      "train_patients": 7,
+      "all_train_patients_retained": true
+    },
+    "T3": {
+      "original_train_slices": 1421,
+      "selected_train_slices": 711,
+      "train_patients": 17,
+      "all_train_patients_retained": true,
+      "original_foreground_slices": 1421,
+      "selected_foreground_slices": 711,
+      "selected_foreground_pixels": 791244,
+      "selected_background_pixels": 4777920
+    }
+  }
+}

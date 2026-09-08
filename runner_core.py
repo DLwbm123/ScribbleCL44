@@ -863,6 +863,8 @@ def main(project_scenario: str) -> None:
                         help="train one Organ task from scratch through the shared ZS loop")
     parser.add_argument("--t3-one-epoch-from", type=Path,
                         help="restore completed T2 model/replay state and run one T3 epoch; retain the original LR horizon")
+    parser.add_argument("--t3-first-epoch-evaluation", action="store_true",
+                        help="evaluate T2 after the first T3 epoch, then continue training")
     parser.add_argument("--annotation-id", default="unspecified")
     parser.add_argument("--validate-each-epoch", action="store_true")
     parser.add_argument("--workers", type=int, default=8)
@@ -959,6 +961,8 @@ def main(project_scenario: str) -> None:
     if args.max_task is not None and not 1 <= args.max_task <= len(tasks):
         parser.error("--max-task is one-based and outside the task sequence")
     last_stage = len(tasks) - 1 if args.max_task is None else args.max_task - 1
+    if args.t3_first_epoch_evaluation and (project_scenario != "organ" or last_stage < 2 or args.organ_task):
+        parser.error("--t3-first-epoch-evaluation requires Organ T1/T2/T3")
     if args.t3_one_epoch_from and (project_scenario != "organ" or args.method != "zs-derpp"
                                   or last_stage != 2 or args.organ_task):
         parser.error("--t3-one-epoch-from requires Organ ZS-DER++ T1/T2/T3")
@@ -1032,6 +1036,7 @@ def main(project_scenario: str) -> None:
         "t3_one_epoch_source": None if args.t3_one_epoch_from is None else args.t3_one_epoch_from.name,
         "t3_transition_seed": None if args.t3_one_epoch_from is None else args.seed + 2,
         "t3_executed_epochs": 1 if args.t3_one_epoch_from else args.epochs_per_task,
+        "t3_first_epoch_evaluation": args.t3_first_epoch_evaluation,
         "history_images": use_der or use_derpp,
         "replay": use_der or use_derpp,
         "ignore_index": IGNORE_INDEX,
@@ -1397,6 +1402,21 @@ def main(project_scenario: str) -> None:
                 }
                 stream.write(json.dumps(row, sort_keys=True) + "\n")
                 stream.flush()
+                if args.t3_first_epoch_evaluation and stage == 2 and epoch == 0:
+                    retention = {"stage": stage, "epoch_one_based": 1, "iteration": iteration,
+                                 "checkpoint_selection": "validation", "training_continues": True}
+                    for split, field in (("val", "validation_evaluated"), ("test", "evaluated")):
+                        if split == "test" and not args.test_evaluation:
+                            continue
+                        before = stage_rows[1][field]["T2"]["benchmark_mean"]
+                        after = _evaluate_task(model, project_scenario, tasks[1], 1, args.data_root,
+                                               split, args.batch_size, device)["benchmark_mean"]
+                        retention[split] = {"t2_before": before, "t2_after": after,
+                                            "absolute_drop": before - after,
+                                            "retention_ratio": after / before if before > 0 else None}
+                    (args.output / "t3_epoch1_t2_retention.json").write_text(
+                        json.dumps(retention, indent=2, sort_keys=True) + "\n")
+                    print(json.dumps({"t3_epoch1_t2_retention": retention}), flush=True)
         final_validation = evaluate(model, val_loader, val.ends, device, task_id, task.classes)
         if final_validation["benchmark_mean"] > best["benchmark_mean"]:
             best = {**final_validation, "epoch": executed_epochs - 1, "iteration": iteration}
