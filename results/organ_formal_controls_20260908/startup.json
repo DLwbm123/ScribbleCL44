@@ -1,0 +1,14 @@
+{
+  "status": "running; startup verified, not completed",
+  "checks": [
+    "same shared runner and selected T1 paired state as GPU7",
+    "derived commands checked with dry-run",
+    "authorized GPU memory and NAS capacity/write-read probe passed",
+    "all three wrappers alive with successful training updates and no exit marker"
+  ],
+  "successful_updates_at_check": {
+    "alpha0": 24,
+    "alpha01": 23,
+    "no_spatial": 24
+  }
+}
