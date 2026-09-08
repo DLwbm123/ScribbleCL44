@@ -1,0 +1,213 @@
+{
+  "status": "complete",
+  "date": "2026-09-08",
+  "gpu": "NVIDIA GeForce RTX 3090, physical GPU7",
+  "runs": {
+    "off": {
+      "status": "complete",
+      "failure": null,
+      "spatial": "off",
+      "physical_gpu": 7,
+      "elapsed_seconds": 143.92448376200628,
+      "scope": "real CL loop; 1 short epoch x 12 updates per task; validation-only; no formal training",
+      "checkpoint_storage": "selected paired states in CPU RAM; final tensor exports skipped for timing",
+      "timing_scope": "batch retrieval through feature-target capture and buffer insertion; excludes evaluation/checkpoint writes",
+      "other_process_sm_mean_when_observed": 0,
+      "other_process_sm_max": 0,
+      "stages": [
+        {
+          "task": "T1",
+          "updates_completed": 12,
+          "timed_updates_after_warmup": 8,
+          "mean_step_seconds": 0.9082252152293222,
+          "median_step_seconds": 0.9080458034295589,
+          "mean_replay_task_groups": 1,
+          "buffer_size_before_last_insert": 44
+        },
+        {
+          "task": "T2",
+          "updates_completed": 12,
+          "timed_updates_after_warmup": 8,
+          "mean_step_seconds": 0.968998568248935,
+          "median_step_seconds": 0.9646412015426904,
+          "mean_replay_task_groups": 1.75,
+          "buffer_size_before_last_insert": 92
+        },
+        {
+          "task": "T3",
+          "updates_completed": 12,
+          "timed_updates_after_warmup": 8,
+          "mean_step_seconds": 0.9647269868728472,
+          "median_step_seconds": 0.9669854249805212,
+          "mean_replay_task_groups": 2.375,
+          "buffer_size_before_last_insert": 128
+        }
+      ],
+      "evaluation_seconds": [
+        {
+          "slices": 153,
+          "seconds": 6.445022298954427
+        },
+        {
+          "slices": 153,
+          "seconds": 6.252550277044065
+        },
+        {
+          "slices": 153,
+          "seconds": 6.259730707970448
+        },
+        {
+          "slices": 52,
+          "seconds": 1.0771883659763262
+        },
+        {
+          "slices": 52,
+          "seconds": 1.0357031309977174
+        },
+        {
+          "slices": 153,
+          "seconds": 6.132943336036988
+        },
+        {
+          "slices": 52,
+          "seconds": 1.0157879480393603
+        },
+        {
+          "slices": 343,
+          "seconds": 20.62596149696037
+        },
+        {
+          "slices": 343,
+          "seconds": 20.39315986307338
+        },
+        {
+          "slices": 153,
+          "seconds": 6.172305331099778
+        },
+        {
+          "slices": 52,
+          "seconds": 1.0160236529773101
+        },
+        {
+          "slices": 343,
+          "seconds": 20.343206168035977
+        }
+      ]
+    },
+    "on": {
+      "status": "complete",
+      "failure": null,
+      "spatial": "on",
+      "physical_gpu": 7,
+      "elapsed_seconds": 58.85904485103674,
+      "scope": "real CL loop; 1 short epoch x 12 updates per task; validation-only; no formal training",
+      "checkpoint_storage": "selected paired states in CPU RAM; final tensor exports skipped for timing",
+      "timing_scope": "batch retrieval through feature-target capture and buffer insertion; excludes evaluation/checkpoint writes",
+      "other_process_sm_mean_when_observed": 0,
+      "other_process_sm_max": 0,
+      "stages": [
+        {
+          "task": "T1",
+          "updates_completed": 12,
+          "timed_updates_after_warmup": 8,
+          "mean_step_seconds": 0.9561512366490206,
+          "median_step_seconds": 0.9567528464831412,
+          "mean_replay_task_groups": 1,
+          "buffer_size_before_last_insert": 44
+        },
+        {
+          "task": "T2",
+          "updates_completed": 12,
+          "timed_updates_after_warmup": 8,
+          "mean_step_seconds": 1.0144019343570108,
+          "median_step_seconds": 1.0100527679896913,
+          "mean_replay_task_groups": 1.75,
+          "buffer_size_before_last_insert": 92
+        }
+      ],
+      "evaluation_seconds": [
+        {
+          "slices": 153,
+          "seconds": 6.231326886918396
+        },
+        {
+          "slices": 153,
+          "seconds": 6.141760698985308
+        },
+        {
+          "slices": 153,
+          "seconds": 6.106074007926509
+        },
+        {
+          "slices": 52,
+          "seconds": 1.0874221279518679
+        },
+        {
+          "slices": 52,
+          "seconds": 1.0405470159603283
+        },
+        {
+          "slices": 153,
+          "seconds": 6.222656017984264
+        },
+        {
+          "slices": 52,
+          "seconds": 1.0101104569621384
+        }
+      ]
+    }
+  },
+  "projection": {
+    "protocol": "full data; T1 80 + T2 80 + T3 1 epochs; Spatial first active epoch30",
+    "stages": [
+      {
+        "task": "T1",
+        "steps_per_epoch": 191,
+        "epochs": 80,
+        "spatial_off_step_seconds": 0.9082252152293222,
+        "spatial_on_step_seconds": 0.9561512366490206,
+        "off_epoch_with_validation_seconds": 179.68927939356945,
+        "on_epoch_with_validation_seconds": 188.84314948473184,
+        "training_seconds": 14344.528663353325,
+        "epoch_validation_seconds": 497.46106278151274,
+        "total_seconds": 14841.989726134838
+      },
+      {
+        "task": "T2",
+        "steps_per_epoch": 42,
+        "epochs": 80,
+        "spatial_off_step_seconds": 0.968998568248935,
+        "spatial_on_step_seconds": 1.0144019343570108,
+        "off_epoch_with_validation_seconds": 41.738337394864566,
+        "on_epoch_with_validation_seconds": 43.645278771403746,
+        "training_seconds": 3353.08919951992,
+        "epoch_validation_seconds": 83.23180227274341,
+        "total_seconds": 3436.3210017926635
+      },
+      {
+        "task": "T3",
+        "steps_per_epoch": 356,
+        "epochs": 1,
+        "spatial_off_step_seconds": 0.9647269868728472,
+        "spatial_on_step_seconds": null,
+        "off_epoch_with_validation_seconds": 363.8969165027568,
+        "on_epoch_with_validation_seconds": null,
+        "training_seconds": 343.4428073267336,
+        "epoch_validation_seconds": 20.45410917602324,
+        "total_seconds": 363.8969165027568
+      }
+    ],
+    "extra_stage_validation_seconds": 68.90246407635,
+    "total_seconds": 18711.110108506608,
+    "exclusions": [
+      "checkpoint filesystem writes",
+      "test evaluation",
+      "initialization and loader startup",
+      "long-run contention and mature replay distribution changes"
+    ],
+    "planning_range_hours": [
+      5.5,
+      6.5
+    ]
+  }
+}
