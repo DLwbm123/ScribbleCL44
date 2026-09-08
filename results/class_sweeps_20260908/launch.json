@@ -1,0 +1,104 @@
+{
+  "status": "sweeps_running",
+  "host": "my-gpu",
+  "gpus": [
+    2,
+    3
+  ],
+  "started_at_utc": "2026-09-08T12:17:01Z",
+  "started_at_shanghai": "2026-09-08 20:17:01",
+  "tmux": "class-sweeps-20260908",
+  "spatial_implementation": "original_unchunked",
+  "checks": "both initial independent jobs alive with correct manifests and no startup traceback",
+  "plan": {
+    "formal_epochs_per_task": 80,
+    "sweep_candidates": [
+      {
+        "name": "ind_T1_lr0.01",
+        "group": "ind_T1",
+        "phase": "sweep",
+        "lr": 0.01,
+        "spatial": 0
+      },
+      {
+        "name": "ind_T2_lr0.01",
+        "group": "ind_T2",
+        "phase": "sweep",
+        "lr": 0.01,
+        "spatial": 0
+      },
+      {
+        "name": "ind_T3_lr0.01",
+        "group": "ind_T3",
+        "phase": "sweep",
+        "lr": 0.01,
+        "spatial": 0
+      },
+      {
+        "name": "ind_T1_lr0.03",
+        "group": "ind_T1",
+        "phase": "sweep",
+        "lr": 0.03,
+        "spatial": 0
+      },
+      {
+        "name": "ind_T2_lr0.03",
+        "group": "ind_T2",
+        "phase": "sweep",
+        "lr": 0.03,
+        "spatial": 0
+      },
+      {
+        "name": "ind_T3_lr0.03",
+        "group": "ind_T3",
+        "phase": "sweep",
+        "lr": 0.03,
+        "spatial": 0
+      },
+      {
+        "name": "cl_spatial_0.001",
+        "group": "cl_spatial",
+        "phase": "sweep",
+        "lr": 0.03,
+        "spatial": 0.001
+      },
+      {
+        "name": "cl_spatial_0.01",
+        "group": "cl_spatial",
+        "phase": "sweep",
+        "lr": 0.03,
+        "spatial": 0.01
+      }
+    ],
+    "selection_split": "validation",
+    "spatial_first_epoch": 35,
+    "cl_spatial_pilot_tasks": [
+      "T1",
+      "T2",
+      "T3"
+    ],
+    "cl_spatial_pilot_epochs": 40,
+    "cl_spatial_pilot_selection_window": [
+      35,
+      40
+    ],
+    "independent_sweep_epochs": 20,
+    "automatic_formal_training": true,
+    "gpu_pool": [
+      2,
+      3
+    ]
+  },
+  "preflight": {
+    "host": "my-gpu",
+    "gpus": [
+      2,
+      3
+    ],
+    "gpu0_excluded": true,
+    "independent_T3_real_smoke": "pass",
+    "class_T1_T2_T3_spatial_mib_replay_real_smoke": "pass",
+    "spatial_implementation": "original_unchunked",
+    "gco": "existing_destination_compatibility_wrapper"
+  }
+}
