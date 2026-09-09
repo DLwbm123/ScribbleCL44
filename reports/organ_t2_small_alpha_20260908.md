@@ -1,5 +1,7 @@
 # Organ T2 small feature-replay coefficients — completed sweep
 
+**Update, 2026-09-09:** The selected formal run completed T2/T3 60 epochs each at 03:26. T2 test Dice was 0.653453 after T2 but fell to 0.078540 at the final selected T3 model. See [formal outcomes and failed controls](organ_formal_controls_20260908.md). The startup snapshot below is historical.
+
 Live verification on 2026-09-08 at approximately 22:53 China time: all three bounded checks and BN probes exited successfully. Alpha **0.05** passed the declared gate and was selected. Formal T2/T3 training started automatically on GPU 7 at 22:51:36 (PID 167733); it is **not completed**. The process was alive, 59 finite updates were recorded, and no numerical-failure snapshot was present. Training code is commit `65ab7ef8783a687ac9787f5419563f5491422b4e`.
 
 ## Completed 10-epoch validation results
@@ -50,4 +52,4 @@ Remote root: `/data_nas/jiangsuiyang/ScribbleCL/organ_T13_half_cl_20260908`.
 - Conditional formal log: `formal.log`; exact command/PID/GPU: `formal_launch.json`.
 - Conditional formal outputs: `formal_small_alpha_20260908/` under the remote root.
 
-Mount/free space and write/read probes passed before launch. The controller checks free space and GPU memory again before formal launch, allows sharing when at least 16,000 MiB is free, and does not modify unrelated processes. Data, model files, raw numerical snapshots, and large logs stay on NAS. Public delivery contains source, protocol, completed sweep scalar metrics, BN probe tables, and verification summaries. Formal outputs are still running and have not been presented as completed results.
+Mount/free space and write/read probes passed before launch. The controller checks free space and GPU memory again before formal launch, allows sharing when at least 16,000 MiB is free, and does not modify unrelated processes. Data, model files, raw numerical snapshots, and large logs stay on NAS. Public delivery contains source, protocol, completed sweep scalar metrics, BN probe tables, and verification summaries. The formal run has now completed; its scalar results and failed controls are reported in the linked formal-outcomes report.

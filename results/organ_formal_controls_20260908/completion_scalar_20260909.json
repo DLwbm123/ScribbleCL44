@@ -1,0 +1,423 @@
+{
+  "verified_at": "2026-09-09T09:12:06.751054",
+  "scope": "Organ formal controls; scalar metrics only; no per-patient records",
+  "records": [
+    {
+      "name": "alpha005",
+      "gpu": 7,
+      "exit_code": 0,
+      "completed_epochs_by_stage": {
+        "1": 60,
+        "2": 60
+      },
+      "stages": [
+        {
+          "stage": 0,
+          "best_epoch_one_based": 17,
+          "validation": {
+            "T1": 0.7593914365346025
+          },
+          "test": {
+            "T1": 0.6648380769470472
+          },
+          "task_strategy": null,
+          "buffer_counts": {
+            "0": 128
+          }
+        },
+        {
+          "stage": 1,
+          "best_epoch_one_based": 14,
+          "validation": {
+            "T1": 0.6475301369585638,
+            "T2": 0.6991301629991079
+          },
+          "test": {
+            "T1": 0.641884117515856,
+            "T2": 0.653452518121827
+          },
+          "task_strategy": {
+            "calibrate_head_bn": true,
+            "der_alpha": 0.05,
+            "der_beta": 0.5,
+            "grad_clip_norm": 5.0
+          },
+          "buffer_counts": {
+            "0": 76,
+            "1": 52
+          }
+        },
+        {
+          "stage": 2,
+          "best_epoch_one_based": 43,
+          "validation": {
+            "T1": 0.6778719513619971,
+            "T2": 0.01937175928019819,
+            "T3": 0.882718954084158
+          },
+          "test": {
+            "T1": 0.6504664644466782,
+            "T2": 0.07853961085151848,
+            "T3": 0.8648898608483557
+          },
+          "task_strategy": {
+            "calibrate_head_bn": false,
+            "der_alpha": 0.5,
+            "der_beta": 0.5,
+            "grad_clip_norm": null
+          },
+          "buffer_counts": {
+            "0": 15,
+            "1": 14,
+            "2": 99
+          }
+        }
+      ],
+      "t3_epoch1_retention": {
+        "checkpoint_selection": "validation",
+        "epoch_one_based": 1,
+        "iteration": 178,
+        "stage": 2,
+        "test": {
+          "absolute_drop": 0.33302138834522754,
+          "retention_ratio": 0.4903663554585302,
+          "t2_after": 0.3204311297765995,
+          "t2_before": 0.653452518121827
+        },
+        "training_continues": true,
+        "val": {
+          "absolute_drop": 0.5791986338834274,
+          "retention_ratio": 0.17154392052146888,
+          "t2_after": 0.11993152911568054,
+          "t2_before": 0.6991301629991079
+        }
+      },
+      "summary": {
+        "completed_stages": 3,
+        "final_seen_mean": 0.5312986453821842,
+        "final_seen_validation_mean": 0.526654221575451,
+        "matrix": [
+          [
+            0.6648380769470472,
+            null,
+            null,
+            null
+          ],
+          [
+            0.641884117515856,
+            0.653452518121827,
+            null,
+            null
+          ],
+          [
+            0.6504664644466782,
+            0.07853961085151848,
+            0.8648898608483557,
+            null
+          ],
+          [
+            null,
+            null,
+            null,
+            null
+          ]
+        ],
+        "validation_matrix": [
+          [
+            0.7593914365346025,
+            null,
+            null,
+            null
+          ],
+          [
+            0.6475301369585638,
+            0.6991301629991079,
+            null,
+            null
+          ],
+          [
+            0.6778719513619971,
+            0.01937175928019819,
+            0.882718954084158,
+            null
+          ],
+          [
+            null,
+            null,
+            null,
+            null
+          ]
+        ]
+      },
+      "checkpoint_sizes": {
+        "s02_best.pt": 103144334,
+        "s02_best_state.pt": 2104356911,
+        "s02.pt": 103135538,
+        "s02_state.pt": 2104356218,
+        "s03_best.pt": 103147143,
+        "s03_best_state.pt": 2104359826,
+        "s03.pt": 103138248,
+        "s03_state.pt": 2104359098
+      },
+      "ended_at": "2026-09-09T03:26:33.817094"
+    },
+    {
+      "name": "alpha0",
+      "gpu": 4,
+      "exit_code": 1,
+      "completed_epochs_by_stage": {
+        "1": 60,
+        "2": 10
+      },
+      "stages": [
+        {
+          "stage": 0,
+          "best_epoch_one_based": 17,
+          "validation": {
+            "T1": 0.7593914365346025
+          },
+          "test": {
+            "T1": 0.6648380769470472
+          },
+          "task_strategy": null,
+          "buffer_counts": {
+            "0": 128
+          }
+        },
+        {
+          "stage": 1,
+          "best_epoch_one_based": 25,
+          "validation": {
+            "T1": 0.6266460746005066,
+            "T2": 0.6850714079460356
+          },
+          "test": {
+            "T1": 0.60716306792153,
+            "T2": 0.5631261954309325
+          },
+          "task_strategy": {
+            "calibrate_head_bn": true,
+            "der_alpha": 0.0,
+            "der_beta": 0.5,
+            "grad_clip_norm": 5.0
+          },
+          "buffer_counts": {
+            "0": 60,
+            "1": 68
+          }
+        }
+      ],
+      "failure": {
+        "dtype": "torch.float32",
+        "epoch_zero_based": 10,
+        "exception": "NumericalFailure",
+        "finite": false,
+        "iteration_one_based": 1816,
+        "message": "buffer_capture/feature_targets: non-finite value",
+        "nonfinite": 15241216,
+        "stage_zero_based": 2,
+        "task_id": 2
+      },
+      "t3_epoch1_retention": {
+        "checkpoint_selection": "validation",
+        "epoch_one_based": 1,
+        "iteration": 178,
+        "stage": 2,
+        "test": {
+          "absolute_drop": 0.5631261949357144,
+          "retention_ratio": 8.794086437759449e-10,
+          "t2_after": 4.95218043798624e-10,
+          "t2_before": 0.5631261954309325
+        },
+        "training_continues": true,
+        "val": {
+          "absolute_drop": 0.6850714076128336,
+          "retention_ratio": 4.863755720727199e-10,
+          "t2_after": 3.332019979504167e-10,
+          "t2_before": 0.6850714079460356
+        }
+      },
+      "checkpoint_sizes": {
+        "s02_best.pt": 103144334,
+        "s02_best_state.pt": 2104356911,
+        "s02.pt": 103135538,
+        "s02_state.pt": 2104356218,
+        "s03_best.pt": 103147143,
+        "s03_best_state.pt": 2104359826
+      },
+      "ended_at": "2026-09-09T00:45:02.462184"
+    },
+    {
+      "name": "alpha01",
+      "gpu": 5,
+      "exit_code": 1,
+      "completed_epochs_by_stage": {
+        "1": 60,
+        "2": 3
+      },
+      "stages": [
+        {
+          "stage": 0,
+          "best_epoch_one_based": 17,
+          "validation": {
+            "T1": 0.7593914365346025
+          },
+          "test": {
+            "T1": 0.6648380769470472
+          },
+          "task_strategy": null,
+          "buffer_counts": {
+            "0": 128
+          }
+        },
+        {
+          "stage": 1,
+          "best_epoch_one_based": 27,
+          "validation": {
+            "T1": 0.673897893359772,
+            "T2": 0.6652807819825848
+          },
+          "test": {
+            "T1": 0.6430195340083471,
+            "T2": 0.686022511157311
+          },
+          "task_strategy": {
+            "calibrate_head_bn": true,
+            "der_alpha": 0.1,
+            "der_beta": 0.5,
+            "grad_clip_norm": 5.0
+          },
+          "buffer_counts": {
+            "0": 58,
+            "1": 70
+          }
+        }
+      ],
+      "failure": {
+        "dtype": "torch.float32",
+        "epoch_zero_based": 3,
+        "exception": "NumericalFailure",
+        "finite": false,
+        "iteration_one_based": 634,
+        "message": "buffer_capture/feature_targets: non-finite value",
+        "nonfinite": 15241216,
+        "stage_zero_based": 2,
+        "task_id": 2
+      },
+      "t3_epoch1_retention": {
+        "checkpoint_selection": "validation",
+        "epoch_one_based": 1,
+        "iteration": 178,
+        "stage": 2,
+        "test": {
+          "absolute_drop": 0.686022510662093,
+          "retention_ratio": 7.218685039404868e-10,
+          "t2_after": 4.95218043798624e-10,
+          "t2_before": 0.686022511157311
+        },
+        "training_continues": true,
+        "val": {
+          "absolute_drop": 0.6652807816493828,
+          "retention_ratio": 5.008441653123523e-10,
+          "t2_after": 3.332019979504167e-10,
+          "t2_before": 0.6652807819825848
+        }
+      },
+      "checkpoint_sizes": {
+        "s02_best.pt": 103144334,
+        "s02_best_state.pt": 2104356911,
+        "s02.pt": 103135538,
+        "s02_state.pt": 2104356218,
+        "s03_best.pt": 103147143,
+        "s03_best_state.pt": 2104359826
+      },
+      "ended_at": "2026-09-09T00:21:24.147197"
+    },
+    {
+      "name": "no_spatial",
+      "gpu": 6,
+      "exit_code": 1,
+      "completed_epochs_by_stage": {
+        "1": 60,
+        "2": 38
+      },
+      "stages": [
+        {
+          "stage": 0,
+          "best_epoch_one_based": 17,
+          "validation": {
+            "T1": 0.7593914365346025
+          },
+          "test": {
+            "T1": 0.6648380769470472
+          },
+          "task_strategy": null,
+          "buffer_counts": {
+            "0": 128
+          }
+        },
+        {
+          "stage": 1,
+          "best_epoch_one_based": 14,
+          "validation": {
+            "T1": 0.6475301369585638,
+            "T2": 0.6991301629991079
+          },
+          "test": {
+            "T1": 0.641884117515856,
+            "T2": 0.653452518121827
+          },
+          "task_strategy": {
+            "calibrate_head_bn": true,
+            "der_alpha": 0.05,
+            "der_beta": 0.5,
+            "grad_clip_norm": 5.0
+          },
+          "buffer_counts": {
+            "0": 76,
+            "1": 52
+          }
+        }
+      ],
+      "failure": {
+        "dtype": "torch.float32",
+        "epoch_zero_based": 38,
+        "exception": "NumericalFailure",
+        "finite": false,
+        "iteration_one_based": 6777,
+        "message": "buffer_capture/feature_targets: non-finite value",
+        "nonfinite": 15241216,
+        "stage_zero_based": 2,
+        "task_id": 2
+      },
+      "t3_epoch1_retention": {
+        "checkpoint_selection": "validation",
+        "epoch_one_based": 1,
+        "iteration": 178,
+        "stage": 2,
+        "test": {
+          "absolute_drop": 0.33302138834522754,
+          "retention_ratio": 0.4903663554585302,
+          "t2_after": 0.3204311297765995,
+          "t2_before": 0.653452518121827
+        },
+        "training_continues": true,
+        "val": {
+          "absolute_drop": 0.5791986338834274,
+          "retention_ratio": 0.17154392052146888,
+          "t2_after": 0.11993152911568054,
+          "t2_before": 0.6991301629991079
+        }
+      },
+      "checkpoint_sizes": {
+        "s02_best.pt": 103144334,
+        "s02_best_state.pt": 2104356911,
+        "s02.pt": 103135538,
+        "s02_state.pt": 2104356218,
+        "s03_best.pt": 103147143,
+        "s03_best_state.pt": 2104359826
+      },
+      "ended_at": "2026-09-09T02:08:57.860137"
+    }
+  ]
+}
