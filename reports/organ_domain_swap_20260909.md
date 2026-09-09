@@ -1,6 +1,34 @@
 # Organ T2 Prostate domain swap: UCL versus BIDMC
 
-Two bounded runs have been launched, UCL on GPU 4 and BIDMC on GPU 5. They test whether changing the Prostate cohort changes T2 acquisition and immediate forgetting during T3. Results are pending; these are not completed formal experiments.
+**Both bounded runs completed successfully and stopped after the requested single T3 epoch.** Verified on 2026-09-09 at approximately 12:43 China time. UCL finished at 09:55:37 (29 min 05 s); BIDMC finished at 10:09:51 (43 min 19 s). Both T2 and T3 processes exited with code 0. Epoch logs, stage summaries, finite aggregate metrics, paired checkpoint presence/sizes, and completion markers were reconciled. No experiment was restarted.
+
+## Completed comparison
+
+The table reports **test Dice at validation-selected checkpoints**. Each T2 ran 20 epochs, then its selected paired state started a standardized one-epoch T3 continuation. The initial shared T1 checkpoint has test Dice 0.664838.
+
+| Metric | UCL | BIDMC |
+|---|---:|---:|
+| T2 selected epoch | 14 | 13 |
+| T2 validation Dice after T2 | 0.699130 | 0.732039 |
+| T2 test Dice after T2 | 0.653453 | 0.696615 |
+| T1 test Dice after T2 | 0.641884 | 0.373053 |
+| T2 test Dice after one T3 epoch | 0.336907 | approximately 0 |
+| T2 absolute test Dice drop | 0.316545 | 0.696615 |
+| T2 retained fraction of test Dice | 51.56% | approximately 0% |
+| T1 test Dice after one T3 epoch | 0.369228 | 0.316691 |
+| T3 test Dice after one T3 epoch | approximately 0 | approximately 0 |
+
+T2 validation after one T3 epoch was 0.244964 for UCL and approximately zero for BIDMC. BIDMC's T2 foreground-prediction fraction was exactly zero on both validation and test; epsilon in Dice accounts for the tiny positive values in the raw scalar export. Both runs' T3 foreground-prediction fractions were also zero at this early endpoint. These finite all-background predictions are distinct from the numerical overflows seen in earlier long runs.
+
+**Changing T2 to BIDMC did not fix forgetting in this comparison.** BIDMC acquired its own task somewhat better, but damaged T1 much more during T2 and lost its own foreground prediction after one T3 epoch. This does not establish that BIDMC is universally worse: cohort size, updates per epoch, actual annotation coverage, and evaluation patients differ, and only one seed was tested. It also does not establish final T3 performance from a single epoch.
+
+The selected T2 buffers contained 76 T1 / 52 T2 samples for UCL and 71 T1 / 57 T2 for BIDMC. These counts alone do not explain the much larger BIDMC T1 loss. T3 shared weights, BN statistics, and replay/clipping settings still require separate causal checks. The next useful target is the T3 transition rather than assuming another domain will solve it; no additional run was launched in this status check.
+
+The UCL first-T3-epoch test score here (0.336907) differs from the previous continuous formal run (0.320431). This check starts a separate T3 process with explicitly reseeded transition seed 44; the old continuous run carried its post-training RNG trajectory into T3. Do not claim bitwise or trajectory equivalence between them.
+
+The inherited retention hook writes `training_continues=true` even in single-epoch mode. This is misleading metadata, **not an active process**: both phase exit codes, exactly one T3 epoch, and `complete.json` establish that the requested stop occurred. The original files are preserved; the scalar export records `actually_stopped_after_t3_epoch1=true` and explains this discrepancy.
+
+Public scalar evidence: `results/organ_domain_swap_20260909/completion_scalar.json`. No per-patient metrics, images, labels, raw traces, or model tensors were exported.
 
 ## Data and annotations
 
@@ -48,4 +76,4 @@ Root: `/data_nas/jiangsuiyang/ScribbleCL/organ_domain_swap_20260909`.
 
 `prepare_organ_domain_swap.py --base-root <original-run> --bidmc <BIDMC.h5> --output <new-root>` builds the views and verifies recipe recovery. Copy the shared runtime source (including this revision's `runner_core.py`) into `<new-root>/source`, then run `run_organ_domain_swap.py --root <new-root> --base-root <original-run> --domain ucl --gpu 4` and the corresponding BIDMC/GPU5 command in detached sessions. The driver derives unchanged parameters from the original selected-run launch record.
 
-NAS capacity and write/read probes passed; the launcher checks GPU free memory before starting. Runs survive SSH/Codex closure. Estimated wall time is 25–35 minutes for UCL and 35–50 minutes for BIDMC, including T3 and checkpoint I/O; these are estimates, not measured completion times. No recurring monitor is configured. Source, protocol and aggregate annotation/startup records are public; images, labels, patient identifiers, checkpoints and raw logs stay on the server. Result publication follows a subsequent completion check.
+NAS capacity and write/read probes passed; the launcher checks GPU free memory before starting. Runs survive SSH/Codex closure. Estimated wall time is 25–35 minutes for UCL and 35–50 minutes for BIDMC, including T3 and checkpoint I/O; these are estimates, not measured completion times. No recurring monitor is configured. Source, protocol and aggregate annotation/startup records are public; images, labels, patient identifiers, checkpoints and raw logs stay on the server. The completed scalar outcomes are now published after the completion check.

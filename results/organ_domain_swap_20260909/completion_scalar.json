@@ -1,0 +1,272 @@
+{
+  "verified_at": "2026-09-09T12:44:12.499452",
+  "status": "both bounded experiments completed; no runs restarted",
+  "records": [
+    {
+      "domain": "ucl",
+      "execution": [
+        {
+          "phase": "t2",
+          "pid": 357458,
+          "started_at": "2026-09-09 09:26:32 +0800",
+          "exit_code": 0,
+          "ended_at": "2026-09-09 09:48:34 +0800"
+        },
+        {
+          "phase": "t3",
+          "pid": 369107,
+          "started_at": "2026-09-09 09:48:34 +0800",
+          "exit_code": 0,
+          "ended_at": "2026-09-09 09:55:37 +0800"
+        }
+      ],
+      "phases": {
+        "t2": {
+          "executed_epochs": 20,
+          "updates": 840,
+          "best_epoch_one_based": 14,
+          "scores": {
+            "validation_evaluated": {
+              "T1": {
+                "dice": 0.6475301369585638,
+                "prediction_fg_fraction": 0.014976252138225081
+              },
+              "T2": {
+                "dice": 0.6991301629991079,
+                "prediction_fg_fraction": 0.015534327580378605
+              }
+            },
+            "evaluated": {
+              "T1": {
+                "dice": 0.641884117515856,
+                "prediction_fg_fraction": 0.016142262708420722
+              },
+              "T2": {
+                "dice": 0.653452518121827,
+                "prediction_fg_fraction": 0.01207855224609375
+              }
+            }
+          },
+          "checkpoint_sizes": {
+            "s02.pt": 103135538,
+            "s02_state.pt": 2104356218
+          },
+          "task_strategy": {
+            "calibrate_head_bn": true,
+            "der_alpha": 0.05,
+            "der_beta": 0.5,
+            "grad_clip_norm": 5.0
+          },
+          "buffer_counts": {
+            "0": 76,
+            "1": 52
+          }
+        },
+        "t3": {
+          "executed_epochs": 1,
+          "updates": 178,
+          "best_epoch_one_based": 1,
+          "scores": {
+            "validation_evaluated": {
+              "T1": {
+                "dice": 0.3969763390948793,
+                "prediction_fg_fraction": 0.016929277407577614
+              },
+              "T2": {
+                "dice": 0.2449638664725288,
+                "prediction_fg_fraction": 0.003764812762920673
+              },
+              "T3": {
+                "dice": 2.5580387808758232e-11,
+                "prediction_fg_fraction": 0.0
+              }
+            },
+            "evaluated": {
+              "T1": {
+                "dice": 0.3692275566217337,
+                "prediction_fg_fraction": 0.0109984634706638
+              },
+              "T2": {
+                "dice": 0.336907349068693,
+                "prediction_fg_fraction": 0.003678131103515625
+              },
+              "T3": {
+                "dice": 4.588572746214912e-11,
+                "prediction_fg_fraction": 0.0
+              }
+            }
+          },
+          "checkpoint_sizes": {
+            "s03.pt": 103138248,
+            "s03_state.pt": 2104359098
+          },
+          "task_strategy": {
+            "calibrate_head_bn": false,
+            "der_alpha": 0.5,
+            "der_beta": 0.5,
+            "grad_clip_norm": null
+          },
+          "buffer_counts": {
+            "0": 67,
+            "1": 49,
+            "2": 12
+          }
+        }
+      },
+      "retention": {
+        "checkpoint_selection": "validation",
+        "epoch_one_based": 1,
+        "iteration": 178,
+        "stage": 2,
+        "test": {
+          "absolute_drop": 0.316545169053134,
+          "retention_ratio": 0.5155804587562725,
+          "t2_after": 0.336907349068693,
+          "t2_before": 0.653452518121827
+        },
+        "training_continues": true,
+        "val": {
+          "absolute_drop": 0.45416629652657914,
+          "retention_ratio": 0.35038377606494625,
+          "t2_after": 0.2449638664725288,
+          "t2_before": 0.6991301629991079
+        }
+      },
+      "actually_stopped_after_t3_epoch1": true,
+      "retention_log_note": "training_continues=true is inherited hook metadata; phase exit codes, one epoch and complete.json verify actual stop"
+    },
+    {
+      "domain": "bidmc",
+      "execution": [
+        {
+          "phase": "t2",
+          "pid": 357459,
+          "started_at": "2026-09-09 09:26:32 +0800",
+          "exit_code": 0,
+          "ended_at": "2026-09-09 10:02:57 +0800"
+        },
+        {
+          "phase": "t3",
+          "pid": 378518,
+          "started_at": "2026-09-09 10:02:57 +0800",
+          "exit_code": 0,
+          "ended_at": "2026-09-09 10:09:51 +0800"
+        }
+      ],
+      "phases": {
+        "t2": {
+          "executed_epochs": 20,
+          "updates": 1520,
+          "best_epoch_one_based": 13,
+          "scores": {
+            "validation_evaluated": {
+              "T1": {
+                "dice": 0.3856677121871951,
+                "prediction_fg_fraction": 0.0445962544360192
+              },
+              "T2": {
+                "dice": 0.7320391194479603,
+                "prediction_fg_fraction": 0.008648486847573139
+              }
+            },
+            "evaluated": {
+              "T1": {
+                "dice": 0.37305278621261123,
+                "prediction_fg_fraction": 0.03935994397873847
+              },
+              "T2": {
+                "dice": 0.6966145566591245,
+                "prediction_fg_fraction": 0.015422518291170634
+              }
+            }
+          },
+          "checkpoint_sizes": {
+            "s02.pt": 103135538,
+            "s02_state.pt": 2104356218
+          },
+          "task_strategy": {
+            "calibrate_head_bn": true,
+            "der_alpha": 0.05,
+            "der_beta": 0.5,
+            "grad_clip_norm": 5.0
+          },
+          "buffer_counts": {
+            "0": 71,
+            "1": 57
+          }
+        },
+        "t3": {
+          "executed_epochs": 1,
+          "updates": 178,
+          "best_epoch_one_based": 1,
+          "scores": {
+            "validation_evaluated": {
+              "T1": {
+                "dice": 0.23764404370543932,
+                "prediction_fg_fraction": 0.0025477191202001636
+              },
+              "T2": {
+                "dice": 3.074001758370784e-10,
+                "prediction_fg_fraction": 0.0
+              },
+              "T3": {
+                "dice": 2.5580387808758232e-11,
+                "prediction_fg_fraction": 0.0
+              }
+            },
+            "evaluated": {
+              "T1": {
+                "dice": 0.3166910490267163,
+                "prediction_fg_fraction": 0.003150786329435822
+              },
+              "T2": {
+                "dice": 2.4113855252239273e-10,
+                "prediction_fg_fraction": 0.0
+              },
+              "T3": {
+                "dice": 4.588572746214912e-11,
+                "prediction_fg_fraction": 0.0
+              }
+            }
+          },
+          "checkpoint_sizes": {
+            "s03.pt": 103138248,
+            "s03_state.pt": 2104359098
+          },
+          "task_strategy": {
+            "calibrate_head_bn": false,
+            "der_alpha": 0.5,
+            "der_beta": 0.5,
+            "grad_clip_norm": null
+          },
+          "buffer_counts": {
+            "0": 65,
+            "1": 51,
+            "2": 12
+          }
+        }
+      },
+      "retention": {
+        "checkpoint_selection": "validation",
+        "epoch_one_based": 1,
+        "iteration": 178,
+        "stage": 2,
+        "test": {
+          "absolute_drop": 0.696614556417986,
+          "retention_ratio": 3.4615778584768997e-10,
+          "t2_after": 2.4113855252239273e-10,
+          "t2_before": 0.6966145566591245
+        },
+        "training_continues": true,
+        "val": {
+          "absolute_drop": 0.7320391191405601,
+          "retention_ratio": 4.1992315392774725e-10,
+          "t2_after": 3.074001758370784e-10,
+          "t2_before": 0.7320391194479603
+        }
+      },
+      "actually_stopped_after_t3_epoch1": true,
+      "retention_log_note": "training_continues=true is inherited hook metadata; phase exit codes, one epoch and complete.json verify actual stop"
+    }
+  ]
+}
