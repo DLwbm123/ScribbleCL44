@@ -1,0 +1,16 @@
+[
+  {
+    "domain": "ucl",
+    "training_pid": 357458,
+    "process_state": "D",
+    "successful_updates": 42,
+    "failure": false
+  },
+  {
+    "domain": "bidmc",
+    "training_pid": 357459,
+    "process_state": "R",
+    "successful_updates": 62,
+    "failure": false
+  }
+]

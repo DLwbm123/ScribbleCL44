@@ -90,9 +90,15 @@ if __name__ == '__main__' and len(__import__('sys').argv) > 1:
     resumed = json.loads((root / 'resume/stages.json').read_text())
     assert resumed[2]['derpp']['alpha'] == .5
     sys.argv = common + ['--output', str(root / 'resume_t2'), '--t2-from', str(root / 'run'),
-                         '--organ-t2-feature-alpha', '.05']
+                         '--organ-t2-feature-alpha', '.05', '--epochs-per-task', '2', '--organ-t2-epochs', '1']
     runner.main('organ')
     resumed_t2 = json.loads((root / 'resume_t2/stages.json').read_text())
     assert [r['derpp']['alpha'] for r in resumed_t2] == [.5, .05, .5]
     assert resumed_t2[0] == rows[0]
+    epoch_rows = [json.loads(line) for line in (root / 'resume_t2/train.jsonl').read_text().splitlines()]
+    epoch_rows = [r for r in epoch_rows if 'epoch_seconds' in r]
+    assert sum(r['stage'] == 1 for r in epoch_rows) == 1
+    assert sum(r['stage'] == 2 for r in epoch_rows) == 2
+    manifest = json.loads((root / 'resume_t2/manifest.json').read_text())
+    assert manifest['organ_t2_executed_epochs'] == 1 and manifest['epochs_per_task'] == 2
     print('PASS: native T1/T2/T3, paired selection, T3 resume, and T2 resume with small alpha; preserved T1 record')

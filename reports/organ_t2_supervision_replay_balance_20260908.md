@@ -18,7 +18,7 @@ Zero coefficients remove loss contributions only: replay forwards, sampling, and
 
 Keeping supervised replay improves both tasks over removing both losses. Removing feature MSE improves short-term T2 acquisition relative to full replay, but reduces T1 retention. Equalizing foreground/background PCE gradient mass is not supported by these results.
 
-T2 has 28,887 foreground scribble pixels out of 1,144,407 known pixels (2.524%); 92/166 training slices contain foreground scribbles. Read-only training-label overlap checks found all foreground/background scribbles inside their corresponding dense class. Foreground scribble coverage is approximately 18.204%, despite the annotation variant's `fg20` name.
+T2 has 28,887 foreground scribble pixels out of 1,144,407 known pixels (2.524%); 92/166 training slices contain foreground scribbles. Read-only training-label overlap checks found all foreground/background scribbles inside their corresponding dense class. A 2026-09-09 re-audit of the active integer-converted training labels gives 146,926 dense foreground pixels and **19.6609%** foreground coverage. This corrects the previously reported 18.204% denominator; the 28,887 scribble pixels and experiment inputs are unchanged.
 
 ## Gradient evidence
 

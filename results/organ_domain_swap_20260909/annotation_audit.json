@@ -1,0 +1,90 @@
+{
+  "ucl": {
+    "dataset": "ucl",
+    "source": "/home/jiangsuiyang/medical_continual_segmentation_data/CL_Benchmark/data/Task_incre/UCL.h5",
+    "splits": {
+      "train": {
+        "slices": 166,
+        "patients": 7
+      },
+      "val": {
+        "slices": 52,
+        "patients": 2
+      },
+      "test": {
+        "slices": 100,
+        "patients": 4
+      }
+    },
+    "seed": 42,
+    "baseline_stats": {
+      "foreground_pixels": 9629,
+      "background_pixels": 55776,
+      "unknown_pixels": 10813571,
+      "dense_foreground_pixels": 146926,
+      "zero_foreground_slices": 74,
+      "minimum_valid_pixels": 336,
+      "maximum_valid_pixels": 552
+    },
+    "stats": {
+      "foreground_pixels": 28887,
+      "background_pixels": 1115520,
+      "unknown_pixels": 9734569,
+      "dense_foreground_pixels": 146926,
+      "zero_foreground_slices": 74,
+      "minimum_valid_pixels": 6720,
+      "maximum_valid_pixels": 7368
+    },
+    "foreground_multiplier": 3,
+    "background_multiplier": 20,
+    "foreground_coverage": 0.19660917740903583,
+    "foreground_fraction_of_known": 0.025241893836720677,
+    "ucl_existing_recipe_exact_match": true,
+    "labels_used": "training only; integer conversion identical to loader",
+    "comparison": "same 20 epochs; different slice and update counts"
+  },
+  "bidmc": {
+    "dataset": "bidmc",
+    "source": "/home/jiangsuiyang/medical_continual_segmentation_domain_fastlane/data/Domain_Prostate/BIDMC.h5",
+    "splits": {
+      "train": {
+        "slices": 301,
+        "patients": 7
+      },
+      "val": {
+        "slices": 94,
+        "patients": 2
+      },
+      "test": {
+        "slices": 126,
+        "patients": 3
+      }
+    },
+    "seed": 42,
+    "baseline_stats": {
+      "foreground_pixels": 29726,
+      "background_pixels": 101136,
+      "unknown_pixels": 19595474,
+      "dense_foreground_pixels": 515139,
+      "zero_foreground_slices": 133,
+      "minimum_valid_pixels": 336,
+      "maximum_valid_pixels": 692
+    },
+    "stats": {
+      "foreground_pixels": 89136,
+      "background_pixels": 2022720,
+      "unknown_pixels": 17614480,
+      "dense_foreground_pixels": 515139,
+      "zero_foreground_slices": 133,
+      "minimum_valid_pixels": 6720,
+      "maximum_valid_pixels": 7788
+    },
+    "foreground_multiplier": 3,
+    "background_multiplier": 20,
+    "foreground_coverage": 0.17303290956421472,
+    "foreground_fraction_of_known": 0.04220742323340228,
+    "ucl_existing_recipe_exact_match": null,
+    "labels_used": "training only; integer conversion identical to loader",
+    "comparison": "same 20 epochs; different slice and update counts"
+  }
+}

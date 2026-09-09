@@ -905,6 +905,8 @@ def main(project_scenario: str) -> None:
                         help="T2 feature MSE weight for --organ-t2-supervision-strategy")
     parser.add_argument("--t2-from", type=Path,
                         help="reuse the completed T1 paired checkpoint and run T2 onward")
+    parser.add_argument("--organ-t2-epochs", type=int,
+                        help="bounded T2 execution budget; keep --epochs-per-task as the LR horizon")
     parser.add_argument("--organ-task", choices=["T1", "T2", "T3", "T4"],
                         help="train one Organ task from scratch through the shared ZS loop")
     parser.add_argument("--t3-one-epoch-from", type=Path,
@@ -1016,6 +1018,9 @@ def main(project_scenario: str) -> None:
     last_stage = len(tasks) - 1 if args.max_task is None else args.max_task - 1
     if args.t3_first_epoch_evaluation and (project_scenario != "organ" or last_stage < 2 or args.organ_task):
         parser.error("--t3-first-epoch-evaluation requires Organ T1/T2/T3")
+    if args.organ_t2_epochs is not None and (project_scenario != "organ" or args.method != "zs-derpp"
+            or args.organ_task or last_stage < 1 or not 1 <= args.organ_t2_epochs <= args.epochs_per_task):
+        parser.error("--organ-t2-epochs requires continual Organ ZS-DER++, between 1 and the LR horizon")
     if args.t2_from and (project_scenario != "organ" or args.method != "zs-derpp"
                          or last_stage < 1 or args.organ_task or args.t3_one_epoch_from):
         parser.error("--t2-from requires continual Organ ZS-DER++ T2 onward, without T3-only resume")
@@ -1087,6 +1092,7 @@ def main(project_scenario: str) -> None:
         "task_strategies": {task.code: organ_task_strategy(
             args.organ_t2_supervision_strategy, task.code, args.der_alpha, args.der_beta,
             args.grad_clip_norm, args.organ_t2_feature_alpha) for task in tasks[:last_stage + 1]},
+        "organ_t2_executed_epochs": args.organ_t2_epochs or args.epochs_per_task,
         "t2_source": None if args.t2_from is None else args.t2_from.name,
         "t2_transition_seed": None if args.t2_from is None else args.seed + 1,
         "batch_size": args.batch_size,
@@ -1264,7 +1270,9 @@ def main(project_scenario: str) -> None:
             )
 
         with train_log.open("a") as stream, _capture_numerical_failure(numerics, model, optimizer, derpp):
-            executed_epochs = 1 if args.t3_one_epoch_from else args.epochs_per_task
+            executed_epochs = (1 if args.t3_one_epoch_from else
+                               args.organ_t2_epochs if task.code == "T2" and args.organ_t2_epochs is not None
+                               else args.epochs_per_task)
             for epoch in range(executed_epochs):
                 epoch_started = time.monotonic()
                 model.train()

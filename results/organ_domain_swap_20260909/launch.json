@@ -1,0 +1,38 @@
+[
+  {
+    "domain": "ucl",
+    "gpu": 4,
+    "controller_pid": 357452,
+    "command": [
+      "/home/jiangsuiyang/anaconda3/envs/py38/bin/python",
+      "-u",
+      "/data_nas/jiangsuiyang/ScribbleCL/organ_domain_swap_20260909/run_organ_domain_swap.py",
+      "--root",
+      "/data_nas/jiangsuiyang/ScribbleCL/organ_domain_swap_20260909",
+      "--base-root",
+      "/data_nas/jiangsuiyang/ScribbleCL/organ_T13_half_cl_20260908",
+      "--domain",
+      "ucl",
+      "--gpu",
+      "4"
+    ]
+  },
+  {
+    "domain": "bidmc",
+    "gpu": 5,
+    "controller_pid": 357453,
+    "command": [
+      "/home/jiangsuiyang/anaconda3/envs/py38/bin/python",
+      "-u",
+      "/data_nas/jiangsuiyang/ScribbleCL/organ_domain_swap_20260909/run_organ_domain_swap.py",
+      "--root",
+      "/data_nas/jiangsuiyang/ScribbleCL/organ_domain_swap_20260909",
+      "--base-root",
+      "/data_nas/jiangsuiyang/ScribbleCL/organ_T13_half_cl_20260908",
+      "--domain",
+      "bidmc",
+      "--gpu",
+      "5"
+    ]
+  }
+]
