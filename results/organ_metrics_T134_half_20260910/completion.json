@@ -1,0 +1,433 @@
+{
+  "verified_at": "2026-09-10T10:02:47.193606+08:00",
+  "data_variant": "T1/T3/T4 half, T2 full",
+  "train_samples": {
+    "T1": 381,
+    "T2": 166,
+    "T3": 711,
+    "T4": 982
+  },
+  "selection": "current-task validation",
+  "CL_epochs_per_task": 60,
+  "independent_epochs": 80,
+  "seed": 42,
+  "batch_size": 4,
+  "spatial_weight": 0.01,
+  "spatial_start_epoch_one_based": 30,
+  "runs": {
+    "organ_retention": {
+      "completed": true,
+      "completed_at": "2026-09-10T04:07:59.062266+08:00",
+      "executed_epochs": 120,
+      "matrix": [
+        [
+          0.6648380769470472,
+          null,
+          null,
+          null
+        ],
+        [
+          0.641884117515856,
+          0.653452518121827,
+          null,
+          null
+        ],
+        [
+          0.5169670714408349,
+          0.3074903509804746,
+          0.8693767791361541,
+          null
+        ],
+        [
+          0.5655142409790693,
+          0.22842043653614713,
+          0.8536527462802365,
+          0.8065287985338309
+        ]
+      ],
+      "validation_matrix": [
+        [
+          0.7593914365346025,
+          null,
+          null,
+          null
+        ],
+        [
+          0.6475301369585638,
+          0.6991301629991079,
+          null,
+          null
+        ],
+        [
+          0.48221811058628594,
+          0.324934005971632,
+          0.8755671936498185,
+          null
+        ],
+        [
+          0.5582162529554469,
+          0.12628384251415833,
+          0.8740290679299266,
+          0.779282100010807
+        ]
+      ],
+      "final_test_mean": 0.613529055582321,
+      "final_validation_mean": 0.5844528158525847,
+      "stages": [
+        {
+          "stage": 1,
+          "train_samples": 381,
+          "best_epoch_one_based": 17,
+          "model_parameters": 25759262,
+          "task_strategy": null
+        },
+        {
+          "stage": 2,
+          "train_samples": 166,
+          "best_epoch_one_based": 14,
+          "model_parameters": 25759396,
+          "task_strategy": {
+            "calibrate_head_bn": true,
+            "der_alpha": 0.05,
+            "der_beta": 0.5,
+            "grad_clip_norm": 5.0
+          }
+        },
+        {
+          "stage": 3,
+          "train_samples": 711,
+          "best_epoch_one_based": 57,
+          "model_parameters": 25759530,
+          "task_strategy": {
+            "backbone_lr_scale": 0.1,
+            "calibrate_head_bn": false,
+            "der_alpha": 0.05,
+            "der_beta": 0.5,
+            "freeze_backbone_bn": true,
+            "grad_clip_norm": 5.0
+          }
+        },
+        {
+          "stage": 4,
+          "train_samples": 982,
+          "best_epoch_one_based": 44,
+          "model_parameters": 25759664,
+          "task_strategy": {
+            "backbone_lr_scale": 0.1,
+            "calibrate_head_bn": false,
+            "der_alpha": 0.05,
+            "der_beta": 0.5,
+            "freeze_backbone_bn": true,
+            "grad_clip_norm": 5.0
+          }
+        }
+      ],
+      "checkpoints": [
+        {
+          "stage": 1,
+          "bytes": 103132892
+        },
+        {
+          "stage": 2,
+          "bytes": 103135538
+        },
+        {
+          "stage": 3,
+          "bytes": 103138248
+        },
+        {
+          "stage": 4,
+          "bytes": 103140894
+        }
+      ]
+    },
+    "organ_no_replay": {
+      "completed": true,
+      "completed_at": "2026-09-10T00:20:28.803393+08:00",
+      "executed_epochs": 180,
+      "matrix": [
+        [
+          0.6648380769470472,
+          null,
+          null,
+          null
+        ],
+        [
+          0.19103844206442694,
+          0.500984927110412,
+          null,
+          null
+        ],
+        [
+          0.004564487628182392,
+          0.003706294877392469,
+          0.8693260817158597,
+          null
+        ],
+        [
+          0.01601458955561903,
+          0.009588540934287137,
+          0.004562842587099715,
+          0.8228229643065443
+        ]
+      ],
+      "validation_matrix": [
+        [
+          0.7593914365346025,
+          null,
+          null,
+          null
+        ],
+        [
+          0.01999425536543676,
+          0.45937597311312617,
+          null,
+          null
+        ],
+        [
+          0.03279938290012048,
+          0.0037699002811106413,
+          0.8826449406262911,
+          null
+        ],
+        [
+          0.007312307986299399,
+          0.016509340498333924,
+          0.0009023453862018288,
+          0.8098700309167827
+        ]
+      ],
+      "final_test_mean": 0.21324723434588755,
+      "final_validation_mean": 0.20864850619690445,
+      "stages": [
+        {
+          "stage": 1,
+          "train_samples": 381,
+          "best_epoch_one_based": 17,
+          "model_parameters": 25759262,
+          "task_strategy": null
+        },
+        {
+          "stage": 2,
+          "train_samples": 166,
+          "best_epoch_one_based": 32,
+          "model_parameters": 25759396,
+          "task_strategy": {
+            "calibrate_head_bn": true,
+            "der_alpha": 0.05,
+            "der_beta": 0.5,
+            "grad_clip_norm": 5.0
+          }
+        },
+        {
+          "stage": 3,
+          "train_samples": 711,
+          "best_epoch_one_based": 43,
+          "model_parameters": 25759530,
+          "task_strategy": {
+            "backbone_lr_scale": 0.1,
+            "calibrate_head_bn": false,
+            "der_alpha": 0.05,
+            "der_beta": 0.5,
+            "freeze_backbone_bn": true,
+            "grad_clip_norm": 5.0
+          }
+        },
+        {
+          "stage": 4,
+          "train_samples": 982,
+          "best_epoch_one_based": 20,
+          "model_parameters": 25759664,
+          "task_strategy": {
+            "backbone_lr_scale": 0.1,
+            "calibrate_head_bn": false,
+            "der_alpha": 0.05,
+            "der_beta": 0.5,
+            "freeze_backbone_bn": true,
+            "grad_clip_norm": 5.0
+          }
+        }
+      ],
+      "checkpoints": [
+        {
+          "stage": 1,
+          "bytes": 103132892
+        },
+        {
+          "stage": 2,
+          "bytes": 103135538
+        },
+        {
+          "stage": 3,
+          "bytes": 103138248
+        },
+        {
+          "stage": 4,
+          "bytes": 103140894
+        }
+      ]
+    },
+    "ind_T3": {
+      "completed": true,
+      "completed_at": "2026-09-09T22:12:21.136465+08:00",
+      "executed_epochs": 80,
+      "matrix": [
+        [
+          0.8749289952746678
+        ]
+      ],
+      "validation_matrix": [
+        [
+          0.9025280633160925
+        ]
+      ],
+      "final_test_mean": 0.8749289952746678,
+      "final_validation_mean": 0.9025280633160925,
+      "stages": [
+        {
+          "stage": 1,
+          "train_samples": 711,
+          "best_epoch_one_based": 65,
+          "model_parameters": 25759262,
+          "task_strategy": {
+            "calibrate_head_bn": false,
+            "der_alpha": 0.5,
+            "der_beta": 0.5,
+            "grad_clip_norm": 5.0
+          }
+        }
+      ],
+      "checkpoints": [
+        {
+          "stage": 1,
+          "bytes": 103132892
+        }
+      ]
+    },
+    "ind_T4": {
+      "completed": true,
+      "completed_at": "2026-09-10T00:21:45.745393+08:00",
+      "executed_epochs": 80,
+      "matrix": [
+        [
+          0.8191791569120478
+        ]
+      ],
+      "validation_matrix": [
+        [
+          0.8129988990704371
+        ]
+      ],
+      "final_test_mean": 0.8191791569120478,
+      "final_validation_mean": 0.8129988990704371,
+      "stages": [
+        {
+          "stage": 1,
+          "train_samples": 982,
+          "best_epoch_one_based": 35,
+          "model_parameters": 25759262,
+          "task_strategy": {
+            "calibrate_head_bn": false,
+            "der_alpha": 0.5,
+            "der_beta": 0.5,
+            "grad_clip_norm": 5.0
+          }
+        }
+      ],
+      "checkpoints": [
+        {
+          "stage": 1,
+          "bytes": 103132892
+        }
+      ]
+    }
+  },
+  "metrics": {
+    "organ_retention": {
+      "A-Dice": 0.613529055582321,
+      "BWTR": -0.27264091243924077,
+      "RMA": 1.069417275046708,
+      "MPE": 5.202012386845555e-06,
+      "DRR": null,
+      "DRR_note": "old T1/T2 buffers omit source IDs; new source counts in stage rows; do not invent historical counts",
+      "matrix": [
+        [
+          0.6648380769470472,
+          null,
+          null,
+          null
+        ],
+        [
+          0.641884117515856,
+          0.653452518121827,
+          null,
+          null
+        ],
+        [
+          0.5169670714408349,
+          0.3074903509804746,
+          0.8693767791361541,
+          null
+        ],
+        [
+          0.5655142409790693,
+          0.22842043653614713,
+          0.8536527462802365,
+          0.8065287985338309
+        ]
+      ],
+      "data_variant": "T1/T3/T4 half, T2 full",
+      "T2_final_retention_ratio": 0.34955934853947773
+    },
+    "organ_no_replay": {
+      "A-Dice": 0.21324723434588755,
+      "BWTR": -0.9838413175680386,
+      "RMA": 0.9803613547091353,
+      "MPE": 5.202012386845555e-06,
+      "DRR": 0.0,
+      "DRR_note": "no raw/feature replay",
+      "matrix": [
+        [
+          0.6648380769470472,
+          null,
+          null,
+          null
+        ],
+        [
+          0.19103844206442694,
+          0.500984927110412,
+          null,
+          null
+        ],
+        [
+          0.004564487628182392,
+          0.003706294877392469,
+          0.8693260817158597,
+          null
+        ],
+        [
+          0.01601458955561903,
+          0.009588540934287137,
+          0.004562842587099715,
+          0.8228229643065443
+        ]
+      ],
+      "data_variant": "T1/T3/T4 half, T2 full"
+    }
+  },
+  "independent_reference_scores": {
+    "T2": 0.5312447371340329,
+    "T3": 0.8749289952746678,
+    "T4": 0.8191791569120478
+  },
+  "notes": [
+    "T1/T2 main checkpoints reused; no-replay starts from reused T1.",
+    "Old full T4 independent was cancelled; excluded from these results.",
+    "DRR unavailable for replay run because old buffers lack source IDs.",
+    "RMA uses fixed 80-epoch independent references against 60-epoch CL; not matched-budget causal comparison.",
+    "No patient-level predictions or identifiers included.",
+    "Legacy first-stage rows lack task_strategy metadata; retained as null."
+  ],
+  "coordinator_exit_code": 0,
+  "pipeline_exit_code": 0
+}

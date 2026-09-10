@@ -557,6 +557,10 @@ class DarkExperienceReplayPlus:
         self.sparse_labels: list[torch.Tensor] = []
         self.task_ids: list[int] = []
         self.class_counts: list[int] = []
+        self.source_ids: list[int] = []
+        self.source_usage: dict[int, set[int]] = {}
+        self.unknown_source_tasks: set[int] = set()
+        self.consumer_stage = 0
         self.replay_batches = 0
         self.replay_draw_counts: Counter[int] = Counter()
 
@@ -570,6 +574,7 @@ class DarkExperienceReplayPlus:
         sparse_labels: torch.Tensor,
         task_ids: torch.Tensor,
         class_counts: int,
+        source_ids: torch.Tensor | None = None,
     ) -> None:
         batch = examples.shape[0]
         if any(value.shape[0] != batch for value in (feature_targets, sparse_labels, task_ids)):
@@ -578,9 +583,12 @@ class DarkExperienceReplayPlus:
         require_finite("buffer_capture/feature_targets", feature_targets)
         if bool((sparse_labels.ne(-100) & sparse_labels.lt(0)).any()):
             raise ValueError("DER++ sparse labels must be -100 or non-negative")
-        for example, target, label, task_id in zip(
+        ids = [-1] * batch if source_ids is None else source_ids.tolist()
+        if len(ids) != batch:
+            raise ValueError("source ID batch length mismatch")
+        for source_id, (example, target, label, task_id) in zip(ids, zip(
             examples.detach(), feature_targets.detach(), sparse_labels.detach(), task_ids.detach()
-        ):
+        )):
             index = reservoir_index(self.num_seen_examples, self.buffer_size)
             self.num_seen_examples += 1
             if index < 0:
@@ -598,18 +606,31 @@ class DarkExperienceReplayPlus:
                 self.sparse_labels.append(values[2])
                 self.task_ids.append(values[3])
                 self.class_counts.append(values[4])
+                self.source_ids.append(int(source_id))
             else:
                 self.examples[index] = values[0]
                 self.feature_targets[index] = values[1]
                 self.sparse_labels[index] = values[2]
                 self.task_ids[index] = values[3]
                 self.class_counts[index] = values[4]
+                self.source_ids[index] = int(source_id)
+
+    def record_sources(self, indices) -> None:
+        for index in indices:
+            task, source = self.task_ids[index], self.source_ids[index]
+            if task >= self.consumer_stage:
+                continue
+            if source < 0:
+                self.unknown_source_tasks.add(task)
+            else:
+                self.source_usage.setdefault(task, set()).add(source)
 
     def sample(self, device: torch.device) -> tuple[torch.Tensor, ...]:
         if not self.examples:
             raise RuntimeError("cannot sample an empty DER++ buffer")
         count = min(self.minibatch_size, len(self.examples))
         indices = np.random.choice(len(self.examples), size=count, replace=False).tolist()
+        self.record_sources(indices)
         examples = torch.stack([self.examples[index] for index in indices]).to(device)
         targets = torch.stack([self.feature_targets[index] for index in indices]).to(device)
         labels = torch.stack([self.sparse_labels[index] for index in indices]).to(device)
@@ -686,6 +707,7 @@ class DarkExperienceReplayPlus:
             "replay_batches": self.replay_batches,
             "replay_draw_counts": dict(self.replay_draw_counts),
             "coverage": self.coverage(),
+            "source_ids": self.source_ids,
         }
 
     def load_state_dict(self, state: dict) -> None:
@@ -718,6 +740,9 @@ class DarkExperienceReplayPlus:
             self.task_ids = [int(value) for value in task_ids.tolist()]
             self.class_counts = [int(value) for value in class_counts.tolist()]
         self.num_seen_examples = int(state["num_seen_examples"])
+        self.source_ids = list(state.get("source_ids", [-1] * len(self.examples)))
+        if len(self.source_ids) != len(self.examples):
+            raise ValueError("replay source IDs do not align with stored examples")
         self.replay_batches = int(state.get("replay_batches", 0))
         self.replay_draw_counts = Counter(
             {int(key): int(value) for key, value in state.get("replay_draw_counts", {}).items()}
@@ -733,6 +758,8 @@ class DarkExperienceReplayPlus:
             "stored_examples": len(self.examples),
             "state_bytes": self.nbytes(),
             "coverage": self.coverage(),
+            "unique_replay_sources": {str(k): len(v) for k, v in self.source_usage.items()},
+            "unknown_source_tasks": sorted(self.unknown_source_tasks),
         }
 
     def nbytes(self) -> int:

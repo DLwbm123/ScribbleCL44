@@ -17,8 +17,11 @@ TASKS = {'T1': 'UtahI.h5', 'T2': 'UCL.h5', 'T3': 'Lits.h5'}
 
 def half_indices(ends, seed):
     ends = np.asarray(ends, dtype=np.int64)
-    if ends.ndim != 1 or len(ends) == 0 or np.any(np.diff(np.r_[-1, ends]) < 2):
-        raise ValueError('Every retained patient must have at least two training slices')
+    if ends.ndim != 1 or len(ends) == 0:
+        raise ValueError('Patient boundaries must be a nonempty one-dimensional array')
+    counts = np.diff(np.r_[-1, ends])
+    if np.any(counts < 0) or np.any(counts == 1) or not np.any(counts):
+        raise ValueError('Every nonempty retained patient must have at least two training slices')
     starts = np.r_[0, ends[:-1] + 1]
     counts = ends - starts + 1
     target = (int(counts.sum()) + 1) // 2
@@ -31,7 +34,7 @@ def half_indices(ends, seed):
     return chosen, quotas
 
 
-def write_view(source, annotation, output_h5, output_npz, seed):
+def write_view(source, annotation, output_h5, output_npz, seed, materialize=False):
     source = source.resolve()
     with h5py.File(source, 'r') as original:
         indices, quotas = half_indices(original['patient_info_train'][:], seed)
@@ -45,6 +48,9 @@ def write_view(source, annotation, output_h5, output_npz, seed):
             for key in original:
                 if key in ('train_images', 'train_labels'):
                     dataset = original[key]
+                    if materialize:
+                        view.create_dataset(key, data=dataset[:][:, :, indices])
+                        continue
                     layout = h5py.VirtualLayout(shape=(*dataset.shape[:2], len(indices)), dtype=dataset.dtype)
                     virtual_source = h5py.VirtualSource(str(source), key, shape=dataset.shape)
                     for target, index in enumerate(indices):
@@ -57,8 +63,11 @@ def write_view(source, annotation, output_h5, output_npz, seed):
         selected = sparse[indices]
         with output_npz.open('xb') as stream:
             np.savez_compressed(stream, annotations=selected)
+        original_counts = np.diff(np.r_[-1, original['patient_info_train'][:]])
         stats = {'original_train_slices': n, 'selected_train_slices': len(indices),
-                 'train_patients': len(quotas), 'all_train_patients_retained': bool((quotas > 0).all()),
+                 'train_patients': len(quotas), 'nonempty_train_patients': int((original_counts > 0).sum()),
+                 'original_empty_train_patients': int((original_counts == 0).sum()),
+                 'all_train_patients_retained': bool((quotas[original_counts > 0] > 0).all()),
                  'original_foreground_slices': int((sparse == 1).any(axis=(1, 2)).sum()),
                  'selected_foreground_slices': int((selected == 1).any(axis=(1, 2)).sum()),
                  'selected_foreground_pixels': int((selected == 1).sum()),
@@ -67,6 +76,9 @@ def write_view(source, annotation, output_h5, output_npz, seed):
 
 
 def self_test():
+    empty_indices, empty_quotas = half_indices([-1, 3, 3, 6, 10], 42)
+    assert len(empty_indices) == 6 and empty_quotas.tolist()[0] == empty_quotas.tolist()[2] == 0
+    assert (empty_quotas[[1, 3, 4]] > 0).all()
     with tempfile.TemporaryDirectory() as temporary:
         root = Path(temporary)
         source = root/'source.h5'
@@ -87,6 +99,14 @@ def self_test():
             assert np.array_equal(h['train_labels'][:].transpose(2, 0, 1), np.load(root/'selected.npz')['annotations'])
             assert isinstance(h.get('val_images', getlink=True), h5py.ExternalLink)
             assert np.array_equal(h['test_images'][:], images[:, :, -2:])
+        material_indices, _ = write_view(source, root/'original.npz', root/'material.h5',
+                                        root/'material.npz', 42, materialize=True)
+        with h5py.File(root/'material.h5') as h:
+            assert np.array_equal(material_indices, indices)
+            assert not h['train_images'].is_virtual
+            assert np.array_equal(h['train_images'][:], images[:, :, indices])
+            assert np.array_equal(h['train_labels'][:].transpose(2, 0, 1),
+                                  np.load(root/'material.npz')['annotations'])
     print('Patient retention, repeatable indices, image/scribble alignment and unchanged evaluation links: PASS')
 
 

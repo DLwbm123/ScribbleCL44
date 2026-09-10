@@ -82,6 +82,8 @@ TASKS = {
 
 
 class H5Slices(Dataset):
+    cache_arrays = False
+
     def __init__(
         self,
         path: Path,
@@ -91,6 +93,7 @@ class H5Slices(Dataset):
         augment: bool = False,
         replay_source: bool = False,
         diagnostic_trace: bool = False,
+        return_index: bool = False,
     ) -> None:
         self.path = str(path)
         self.split = split
@@ -98,10 +101,16 @@ class H5Slices(Dataset):
         self.augment = augment
         self.replay_source = replay_source
         self.diagnostic_trace = diagnostic_trace
+        self.return_index = return_index
         self._handle = None
+        self._images = self._labels = None
         with h5py.File(self.path, "r") as handle:
             self.length = int(handle[f"{split}_images"].shape[2])
             self.ends = None if split == "train" else np.asarray(handle[f"patient_info_{split}"], dtype=np.int64)
+            if self.cache_arrays:
+                self._images = np.asarray(handle[f"{split}_images"], dtype=np.float32)
+                if split != "train":
+                    self._labels = np.asarray(handle[f"{split}_labels"])
         self.sparse = None
         if split == "train":
             if sparse_path is None:
@@ -127,12 +136,14 @@ class H5Slices(Dataset):
         return state
 
     def __getitem__(self, index: int):
-        handle = self._open()
-        image = np.asarray(handle[f"{self.split}_images"][:, :, index], dtype=np.float32)
+        handle = self._open() if self._images is None else None
+        images = handle[f"{self.split}_images"] if self._images is None else self._images
+        image = np.asarray(images[:, :, index], dtype=np.float32)
         if self.sparse is not None:
             label = self.sparse[index].astype(np.int64, copy=True)
         else:
-            label = np.asarray(handle[f"{self.split}_labels"][:, :, index]).astype(np.int64)
+            labels = handle[f"{self.split}_labels"] if self._labels is None else self._labels
+            label = np.asarray(labels[:, :, index]).astype(np.int64)
             if self.label_shift:
                 label = np.where(label > 0, label + self.label_shift, 0)
         replay_image = image.copy()
@@ -166,15 +177,18 @@ class H5Slices(Dataset):
                 torch.from_numpy(replay_image[None].copy()),
                 torch.from_numpy(replay_label.copy()).long(),
             )
-            return (*result, torch.from_numpy(transform_trace)) if self.diagnostic_trace else result
-        result = (image, label)
-        return (*result, torch.from_numpy(transform_trace)) if self.diagnostic_trace else result
+        else:
+            result = (image, label)
+        if self.diagnostic_trace:
+            result = (*result, torch.from_numpy(transform_trace))
+        return (*result, index) if self.return_index else result
 
     def close(self) -> None:
         if self._handle is not None:
             self._handle.close()
             self._handle = None
         self.sparse = None
+        self._images = self._labels = None
 
 
 def _match_spatial(skip: torch.Tensor, reference: torch.Tensor) -> torch.Tensor:
@@ -283,6 +297,7 @@ class OrganModel(nn.Module):
         self.backbone = _native_backbone()
         self.heads = nn.ModuleDict({"0": OutputHead(2)})
         self.active_stage = 0
+        self.freeze_backbone_bn = False
 
     def activate_stage(self, stage: int) -> None:
         stage = int(stage)
@@ -301,6 +316,10 @@ class OrganModel(nn.Module):
     def train(self, mode: bool = True):
         super().train(mode)
         if mode:
+            if self.freeze_backbone_bn:
+                for layer in self.backbone.modules():
+                    if isinstance(layer, nn.modules.batchnorm._BatchNorm):
+                        layer.eval()
             for index, head in self.heads.items():
                 if int(index) != self.active_stage:
                     head.eval()
@@ -323,7 +342,12 @@ class OrganModel(nn.Module):
 
 
 def organ_task_strategy(enabled: bool, task_code: str, alpha: float, beta: float,
-                        clip: float | None, t2_alpha: float = 0.0) -> dict:
+                        clip: float | None, t2_alpha: float = 0.0,
+                        retention: bool = False) -> dict:
+    if retention and task_code in ("T3", "T4"):
+        return {"der_alpha": .05, "der_beta": .5, "grad_clip_norm": 5.,
+                "calibrate_head_bn": False, "backbone_lr_scale": .1,
+                "freeze_backbone_bn": True}
     candidate = enabled and task_code == "T2"
     return {"der_alpha": t2_alpha if candidate else alpha,
             "der_beta": 0.5 if candidate else beta,
@@ -474,6 +498,7 @@ def derpp_replay_losses(
     args,
     device: torch.device,
     audit: NumericalAudit | None = None,
+    task_terms: dict | None = None,
 ) -> tuple[torch.Tensor, torch.Tensor]:
     """Compute sparse PCE and ZS global consistency on DER++ replay samples."""
     examples, _, labels, task_ids, class_counts = replay
@@ -496,6 +521,8 @@ def derpp_replay_losses(
                 global_loss = examples.new_zeros(())
             pce_terms.append(pce_loss(outputs, target))
             global_terms.append(global_loss)
+            if task_terms is not None:
+                task_terms[int(task_value)] = (pce_terms[-1], global_loss)
     return torch.stack(pce_terms).mean(), torch.stack(global_terms).mean()
 
 
@@ -650,6 +677,7 @@ def evaluate(
     device: torch.device,
     task_id: int | None,
     classes: tuple[int, ...],
+    diagnostic_output: Path | None = None,
 ) -> dict:
     modes = [(module, module.training) for module in model.modules()]
     try:
@@ -671,7 +699,26 @@ def evaluate(
                                        (predicted.sum() + expected.sum() + 1e-5)))
             per_patient.append(per_class)
         values = np.asarray(per_patient, dtype=float)
+        diagnostics = {}
+        if diagnostic_output is not None:
+            patient_metrics = []
+            for index, (start, stop) in enumerate(zip(starts, stops)):
+                pred, truth = prediction[start:stop] > 0, target[start:stop] > 0
+                tp, pp, gt = int((pred & truth).sum()), int(pred.sum()), int(truth.sum())
+                patient_metrics.append(dict(patient_index=index, dice=float(values[index].mean()),
+                    precision=tp / pp if pp else 0., recall=tp / gt if gt else 0.,
+                    predicted_foreground_fraction=float(pred.mean()), empty_prediction=pp == 0))
+            diagnostic_output.mkdir(parents=True, exist_ok=True)
+            (diagnostic_output / "patients.json").write_text(json.dumps(patient_metrics, indent=2) + "\n")
+            # Fixed first validation patient; private server artifact, no source image export.
+            np.savez_compressed(diagnostic_output / "fixed_patient_predictions.npz",
+                prediction=prediction[:stops[0]].astype(np.uint8))
+            diagnostics = dict(precision=float(np.mean([x["precision"] for x in patient_metrics])),
+                recall=float(np.mean([x["recall"] for x in patient_metrics])),
+                empty_foreground_patients=sum(x["empty_prediction"] for x in patient_metrics),
+                patients=len(patient_metrics))
         return {
+            **diagnostics,
             "benchmark_mean": float(values.mean()),
             "per_class": values.mean(axis=0).tolist(),
             "per_patient": values.tolist(),
@@ -903,17 +950,27 @@ def main(project_scenario: str) -> None:
                         help="Organ ZS-DER++ T2 only: configurable feature alpha, beta=0.5, clip=5, train-image head BN calibration")
     parser.add_argument("--organ-t2-feature-alpha", type=float, default=0.0,
                         help="T2 feature MSE weight for --organ-t2-supervision-strategy")
+    parser.add_argument("--organ-retention-strategy", action="store_true",
+                        help="formal T3/T4: R3 backbone/head LR ratio, fixed backbone BN, alpha .05, beta .5, clip 5")
     parser.add_argument("--t2-from", type=Path,
                         help="reuse the completed T1 paired checkpoint and run T2 onward")
+    parser.add_argument("--t3-from", type=Path,
+                        help="reuse completed T2 paired state and train full T3/T4 budgets")
     parser.add_argument("--organ-t2-epochs", type=int,
                         help="bounded T2 execution budget; keep --epochs-per-task as the LR horizon")
     parser.add_argument("--organ-task", choices=["T1", "T2", "T3", "T4"],
                         help="train one Organ task from scratch through the shared ZS loop")
     parser.add_argument("--t3-one-epoch-from", type=Path,
                         help="restore completed T2 model/replay state and run one T3 epoch; retain the original LR horizon")
+    parser.add_argument("--organ-t3-probe", choices=("frozen", "R0", "R1", "R2", "R3"),
+                        help="bounded validation-only T3 diagnostic; frozen=10, R0-R3=178 updates")
     parser.add_argument("--t3-first-epoch-evaluation", action="store_true",
                         help="evaluate T2 after the first T3 epoch, then continue training")
     parser.add_argument("--annotation-id", default="unspecified")
+    parser.add_argument("--record-source-ids", action="store_true",
+                        help="record sample-source counts for replay metrics, without changing sampling")
+    parser.add_argument("--cache-h5", action="store_true",
+                        help="load each open dataset's arrays into RAM once to avoid strided H5 reads")
     parser.add_argument("--validate-each-epoch", action="store_true")
     parser.add_argument("--workers", type=int, default=8)
     parser.add_argument("--max-task", type=int)
@@ -957,6 +1014,10 @@ def main(project_scenario: str) -> None:
     parser.add_argument("--independent-reference", action="store_true")
     parser.add_argument("--independent-scores", type=Path)
     args = parser.parse_args()
+    H5Slices.cache_arrays = args.cache_h5
+    if args.organ_t3_probe:
+        from organ_t3_retention_probe import validate_controls
+        validate_controls(args, project_scenario)
     use_zs = args.method.startswith("zs-")
     use_ewc = args.method.endswith("-ewc")
     use_gpm = args.method.endswith("-gpm")
@@ -1006,9 +1067,14 @@ def main(project_scenario: str) -> None:
         parser.error("--organ-t2-feature-alpha must be finite and non-negative")
     if args.organ_t2_feature_alpha and not args.organ_t2_supervision_strategy:
         parser.error("--organ-t2-feature-alpha requires --organ-t2-supervision-strategy")
-    if args.organ_t2_supervision_strategy and (project_scenario != "organ" or args.method != "zs-derpp"
-                                              or args.organ_task):
-        parser.error("--organ-t2-supervision-strategy requires continual Organ zs-derpp")
+    if args.organ_t2_supervision_strategy and (project_scenario != "organ"
+            or args.method not in ("zs-derpp", "zs-sequential")
+            or args.organ_task not in (None, "T2")):
+        parser.error("T2 strategy requires Organ ZS-DER++/ZS-Sequential, or independent T2")
+    if args.organ_retention_strategy and (project_scenario != "organ"
+            or args.method not in ("zs-derpp", "zs-sequential") or args.organ_task
+            or args.organ_t3_probe or args.t3_one_epoch_from):
+        parser.error("formal retention strategy requires a continual Organ sequence, not a bounded probe")
     if args.organ_task:
         if project_scenario != "organ" or args.method != "zs-sequential" or args.max_task is not None:
             parser.error("--organ-task requires Organ zs-sequential without --max-task")
@@ -1018,12 +1084,16 @@ def main(project_scenario: str) -> None:
     last_stage = len(tasks) - 1 if args.max_task is None else args.max_task - 1
     if args.t3_first_epoch_evaluation and (project_scenario != "organ" or last_stage < 2 or args.organ_task):
         parser.error("--t3-first-epoch-evaluation requires Organ T1/T2/T3")
-    if args.organ_t2_epochs is not None and (project_scenario != "organ" or args.method != "zs-derpp"
+    if args.organ_t2_epochs is not None and (project_scenario != "organ" or args.method not in ("zs-derpp", "zs-sequential")
             or args.organ_task or last_stage < 1 or not 1 <= args.organ_t2_epochs <= args.epochs_per_task):
         parser.error("--organ-t2-epochs requires continual Organ ZS-DER++, between 1 and the LR horizon")
-    if args.t2_from and (project_scenario != "organ" or args.method != "zs-derpp"
-                         or last_stage < 1 or args.organ_task or args.t3_one_epoch_from):
-        parser.error("--t2-from requires continual Organ ZS-DER++ T2 onward, without T3-only resume")
+    if args.t2_from and (project_scenario != "organ" or args.method not in ("zs-derpp", "zs-sequential")
+                         or last_stage < 1 or args.organ_task or args.t3_one_epoch_from or args.t3_from):
+        parser.error("--t2-from requires continual Organ ZS-DER++/ZS-Sequential T2 onward")
+    if args.t3_from and (project_scenario != "organ" or args.method != "zs-derpp"
+                         or last_stage < 2 or args.organ_task or args.t3_one_epoch_from
+                         or args.organ_t3_probe or not args.organ_retention_strategy):
+        parser.error("--t3-from requires formal Organ retention training from completed T2")
     if args.t3_one_epoch_from and (project_scenario != "organ" or args.method != "zs-derpp"
                                   or last_stage != 2 or args.organ_task):
         parser.error("--t3-one-epoch-from requires Organ ZS-DER++ T1/T2/T3")
@@ -1089,17 +1159,23 @@ def main(project_scenario: str) -> None:
         "initial_lr": args.lr,
         "grad_clip_norm": args.grad_clip_norm,
         "organ_t2_supervision_strategy": args.organ_t2_supervision_strategy,
+        "organ_retention_strategy": args.organ_retention_strategy,
+        "stage_seed_policy": "seed+stage" if args.organ_retention_strategy else "legacy",
         "task_strategies": {task.code: organ_task_strategy(
             args.organ_t2_supervision_strategy, task.code, args.der_alpha, args.der_beta,
-            args.grad_clip_norm, args.organ_t2_feature_alpha) for task in tasks[:last_stage + 1]},
+            args.grad_clip_norm, args.organ_t2_feature_alpha,
+            args.organ_retention_strategy) for task in tasks[:last_stage + 1]},
         "organ_t2_executed_epochs": args.organ_t2_epochs or args.epochs_per_task,
         "t2_source": None if args.t2_from is None else args.t2_from.name,
+        "t3_source": None if args.t3_from is None else args.t3_from.name,
         "t2_transition_seed": None if args.t2_from is None else args.seed + 1,
         "batch_size": args.batch_size,
         "workers": args.workers,
         "optimizer_weight_decay": 0.0 if use_gpm else 1e-4,
         "validate_each_epoch": args.validate_each_epoch,
         "annotation_id": args.annotation_id,
+        "record_source_ids": args.record_source_ids,
+        "cache_h5": args.cache_h5,
         "organ_independent_task": args.organ_task,
         "t3_one_epoch_source": None if args.t3_one_epoch_from is None else args.t3_one_epoch_from.name,
         "t3_transition_seed": None if args.t3_one_epoch_from is None else args.seed + 2,
@@ -1140,12 +1216,20 @@ def main(project_scenario: str) -> None:
     matrix = np.full((len(tasks), len(tasks)), np.nan)
     validation_matrix = np.full((len(tasks), len(tasks)), np.nan)
     stage_rows = []
-    first_stage = 1 if args.t2_from else 2 if args.t3_one_epoch_from else 0
+    first_stage = 1 if args.t2_from else 2 if (args.t3_one_epoch_from or args.t3_from) else 0
     if first_stage:
-        source = args.t2_from or args.t3_one_epoch_from
+        source = args.t2_from or args.t3_one_epoch_from or args.t3_from
         saved = torch.load(source / f"s{first_stage:02d}_state.pt", map_location="cpu")
-        if saved["stage"] != first_stage - 1 or saved["method"] != args.method:
+        shared_t1 = first_stage == 1 and args.method == "zs-sequential" and saved["method"] == "zs-derpp"
+        if saved["stage"] != first_stage - 1 or (saved["method"] != args.method and not shared_t1):
             raise ValueError("resume source must be the completed previous-task paired model/replay checkpoint")
+        if shared_t1:
+            source_manifest = json.loads((source / "manifest.json").read_text())
+            for key in ("seed", "epochs_per_task", "batch_size", "initial_lr", "annotation_id",
+                        "pce_loss_weight", "zs_global_weight", "zs_spatial_loss_weight",
+                        "zs_spatial_warmup_epochs", "grad_clip_norm"):
+                if source_manifest.get(key) != manifest.get(key):
+                    raise ValueError(f"shared T1 protocol differs: {key}")
         model.activate_stage(first_stage - 1)
         model.load_state_dict(saved["model"], strict=True)
         # Restore the declared source policy strictly; the next stage resets its coefficients.
@@ -1155,12 +1239,31 @@ def main(project_scenario: str) -> None:
             if saved.get("task_strategy") != expected:
                 raise ValueError("T3 source does not contain the requested T2 strategy")
             derpp.alpha, derpp.beta = expected["der_alpha"], expected["der_beta"]
-        derpp.load_state_dict(saved["continual"])
-        del saved
+        if derpp is not None:
+            derpp.load_state_dict(saved["continual"])
+        if args.organ_t3_probe:
+            from organ_t3_retention_probe import check_paired_restore
+            check_paired_restore(model, derpp, saved)
         stage_rows = json.loads((source / "stages.json").read_text())[:first_stage]
+        if shared_t1:
+            stage_rows[0] = {**stage_rows[0], "derpp": None,
+                             "shared_t1_source": str(source), "replay_active": False}
+            (args.output / "s01.pt").symlink_to((source / "s01.pt").resolve())
+            torch.save({"model": model.state_dict(), "continual": None, "stage": 0,
+                        "method": args.method, "task_strategy": saved.get("task_strategy")},
+                       args.output / "s01_state.pt")
+        if args.t3_from:
+            for prefix in ("s01", "s02"):
+                for suffix in (".pt", "_state.pt"):
+                    (args.output / (prefix + suffix)).symlink_to((source / (prefix + suffix)).resolve(strict=True))
+        del saved
         if len(stage_rows) != first_stage or [row["stage"] for row in stage_rows] != list(range(first_stage)):
             raise ValueError("source lacks completed previous-task evaluation records")
         for row in stage_rows:
+            row.setdefault("model_parameters", sum(p.numel() for p in model.backbone.parameters())
+                           + (row["stage"] + 1) * sum(p.numel() for p in model.heads["0"].parameters()))
+            with h5py.File(args.data_root / tasks[row["stage"]].folder / tasks[row["stage"]].filename, "r") as handle:
+                row.setdefault("train_samples", int(handle["train_images"].shape[2]))
             for index, task in enumerate(tasks[:row["stage"] + 1]):
                 validation_matrix[row["stage"], index] = row["validation_evaluated"][task.code]["benchmark_mean"]
                 if args.test_evaluation and task.code in row["evaluated"]:
@@ -1170,6 +1273,10 @@ def main(project_scenario: str) -> None:
         torch.manual_seed(args.seed + first_stage)
         np.random.seed(args.seed + first_stage)
         random.seed(args.seed + first_stage)
+    probe = None
+    if args.organ_t3_probe:
+        from organ_t3_retention_probe import RetentionProbe
+        probe = RetentionProbe(args, model, derpp, tasks, device, stage_rows)
     fisher_rows = []
     gpm_rows = []
     train_log = args.output / "train.jsonl"
@@ -1191,13 +1298,21 @@ def main(project_scenario: str) -> None:
     for stage, task in enumerate(tasks[:last_stage + 1]):
         if stage < first_stage:
             continue
+        if args.organ_retention_strategy:
+            torch.manual_seed(args.seed + stage)
+            np.random.seed(args.seed + stage)
+            random.seed(args.seed + stage)
         task_strategy = organ_task_strategy(args.organ_t2_supervision_strategy, task.code,
                                              args.der_alpha, args.der_beta, args.grad_clip_norm,
-                                             args.organ_t2_feature_alpha)
+                                             args.organ_t2_feature_alpha, args.organ_retention_strategy)
+        if probe is not None:
+            task_strategy = dict(der_alpha=.05, der_beta=.5, grad_clip_norm=5., calibrate_head_bn=False)
         replay_beta = task_strategy["der_beta"]
         clip_norm = task_strategy["grad_clip_norm"]
         if derpp is not None:
             derpp.alpha, derpp.beta = task_strategy["der_alpha"], replay_beta
+            derpp.consumer_stage = stage
+            derpp.record_sources(range(len(derpp)))
         teacher = None
         old_class_count = None
         if use_mib and stage > 0:
@@ -1206,7 +1321,11 @@ def main(project_scenario: str) -> None:
                 parameter.requires_grad_(False)
             old_class_count = model.output_channels(stage - 1)
         model.activate_stage(stage)
+        if args.organ_retention_strategy:
+            model.freeze_backbone_bn = task_strategy.get("freeze_backbone_bn", False)
         model.train()
+        if probe is not None:
+            probe.after_head()
         train = H5Slices(
             args.data_root / task.folder / task.filename,
             "train",
@@ -1214,6 +1333,7 @@ def main(project_scenario: str) -> None:
             augment=True,
             replay_source=use_derpp,
             diagnostic_trace=args.numerical_debug,
+            return_index=args.record_source_ids,
         )
         val = H5Slices(
             args.data_root / task.folder / task.filename,
@@ -1222,8 +1342,18 @@ def main(project_scenario: str) -> None:
         )
         train_loader = _loader(train, args.batch_size, True, args.workers, args.seed + stage)
         val_loader = _loader(val, args.batch_size, False, 0, args.seed)
+        parameter_groups = (probe.parameter_groups() if probe is not None else
+                            [parameter for parameter in model.parameters() if parameter.requires_grad])
+        if task_strategy.get("backbone_lr_scale") is not None:
+            backbone_lr = args.lr * task_strategy["backbone_lr_scale"]
+            parameter_groups = [
+                dict(params=list(model.backbone.parameters()), lr=backbone_lr,
+                     base_lr=backbone_lr, name="backbone"),
+                dict(params=list(model.heads[str(stage)].parameters()), lr=args.lr,
+                     base_lr=args.lr, name="new_head"),
+            ]
         optimizer = torch.optim.SGD(
-            [parameter for parameter in model.parameters() if parameter.requires_grad],
+            parameter_groups,
             lr=args.lr,
             momentum=0.9,
             # For GPM, weight decay is folded into gradients before projection.
@@ -1236,6 +1366,8 @@ def main(project_scenario: str) -> None:
         if args.max_train_batches is not None:
             batches_per_epoch = min(batches_per_epoch, args.max_train_batches)
         max_iterations = batches_per_epoch * args.epochs_per_task
+        if probe is not None:
+            probe.start(optimizer, train_loader, max_iterations, task_strategy)
         iteration = 0
         best = {"benchmark_mean": -1.0, "epoch": None, "iteration": None}
         best_path = args.output / f"s{stage + 1:02d}_best.pt"
@@ -1288,6 +1420,9 @@ def main(project_scenario: str) -> None:
                     if args.max_train_batches is not None and batch_index >= args.max_train_batches:
                         break
                     transform_trace = None
+                    source_ids = None
+                    if args.record_source_ids:
+                        source_ids, batch = batch[-1], batch[:-1]
                     if use_derpp:
                         if args.numerical_debug:
                             image, label, replay_image, replay_label, transform_trace = batch
@@ -1317,6 +1452,8 @@ def main(project_scenario: str) -> None:
                         optimizer,
                         derpp_summary=None if derpp is None else derpp.summary(),
                     )
+                    if probe is not None:
+                        numerics.pre_step["probe_numpy_streams"] = copy.deepcopy(probe.streams)
                     target = native_target(label, classes)
                     optimizer.zero_grad(set_to_none=True)
                     use_spatial = args.zs_spatial_loss_weight > 0 and epoch > args.zs_spatial_warmup_epochs
@@ -1358,14 +1495,16 @@ def main(project_scenario: str) -> None:
                     loss = loss + ewc_penalty
                     der_penalty = der.penalty(model, device) if use_der else image.new_zeros(())
                     loss = loss + der_penalty
+                    replay_terms = {} if probe is not None else None
                     if use_derpp:
-                        derpp_feature, replay = derpp.feature_penalty(model, device, numerics)
+                        with probe.random_stream("sample") if probe is not None else nullcontext():
+                            derpp_feature, replay = derpp.feature_penalty(model, device, numerics)
                         numerics.attach_replay(replay)
                         if replay is None:
                             derpp_pce = derpp_global = image.new_zeros(())
                         else:
                             derpp_pce, derpp_global = derpp_replay_losses(
-                                model, replay, project_scenario, args, device, numerics,
+                                model, replay, project_scenario, args, device, numerics, replay_terms,
                             )
                         loss = loss + derpp_feature + replay_beta * (
                             derpp_pce + args.zs_global_weight * derpp_global
@@ -1391,6 +1530,9 @@ def main(project_scenario: str) -> None:
                     ):
                         numerics.check(branch, name, value)
                     numerics.flush()
+                    if probe is not None:
+                        probe.before_backward(iteration + 1, partial_ce, global_loss, spatial_loss,
+                                              derpp_feature, derpp_pce, derpp_global, replay_terms, replay)
                     loss.backward()
                     gradient_norm = numerics.check_gradients(model)
                     if clip_norm is not None:
@@ -1433,19 +1575,18 @@ def main(project_scenario: str) -> None:
                             )
                             feature_targets = stable_backbone_features(model, replay_image, no_grad=True)
                             numerics.check("buffer_capture", "feature_targets", feature_targets)
-                            derpp.add_data(
-                                replay_image,
-                                feature_targets,
-                                replay_label,
-                                replay_task_ids,
-                                classes,
-                            )
+                            with probe.random_stream("reservoir") if probe is not None else nullcontext():
+                                derpp.add_data(
+                                    replay_image, feature_targets, replay_label, replay_task_ids, classes,
+                                    source_ids=source_ids,
+                                )
                     numerics.flush()
                     numerics.record_success()
                     iteration += 1
-                    learning_rate = args.lr * max(0.0, 1.0 - iteration / max_iterations) ** 0.9
                     for group in optimizer.param_groups:
-                        group["lr"] = learning_rate
+                        group["lr"] = group.get("base_lr", args.lr) * max(0.0, 1.0 - iteration / max_iterations) ** 0.9
+                    if probe is not None:
+                        probe.after_step(iteration, optimizer, numerics, gradient_norm)
                     totals["loss"].append(float(loss.detach()))
                     totals["pce"].append(float(partial_ce.detach()))
                     totals["global"].append(float(global_loss.detach()))
@@ -1634,6 +1775,8 @@ def main(project_scenario: str) -> None:
                 evaluated[evaluated_task.code] = score
         stage_row = {
             "stage": stage,
+            "train_samples": len(train),
+            "model_parameters": sum(p.numel() for p in model.parameters()),
             "best_validation": best,
             "task_strategy": task_strategy,
             "validation_evaluated": validation_evaluated,
