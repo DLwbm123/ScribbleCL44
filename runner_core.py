@@ -966,6 +966,8 @@ def main(project_scenario: str) -> None:
                         help="bounded validation-only T3 diagnostic; frozen=10, R0-R3=178 updates")
     parser.add_argument("--t3-first-epoch-evaluation", action="store_true",
                         help="evaluate T2 after the first T3 epoch, then continue training")
+    parser.add_argument("--t3-each-epoch-evaluation", action="store_true",
+                        help="record T2/T3 retention and save endpoint weights after each T3 epoch")
     parser.add_argument("--annotation-id", default="unspecified")
     parser.add_argument("--record-source-ids", action="store_true",
                         help="record sample-source counts for replay metrics, without changing sampling")
@@ -1084,6 +1086,9 @@ def main(project_scenario: str) -> None:
     last_stage = len(tasks) - 1 if args.max_task is None else args.max_task - 1
     if args.t3_first_epoch_evaluation and (project_scenario != "organ" or last_stage < 2 or args.organ_task):
         parser.error("--t3-first-epoch-evaluation requires Organ T1/T2/T3")
+    if args.t3_each_epoch_evaluation and (project_scenario != "organ" or last_stage != 2
+            or not args.t3_from or not args.validate_each_epoch or not args.test_evaluation):
+        parser.error("--t3-each-epoch-evaluation requires completed T2 restore, T3-only continuation, per-epoch validation and test evaluation")
     if args.organ_t2_epochs is not None and (project_scenario != "organ" or args.method not in ("zs-derpp", "zs-sequential")
             or args.organ_task or last_stage < 1 or not 1 <= args.organ_t2_epochs <= args.epochs_per_task):
         parser.error("--organ-t2-epochs requires continual Organ ZS-DER++, between 1 and the LR horizon")
@@ -1181,6 +1186,7 @@ def main(project_scenario: str) -> None:
         "t3_transition_seed": None if args.t3_one_epoch_from is None else args.seed + 2,
         "t3_executed_epochs": 1 if args.t3_one_epoch_from else args.epochs_per_task,
         "t3_first_epoch_evaluation": args.t3_first_epoch_evaluation,
+        "t3_each_epoch_evaluation": args.t3_each_epoch_evaluation,
         "history_images": use_der or use_derpp,
         "replay": use_der or use_derpp,
         "ignore_index": IGNORE_INDEX,
@@ -1274,6 +1280,17 @@ def main(project_scenario: str) -> None:
         np.random.seed(args.seed + first_stage)
         random.seed(args.seed + first_stage)
     probe = None
+    if args.t3_each_epoch_evaluation:
+        baseline = {}
+        for split, field in (("val", "validation_evaluated"), ("test", "evaluated")):
+            score = _evaluate_task(model, project_scenario, tasks[1], 1, args.data_root,
+                                   split, args.batch_size, device)["benchmark_mean"]
+            expected = stage_rows[1][field]["T2"]["benchmark_mean"]
+            if abs(score - expected) > 1e-6:
+                raise ValueError(f"restored T2 {split} baseline differs from source: {score} vs {expected}")
+            baseline[split] = score
+        (args.output / "t3_retention_baseline.json").write_text(json.dumps(baseline, indent=2) + "\n")
+        print(json.dumps({"t3_retention_baseline": baseline}), flush=True)
     if args.organ_t3_probe:
         from organ_t3_retention_probe import RetentionProbe
         probe = RetentionProbe(args, model, derpp, tasks, device, stage_rows)
@@ -1645,8 +1662,8 @@ def main(project_scenario: str) -> None:
                 }
                 stream.write(json.dumps(row, sort_keys=True) + "\n")
                 stream.flush()
-                if args.t3_first_epoch_evaluation and stage == 2 and epoch == 0:
-                    retention = {"stage": stage, "epoch_one_based": 1, "iteration": iteration,
+                if stage == 2 and (args.t3_each_epoch_evaluation or (args.t3_first_epoch_evaluation and epoch == 0)):
+                    retention = {"stage": stage, "epoch_one_based": epoch + 1, "iteration": iteration,
                                  "checkpoint_selection": "validation", "training_continues": True}
                     for split, field in (("val", "validation_evaluated"), ("test", "evaluated")):
                         if split == "test" and not args.test_evaluation:
@@ -1657,9 +1674,22 @@ def main(project_scenario: str) -> None:
                         retention[split] = {"t2_before": before, "t2_after": after,
                                             "absolute_drop": before - after,
                                             "retention_ratio": after / before if before > 0 else None}
-                    (args.output / "t3_epoch1_t2_retention.json").write_text(
-                        json.dumps(retention, indent=2, sort_keys=True) + "\n")
-                    print(json.dumps({"t3_epoch1_t2_retention": retention}), flush=True)
+                    if epoch == 0:
+                        (args.output / "t3_epoch1_t2_retention.json").write_text(
+                            json.dumps(retention, indent=2, sort_keys=True) + "\n")
+                    if args.t3_each_epoch_evaluation:
+                        retention["T3_validation"] = validation["benchmark_mean"]
+                        retention["T3_test"] = _evaluate_task(model, project_scenario, tasks[2], 2,
+                            args.data_root, "test", args.batch_size, device)["benchmark_mean"]
+                        retention["checkpoint"] = f"t3_epoch_{epoch + 1:02d}.pt"
+                        retention["checkpoint_role"] = "epoch endpoint; not selected using test"
+                        retention["learning_rates_end"] = {group.get("name", str(index)): group["lr"]
+                            for index, group in enumerate(optimizer.param_groups)}
+                        retention["training_continues"] = epoch + 1 < executed_epochs
+                        torch.save(model.state_dict(), args.output / retention["checkpoint"])
+                        with (args.output / "t3_retention_curve.jsonl").open("a") as curve:
+                            curve.write(json.dumps(retention, sort_keys=True) + "\n")
+                    print(json.dumps({"t3_epoch_retention": retention}), flush=True)
         final_validation = validate_current_task()
         if final_validation["benchmark_mean"] > best["benchmark_mean"]:
             best = {**final_validation, "epoch": executed_epochs - 1, "iteration": iteration}

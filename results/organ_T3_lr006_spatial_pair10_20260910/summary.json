@@ -1,0 +1,598 @@
+{
+  "root_run": "organ_T3_lr006_spatial_pair10_20260910",
+  "metric": "foreground-only per-case macro Dice",
+  "jobs": {
+    "spatial0": {
+      "baseline": {
+        "val": 0.6991301629991079,
+        "test": 0.653452518121827
+      },
+      "epoch_count": 10,
+      "updates": 1780,
+      "finite_losses": true,
+      "endpoint_checkpoints": 10,
+      "curve": [
+        {
+          "T3_test": 0.6709636932129829,
+          "T3_validation": 0.6104669119380544,
+          "checkpoint": "t3_epoch_01.pt",
+          "checkpoint_role": "epoch endpoint; not selected using test",
+          "checkpoint_selection": "validation",
+          "epoch_one_based": 1,
+          "iteration": 178,
+          "learning_rates_end": {
+            "backbone": 0.005457195456497773,
+            "new_head": 0.05457195456497773
+          },
+          "stage": 2,
+          "test": {
+            "absolute_drop": 0.019569984986762545,
+            "retention_ratio": 0.9700514047401467,
+            "t2_after": 0.6338825331350645,
+            "t2_before": 0.653452518121827
+          },
+          "training_continues": true,
+          "val": {
+            "absolute_drop": 0.015472778889817573,
+            "retention_ratio": 0.9778685290540993,
+            "t2_after": 0.6836573841092903,
+            "t2_before": 0.6991301629991079
+          }
+        },
+        {
+          "T3_test": 0.7009957781622728,
+          "T3_validation": 0.728521549927457,
+          "checkpoint": "t3_epoch_02.pt",
+          "checkpoint_role": "epoch endpoint; not selected using test",
+          "checkpoint_selection": "validation",
+          "epoch_one_based": 2,
+          "iteration": 356,
+          "learning_rates_end": {
+            "backbone": 0.004908312876305151,
+            "new_head": 0.0490831287630515
+          },
+          "stage": 2,
+          "test": {
+            "absolute_drop": 0.07813121777414311,
+            "retention_ratio": 0.8804332134204483,
+            "t2_after": 0.5753213003476839,
+            "t2_before": 0.653452518121827
+          },
+          "training_continues": true,
+          "val": {
+            "absolute_drop": 0.21829287310732542,
+            "retention_ratio": 0.6877650476831109,
+            "t2_after": 0.4808372898917825,
+            "t2_before": 0.6991301629991079
+          }
+        },
+        {
+          "T3_test": 0.7427015680846714,
+          "T3_validation": 0.7054994679748924,
+          "checkpoint": "t3_epoch_03.pt",
+          "checkpoint_role": "epoch endpoint; not selected using test",
+          "checkpoint_selection": "validation",
+          "epoch_one_based": 3,
+          "iteration": 534,
+          "learning_rates_end": {
+            "backbone": 0.0043525070816233195,
+            "new_head": 0.04352507081623319
+          },
+          "stage": 2,
+          "test": {
+            "absolute_drop": 0.07349778361351633,
+            "retention_ratio": 0.8875239109571942,
+            "t2_after": 0.5799547345083107,
+            "t2_before": 0.653452518121827
+          },
+          "training_continues": true,
+          "val": {
+            "absolute_drop": 0.12980947435701407,
+            "retention_ratio": 0.814327172210449,
+            "t2_after": 0.5693206886420938,
+            "t2_before": 0.6991301629991079
+          }
+        },
+        {
+          "T3_test": 0.7522914212397015,
+          "T3_validation": 0.7164026735169609,
+          "checkpoint": "t3_epoch_04.pt",
+          "checkpoint_role": "epoch endpoint; not selected using test",
+          "checkpoint_selection": "validation",
+          "epoch_one_based": 4,
+          "iteration": 712,
+          "learning_rates_end": {
+            "backbone": 0.003788675204936132,
+            "new_head": 0.037886752049361316
+          },
+          "stage": 2,
+          "test": {
+            "absolute_drop": 0.1657108699035409,
+            "retention_ratio": 0.7464071752606722,
+            "t2_after": 0.48774164821828614,
+            "t2_before": 0.653452518121827
+          },
+          "training_continues": true,
+          "val": {
+            "absolute_drop": 0.2856152583428171,
+            "retention_ratio": 0.5914705537555508,
+            "t2_after": 0.4135149046562908,
+            "t2_before": 0.6991301629991079
+          }
+        },
+        {
+          "T3_test": 0.7972511852671414,
+          "T3_validation": 0.7458760690423425,
+          "checkpoint": "t3_epoch_05.pt",
+          "checkpoint_role": "epoch endpoint; not selected using test",
+          "checkpoint_selection": "validation",
+          "epoch_one_based": 5,
+          "iteration": 890,
+          "learning_rates_end": {
+            "backbone": 0.0032153203876088793,
+            "new_head": 0.03215320387608879
+          },
+          "stage": 2,
+          "test": {
+            "absolute_drop": 0.06173014283305478,
+            "retention_ratio": 0.9055323208326116,
+            "t2_after": 0.5917223752887723,
+            "t2_before": 0.653452518121827
+          },
+          "training_continues": true,
+          "val": {
+            "absolute_drop": 0.11250306981674596,
+            "retention_ratio": 0.8390813674321622,
+            "t2_after": 0.586627093182362,
+            "t2_before": 0.6991301629991079
+          }
+        },
+        {
+          "T3_test": 0.7225880694605323,
+          "T3_validation": 0.7374504237480637,
+          "checkpoint": "t3_epoch_06.pt",
+          "checkpoint_role": "epoch endpoint; not selected using test",
+          "checkpoint_selection": "validation",
+          "epoch_one_based": 6,
+          "iteration": 1068,
+          "learning_rates_end": {
+            "backbone": 0.0026302997433245217,
+            "new_head": 0.026302997433245216
+          },
+          "stage": 2,
+          "test": {
+            "absolute_drop": 0.08272452133260577,
+            "retention_ratio": 0.8734039290714265,
+            "t2_after": 0.5707279967892213,
+            "t2_before": 0.653452518121827
+          },
+          "training_continues": true,
+          "val": {
+            "absolute_drop": 0.14290676738086916,
+            "retention_ratio": 0.7955934746573772,
+            "t2_after": 0.5562233956182387,
+            "t2_before": 0.6991301629991079
+          }
+        },
+        {
+          "T3_test": 0.7895872135158953,
+          "T3_validation": 0.7819658030760225,
+          "checkpoint": "t3_epoch_07.pt",
+          "checkpoint_role": "epoch endpoint; not selected using test",
+          "checkpoint_selection": "validation",
+          "epoch_one_based": 7,
+          "iteration": 1246,
+          "learning_rates_end": {
+            "backbone": 0.002030300771409899,
+            "new_head": 0.02030300771409899
+          },
+          "stage": 2,
+          "test": {
+            "absolute_drop": 0.11400123079915403,
+            "retention_ratio": 0.8255401461657539,
+            "t2_after": 0.539451287322673,
+            "t2_before": 0.653452518121827
+          },
+          "training_continues": true,
+          "val": {
+            "absolute_drop": 0.10808161222489121,
+            "retention_ratio": 0.845405594058128,
+            "t2_after": 0.5910485507742167,
+            "t2_before": 0.6991301629991079
+          }
+        },
+        {
+          "T3_test": 0.8051645710536278,
+          "T3_validation": 0.8002808334080767,
+          "checkpoint": "t3_epoch_08.pt",
+          "checkpoint_role": "epoch endpoint; not selected using test",
+          "checkpoint_selection": "validation",
+          "epoch_one_based": 8,
+          "iteration": 1424,
+          "learning_rates_end": {
+            "backbone": 0.0014095427317056225,
+            "new_head": 0.014095427317056224
+          },
+          "stage": 2,
+          "test": {
+            "absolute_drop": 0.09107592104551798,
+            "retention_ratio": 0.8606235058864091,
+            "t2_after": 0.562376597076309,
+            "t2_before": 0.653452518121827
+          },
+          "training_continues": true,
+          "val": {
+            "absolute_drop": 0.1150366856589854,
+            "retention_ratio": 0.8354574130151896,
+            "t2_after": 0.5840934773401225,
+            "t2_before": 0.6991301629991079
+          }
+        },
+        {
+          "T3_test": 0.8167744095855448,
+          "T3_validation": 0.800230580593819,
+          "checkpoint": "t3_epoch_09.pt",
+          "checkpoint_role": "epoch endpoint; not selected using test",
+          "checkpoint_selection": "validation",
+          "epoch_one_based": 9,
+          "iteration": 1602,
+          "learning_rates_end": {
+            "backbone": 0.0007553552470765002,
+            "new_head": 0.0075535524707650015
+          },
+          "stage": 2,
+          "test": {
+            "absolute_drop": 0.09278732893624941,
+            "retention_ratio": 0.8580044817901359,
+            "t2_after": 0.5606651891855776,
+            "t2_before": 0.653452518121827
+          },
+          "training_continues": true,
+          "val": {
+            "absolute_drop": 0.11133148705395557,
+            "retention_ratio": 0.8407571394482981,
+            "t2_after": 0.5877986759451523,
+            "t2_before": 0.6991301629991079
+          }
+        },
+        {
+          "T3_test": 0.818899890866135,
+          "T3_validation": 0.790225024948098,
+          "checkpoint": "t3_epoch_10.pt",
+          "checkpoint_role": "epoch endpoint; not selected using test",
+          "checkpoint_selection": "validation",
+          "epoch_one_based": 10,
+          "iteration": 1780,
+          "learning_rates_end": {
+            "backbone": 0.0,
+            "new_head": 0.0
+          },
+          "stage": 2,
+          "test": {
+            "absolute_drop": 0.07895756483378813,
+            "retention_ratio": 0.8791686271854452,
+            "t2_after": 0.5744949532880389,
+            "t2_before": 0.653452518121827
+          },
+          "training_continues": false,
+          "val": {
+            "absolute_drop": 0.09204140201554656,
+            "retention_ratio": 0.8683486897193649,
+            "t2_after": 0.6070887609835613,
+            "t2_before": 0.6991301629991079
+          }
+        }
+      ],
+      "selected": {
+        "best_validation": {
+          "benchmark_mean": 0.8002808334080767,
+          "epoch": 7,
+          "iteration": 1424
+        },
+        "test": {
+          "T1": 0.6494367190137663,
+          "T2": 0.562376597076309,
+          "T3": 0.8051645710536278
+        },
+        "test_mean": 0.6723259623812344
+      },
+      "exitcode": 0
+    },
+    "spatial001": {
+      "baseline": {
+        "val": 0.6991301629991079,
+        "test": 0.653452518121827
+      },
+      "epoch_count": 10,
+      "updates": 1780,
+      "finite_losses": true,
+      "endpoint_checkpoints": 10,
+      "curve": [
+        {
+          "T3_test": 0.7228650898983808,
+          "T3_validation": 0.7560209954542692,
+          "checkpoint": "t3_epoch_01.pt",
+          "checkpoint_role": "epoch endpoint; not selected using test",
+          "checkpoint_selection": "validation",
+          "epoch_one_based": 1,
+          "iteration": 178,
+          "learning_rates_end": {
+            "backbone": 0.005457195456497773,
+            "new_head": 0.05457195456497773
+          },
+          "stage": 2,
+          "test": {
+            "absolute_drop": 0.05140497069487815,
+            "retention_ratio": 0.9213332732382333,
+            "t2_after": 0.6020475474269489,
+            "t2_before": 0.653452518121827
+          },
+          "training_continues": true,
+          "val": {
+            "absolute_drop": 0.02771924431229833,
+            "retention_ratio": 0.9603518117522077,
+            "t2_after": 0.6714109186868096,
+            "t2_before": 0.6991301629991079
+          }
+        },
+        {
+          "T3_test": 0.7411798661108582,
+          "T3_validation": 0.7600030209963339,
+          "checkpoint": "t3_epoch_02.pt",
+          "checkpoint_role": "epoch endpoint; not selected using test",
+          "checkpoint_selection": "validation",
+          "epoch_one_based": 2,
+          "iteration": 356,
+          "learning_rates_end": {
+            "backbone": 0.004908312876305151,
+            "new_head": 0.0490831287630515
+          },
+          "stage": 2,
+          "test": {
+            "absolute_drop": 0.058619408482201374,
+            "retention_ratio": 0.910292780490483,
+            "t2_after": 0.5948331096396257,
+            "t2_before": 0.653452518121827
+          },
+          "training_continues": true,
+          "val": {
+            "absolute_drop": 0.2529390562680374,
+            "retention_ratio": 0.6382089206636616,
+            "t2_after": 0.4461911067310705,
+            "t2_before": 0.6991301629991079
+          }
+        },
+        {
+          "T3_test": 0.7583221067280915,
+          "T3_validation": 0.7485076381622513,
+          "checkpoint": "t3_epoch_03.pt",
+          "checkpoint_role": "epoch endpoint; not selected using test",
+          "checkpoint_selection": "validation",
+          "epoch_one_based": 3,
+          "iteration": 534,
+          "learning_rates_end": {
+            "backbone": 0.0043525070816233195,
+            "new_head": 0.04352507081623319
+          },
+          "stage": 2,
+          "test": {
+            "absolute_drop": 0.05082114789791259,
+            "retention_ratio": 0.9222267165730966,
+            "t2_after": 0.6026313702239144,
+            "t2_before": 0.653452518121827
+          },
+          "training_continues": true,
+          "val": {
+            "absolute_drop": 0.13630486724465096,
+            "retention_ratio": 0.8050364946922982,
+            "t2_after": 0.562825295754457,
+            "t2_before": 0.6991301629991079
+          }
+        },
+        {
+          "T3_test": 0.7815458688659158,
+          "T3_validation": 0.7572871127152682,
+          "checkpoint": "t3_epoch_04.pt",
+          "checkpoint_role": "epoch endpoint; not selected using test",
+          "checkpoint_selection": "validation",
+          "epoch_one_based": 4,
+          "iteration": 712,
+          "learning_rates_end": {
+            "backbone": 0.003788675204936132,
+            "new_head": 0.037886752049361316
+          },
+          "stage": 2,
+          "test": {
+            "absolute_drop": 0.09583512954756168,
+            "retention_ratio": 0.8533403317152807,
+            "t2_after": 0.5576173885742653,
+            "t2_before": 0.653452518121827
+          },
+          "training_continues": true,
+          "val": {
+            "absolute_drop": 0.22520546499166472,
+            "retention_ratio": 0.677877630074513,
+            "t2_after": 0.4739246980074432,
+            "t2_before": 0.6991301629991079
+          }
+        },
+        {
+          "T3_test": 0.7849975682879544,
+          "T3_validation": 0.7215423642881335,
+          "checkpoint": "t3_epoch_05.pt",
+          "checkpoint_role": "epoch endpoint; not selected using test",
+          "checkpoint_selection": "validation",
+          "epoch_one_based": 5,
+          "iteration": 890,
+          "learning_rates_end": {
+            "backbone": 0.0032153203876088793,
+            "new_head": 0.03215320387608879
+          },
+          "stage": 2,
+          "test": {
+            "absolute_drop": 0.07459512965282233,
+            "retention_ratio": 0.885844606020915,
+            "t2_after": 0.5788573884690047,
+            "t2_before": 0.653452518121827
+          },
+          "training_continues": true,
+          "val": {
+            "absolute_drop": 0.1862347814014833,
+            "retention_ratio": 0.7336193011576287,
+            "t2_after": 0.5128953815976246,
+            "t2_before": 0.6991301629991079
+          }
+        },
+        {
+          "T3_test": 0.7866962925899624,
+          "T3_validation": 0.7766456895869502,
+          "checkpoint": "t3_epoch_06.pt",
+          "checkpoint_role": "epoch endpoint; not selected using test",
+          "checkpoint_selection": "validation",
+          "epoch_one_based": 6,
+          "iteration": 1068,
+          "learning_rates_end": {
+            "backbone": 0.0026302997433245217,
+            "new_head": 0.026302997433245216
+          },
+          "stage": 2,
+          "test": {
+            "absolute_drop": 0.06446374818565792,
+            "retention_ratio": 0.9013489941534826,
+            "t2_after": 0.5889887699361691,
+            "t2_before": 0.653452518121827
+          },
+          "training_continues": true,
+          "val": {
+            "absolute_drop": 0.11956861476447489,
+            "retention_ratio": 0.828975173590633,
+            "t2_after": 0.579561548234633,
+            "t2_before": 0.6991301629991079
+          }
+        },
+        {
+          "T3_test": 0.7991333521618925,
+          "T3_validation": 0.7666850039994257,
+          "checkpoint": "t3_epoch_07.pt",
+          "checkpoint_role": "epoch endpoint; not selected using test",
+          "checkpoint_selection": "validation",
+          "epoch_one_based": 7,
+          "iteration": 1246,
+          "learning_rates_end": {
+            "backbone": 0.002030300771409899,
+            "new_head": 0.02030300771409899
+          },
+          "stage": 2,
+          "test": {
+            "absolute_drop": 0.09991070654727807,
+            "retention_ratio": 0.8471033414417861,
+            "t2_after": 0.553541811574549,
+            "t2_before": 0.653452518121827
+          },
+          "training_continues": true,
+          "val": {
+            "absolute_drop": 0.11691885644849942,
+            "retention_ratio": 0.8327652522572558,
+            "t2_after": 0.5822113065506085,
+            "t2_before": 0.6991301629991079
+          }
+        },
+        {
+          "T3_test": 0.7686354357422605,
+          "T3_validation": 0.7880335873315427,
+          "checkpoint": "t3_epoch_08.pt",
+          "checkpoint_role": "epoch endpoint; not selected using test",
+          "checkpoint_selection": "validation",
+          "epoch_one_based": 8,
+          "iteration": 1424,
+          "learning_rates_end": {
+            "backbone": 0.0014095427317056225,
+            "new_head": 0.014095427317056224
+          },
+          "stage": 2,
+          "test": {
+            "absolute_drop": 0.11059653877272924,
+            "retention_ratio": 0.8307504589765616,
+            "t2_after": 0.5428559793490978,
+            "t2_before": 0.653452518121827
+          },
+          "training_continues": true,
+          "val": {
+            "absolute_drop": 0.14610726356225145,
+            "retention_ratio": 0.7910156487377331,
+            "t2_after": 0.5530228994368565,
+            "t2_before": 0.6991301629991079
+          }
+        },
+        {
+          "T3_test": 0.8082961491592807,
+          "T3_validation": 0.8086303442086026,
+          "checkpoint": "t3_epoch_09.pt",
+          "checkpoint_role": "epoch endpoint; not selected using test",
+          "checkpoint_selection": "validation",
+          "epoch_one_based": 9,
+          "iteration": 1602,
+          "learning_rates_end": {
+            "backbone": 0.0007553552470765002,
+            "new_head": 0.0075535524707650015
+          },
+          "stage": 2,
+          "test": {
+            "absolute_drop": 0.09676765252653718,
+            "retention_ratio": 0.8519132609593889,
+            "t2_after": 0.5566848655952898,
+            "t2_before": 0.653452518121827
+          },
+          "training_continues": true,
+          "val": {
+            "absolute_drop": 0.13924741669013385,
+            "retention_ratio": 0.8008276225806159,
+            "t2_after": 0.559882746308974,
+            "t2_before": 0.6991301629991079
+          }
+        },
+        {
+          "T3_test": 0.8227560974827461,
+          "T3_validation": 0.7998554291759997,
+          "checkpoint": "t3_epoch_10.pt",
+          "checkpoint_role": "epoch endpoint; not selected using test",
+          "checkpoint_selection": "validation",
+          "epoch_one_based": 10,
+          "iteration": 1780,
+          "learning_rates_end": {
+            "backbone": 0.0,
+            "new_head": 0.0
+          },
+          "stage": 2,
+          "test": {
+            "absolute_drop": 0.07018187777422336,
+            "retention_ratio": 0.8925983513294244,
+            "t2_after": 0.5832706403476037,
+            "t2_before": 0.653452518121827
+          },
+          "training_continues": false,
+          "val": {
+            "absolute_drop": 0.10058491572584694,
+            "retention_ratio": 0.8561284850100578,
+            "t2_after": 0.598545247273261,
+            "t2_before": 0.6991301629991079
+          }
+        }
+      ],
+      "selected": {
+        "best_validation": {
+          "benchmark_mean": 0.8086303442086026,
+          "epoch": 8,
+          "iteration": 1602
+        },
+        "test": {
+          "T1": 0.6241031035969975,
+          "T2": 0.5566848655952898,
+          "T3": 0.8082961491592807
+        },
+        "test_mean": 0.6630280394505227
+      },
+      "exitcode": 0
+    }
+  }
+}

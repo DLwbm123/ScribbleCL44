@@ -1,11 +1,12 @@
 """CPU check: formal retention policy, old-head isolation and replay accounting."""
 import copy
+import random
 from pathlib import Path
 from tempfile import TemporaryDirectory
 import h5py
 import numpy as np
 import torch
-from runner_core import H5Slices, OrganModel, organ_task_strategy
+from runner_core import H5Slices, OrganModel, organ_task_strategy, evaluate, _loader
 from cl_methods import DarkExperienceReplayPlus
 
 
@@ -30,6 +31,20 @@ def main():
         if stage >= 2:
             assert policy['backbone_lr_scale'] == .1 and policy['grad_clip_norm'] == 5
         model.zero_grad(set_to_none=True)
+    # Repeated retention observations must not alter model state or training RNG streams.
+    model.activate_stage(2)
+    model.train()
+    dataset = torch.utils.data.TensorDataset(torch.randn(2,1,32,32), torch.zeros(2,32,32,dtype=torch.long))
+    modes = [(module, module.training) for module in model.modules()]
+    before = copy.deepcopy(model.state_dict())
+    torch_rng, numpy_rng, python_rng = torch.get_rng_state(), np.random.get_state(), random.getstate()
+    score = evaluate(model, _loader(dataset, 1, False, 0, 42), np.array([1]), torch.device('cpu'), 2, (1,))
+    assert 0 <= score['benchmark_mean'] <= 1
+    assert all(torch.equal(value, model.state_dict()[key]) for key,value in before.items())
+    assert all(module.training == mode for module,mode in modes)
+    assert torch.equal(torch_rng, torch.get_rng_state()) and random.getstate() == python_rng
+    current_rng = np.random.get_state()
+    assert numpy_rng[0] == current_rng[0] and np.array_equal(numpy_rng[1],current_rng[1]) and numpy_rng[2:] == current_rng[2:]
     replay = DarkExperienceReplayPlus(3, 3, .5, .5)
     x = torch.ones(3, 1, 2, 2)
     replay.add_data(x, x, torch.zeros(3,2,2,dtype=torch.long), torch.zeros(3,dtype=torch.long),
@@ -65,7 +80,7 @@ def main():
                 assert all(torch.equal(x,y) for x,y in zip(a[:2],b[:2])) and a[2]==b[2]
             direct.close();cached.close()
         H5Slices.cache_arrays=False
-    print('PASS: formal T2/T3/T4 policy, frozen old heads/BN, source-ID dedup, legacy checkpoints and identical cached H5 tensors')
+    print('PASS: retention policy, evaluation state/RNG isolation, source-ID dedup, legacy checkpoints and cached H5 equality')
 
 
 if __name__ == '__main__':
