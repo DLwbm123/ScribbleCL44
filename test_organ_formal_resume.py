@@ -8,10 +8,33 @@ import numpy as np
 import torch
 from runner_core import H5Slices, OrganModel, organ_task_strategy, evaluate, _loader
 from cl_methods import DarkExperienceReplayPlus
+from launch_organ_t3_lr10_pair import pair_jobs
 
 
 def main():
     torch.set_num_threads(2)
+    for epochs, last in ((10, 3), (20, 4)):
+        jobs = pair_jobs(Path('/data_nas/campaign'), epochs, last)
+        assert len(jobs) == 2
+        for job, weight in zip(jobs, ('0', '.01')):
+            command = job['command']
+            assert (job['first_stage'], job['stages'], job['epochs']) == (2, last, epochs)
+            assert command[command.index('--epochs-per-task')+1] == str(epochs)
+            assert command[command.index('--zs-spatial-loss-weight')+1] == weight
+            assert ('--t3-each-epoch-evaluation' in command) == (last == 3)
+            assert '--t3-from' in command and '--t3-first-epoch-evaluation' in command
+    for job in pair_jobs(Path('/data_nas/campaign'), 10, 4, t4_only=True):
+        command = job['command']
+        assert (job['first_stage'], job['stages'], job['epochs']) == (3, 4, 10)
+        assert command[command.index('--t4-from')+1] == '/data_nas/campaign/prefix_T3/'+job['name']
+        assert '--t3-from' not in command and '--t3-first-epoch-evaluation' not in command
+    source = OrganModel(); source.activate_stage(1); source.activate_stage(2)
+    restored_model = OrganModel(); restored_model.activate_stage(2)
+    restored_model.load_state_dict(source.state_dict(), strict=True)
+    restored_model.activate_stage(3)
+    assert set(restored_model.heads) == {'0','1','2','3'}
+    assert all(torch.equal(value, restored_model.state_dict()[key]) for key,value in source.state_dict().items())
+    del source, restored_model
     t2 = organ_task_strategy(True, 'T2', .5, .5, None, .05, True)
     assert t2 == dict(der_alpha=.05, der_beta=.5, grad_clip_norm=5., calibrate_head_bn=True)
     model = OrganModel()

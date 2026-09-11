@@ -33,6 +33,8 @@ def audit_run(output, epochs, stages, spatial):
 
 
 def main():
+    from setproctitle import setproctitle
+    setproctitle('run')
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--root', type=Path, required=True)
     p.add_argument('--data-root', type=Path, required=True)

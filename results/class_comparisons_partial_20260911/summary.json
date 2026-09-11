@@ -1,0 +1,119 @@
+{
+  "run_id": "class_comparisons_20260910_neutral_restart",
+  "campaign_status": "in progress",
+  "selection": "foreground validation Dice, 80 epochs per task",
+  "reporting": "background-inclusive per-patient Dice",
+  "RMA_note": "pending common independent T2/T3 reference runs",
+  "completed": {
+    "pce_sequential": {
+      "background_inclusive_matrix": [
+        [
+          0.6503155361537104
+        ],
+        [
+          0.23838480127749925,
+          0.7063972235664941
+        ],
+        [
+          0.2348264308834681,
+          0.3161182312968307,
+          0.5755123878199817
+        ]
+      ],
+      "A_Dice": 0.37548568333342686,
+      "BWTR": -0.5956980548197925,
+      "RMA": null,
+      "WCD": 0.19712165471830861,
+      "MPE": 0.0,
+      "DRR": 0.0,
+      "DRR_raw_image_replay": false,
+      "selected_epochs": [
+        21,
+        19,
+        19
+      ],
+      "stage_epoch_counts": [
+        80,
+        80,
+        80
+      ],
+      "verification": "passed"
+    },
+    "dense_sequential": {
+      "background_inclusive_matrix": [
+        [
+          0.8749306593889462
+        ],
+        [
+          0.24087480623340282,
+          0.8939793048810487
+        ],
+        [
+          0.24320490480604062,
+          0.3263062230122055,
+          0.8837258759374274
+        ]
+      ],
+      "A_Dice": 0.4844123345852245,
+      "BWTR": -0.6785126422858089,
+      "RMA": null,
+      "WCD": 0.33085508212264136,
+      "MPE": 0.0,
+      "DRR": 0.0,
+      "DRR_raw_image_replay": false,
+      "selected_epochs": [
+        20,
+        6,
+        28
+      ],
+      "stage_epoch_counts": [
+        80,
+        80,
+        80
+      ],
+      "verification": "passed"
+    },
+    "zs_sequential": {
+      "background_inclusive_matrix": [
+        [
+          0.7677708933093285
+        ],
+        [
+          0.24050417429367452,
+          0.8145219697672498
+        ],
+        [
+          0.24268460020867788,
+          0.3257453591322082,
+          0.8145005758244785
+        ]
+      ],
+      "A_Dice": 0.46097684505512154,
+      "BWTR": -0.641994002269099,
+      "RMA": null,
+      "WCD": 0.30631945148933876,
+      "MPE": 0.0,
+      "DRR": 0.0,
+      "DRR_raw_image_replay": false,
+      "selected_epochs": [
+        77,
+        40,
+        79
+      ],
+      "stage_epoch_counts": [
+        80,
+        80,
+        80
+      ],
+      "verification": "passed"
+    }
+  },
+  "protocol": {
+    "epochs_per_task": 80,
+    "seed": 42,
+    "batch_size": 4,
+    "lr": 0.03,
+    "train_slices_per_task": 1500,
+    "spatial": 0
+  }
+}

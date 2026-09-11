@@ -79,17 +79,20 @@ class H5Slices(Dataset):
         label_shift: int = 0,
         augment: bool = False,
         sparse_label_shift: int = 0,
+        return_index: bool = False,
+        dense_supervision: bool = False,
     ) -> None:
         self.path = str(path)
         self.split = split
         self.label_shift = int(label_shift)
         self.augment = augment
+        self.return_index = return_index
         self._handle = None
         with h5py.File(self.path, "r") as handle:
             self.length = int(handle[f"{split}_images"].shape[2])
             self.ends = None if split == "train" else np.asarray(handle[f"patient_info_{split}"], dtype=np.int64)
         self.sparse = None
-        if split == "train":
+        if split == "train" and not dense_supervision:
             if sparse_path is None:
                 raise ValueError("training requires a sparse annotation archive")
             archive = np.load(sparse_path, allow_pickle=False)
@@ -132,7 +135,8 @@ class H5Slices(Dataset):
                 angle = np.random.randint(-20, 20)
                 image = ndimage.rotate(image, angle, order=0, reshape=False)
                 label = ndimage.rotate(label, angle, order=0, reshape=False)
-        return torch.from_numpy(image[None].copy()), torch.from_numpy(label.copy()).long()
+        pair = (torch.from_numpy(image[None].copy()), torch.from_numpy(label.copy()).long())
+        return (*pair, index) if self.return_index else pair
 
     def close(self) -> None:
         if self._handle is not None:
@@ -507,15 +511,19 @@ def evaluate(
     per_patient = []
     for start, stop in zip(starts, stops):
         per_class = []
-        for label in classes:
+        for label in (0, *classes):
             predicted = prediction[start:stop] == label
             expected = target[start:stop] == label
             per_class.append(float((2 * np.logical_and(predicted, expected).sum() + 1e-5) /
                                    (predicted.sum() + expected.sum() + 1e-5)))
         per_patient.append(per_class)
-    values = np.asarray(per_patient, dtype=float)
+    inclusive_values = np.asarray(per_patient, dtype=float)
+    values = inclusive_values[:, 1:]
     result = {
         "benchmark_mean": float(values.mean()),
+        "background_inclusive_mean": float(inclusive_values.mean()),
+        "background_dice": float(inclusive_values[:, 0].mean()),
+        "per_class_including_background": inclusive_values.mean(axis=0).tolist(),
         "per_class": values.mean(axis=0).tolist(),
         "per_patient": values.tolist(),
         "prediction_fg_fraction": float((prediction > 0).mean()),
@@ -702,7 +710,7 @@ def _run_independent_domain_references(args, tasks: tuple[Task, ...], device: to
 
 METHODS = {
     "class": (
-        "pce-sequential", "zs-sequential", "pce-ewc", "pce-gpm", "pce-der",
+        "dense-sequential", "pce-sequential", "zs-sequential", "zs-ewc", "pce-ewc", "pce-gpm", "pce-der",
         "zs-mib", "zs-gpm", "zs-der", "zs-derpp", "zs-derpp-mib",
     ),
     "organ": (
@@ -922,6 +930,8 @@ def main(project_scenario: str) -> None:
     stage_rows = []
     fisher_rows = []
     gpm_rows = []
+    train_sizes = {}
+    parameter_counts = []
     train_log = args.output / "train.jsonl"
     random_scores = None
     if project_scenario == "domain":
@@ -947,6 +957,9 @@ def main(project_scenario: str) -> None:
                 parameter.requires_grad_(False)
             old_class_count = model.output_channels(stage - 1)
         model.activate_stage(stage)
+        parameter_counts.append(sum(p.numel() for p in model.parameters()))
+        if derpp is not None:
+            derpp.current_stage = stage
         model.train()
         train = H5Slices(
             args.data_root / task.folder / task.filename,
@@ -954,7 +967,11 @@ def main(project_scenario: str) -> None:
             _sparse_path(args.sparse_root, project_scenario, task, args.seed),
             augment=True,
             sparse_label_shift=0 if independent_task is None else independent_task.label_shift,
+            return_index=use_derpp,
+            dense_supervision=args.method == "dense-sequential",
+            label_shift=task.label_shift if args.method == "dense-sequential" else 0,
         )
+        train_sizes[stage] = len(train)
         val = H5Slices(
             args.data_root / task.folder / task.filename,
             "val",
@@ -991,7 +1008,8 @@ def main(project_scenario: str) -> None:
                 }
                 adversarial_batches = 0
                 ratios = None
-                for batch_index, (image, label) in enumerate(train_loader):
+                for batch_index, batch in enumerate(train_loader):
+                    image, label = batch[:2]
                     if args.max_train_batches is not None and batch_index >= args.max_train_batches:
                         break
                     image, label = image.to(device), label.to(device)
@@ -1080,6 +1098,7 @@ def main(project_scenario: str) -> None:
                                 label,
                                 replay_task_ids,
                                 classes,
+                                source_indices=batch[2],
                             )
                     iteration += 1
                     learning_rate = args.lr * max(0.0, 1.0 - iteration / max_iterations) ** 0.9
@@ -1275,6 +1294,8 @@ def main(project_scenario: str) -> None:
         "der_buffer": None if der is None else der.summary(),
         "derpp_state_bytes": None if derpp is None else derpp.nbytes(),
         "derpp_buffer": None if derpp is None else derpp.summary(),
+        "parameter_counts": parameter_counts,
+        "source_train_sizes": train_sizes,
     }
     if project_scenario == "domain":
         independent = None

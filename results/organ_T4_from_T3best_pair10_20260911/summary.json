@@ -1,0 +1,174 @@
+{
+  "run_id": "organ_T4_from_T3best_lr006_spatial_pair10_20260910",
+  "metric": "foreground per-patient macro Dice",
+  "selection": "current-task validation; never test",
+  "started_at": "2026-09-10T21:51:19.667754+08:00",
+  "completed_at": "2026-09-10 22:49:38 +0800",
+  "protocol": {
+    "reused_T1_T2_epochs": 60,
+    "reused_T3_budget_epochs": 10,
+    "T4_epochs": 10,
+    "T4_training_slices": 982,
+    "T1_T3_T4_data": "fixed half subsets",
+    "T2_data": "full",
+    "head_lr": 0.06,
+    "backbone_lr": 0.006,
+    "seed": 42,
+    "batch_size": 4,
+    "spatial_start_epoch": 1,
+    "pce": 1,
+    "global_weight": 1,
+    "feature_alpha": 0.05,
+    "replay_beta": 0.5,
+    "replay_buffer": 128,
+    "replay_batch": 4
+  },
+  "runs": {
+    "spatial0": {
+      "spatial": 0,
+      "matrix": [
+        [
+          0.6648380769470472,
+          null,
+          null,
+          null
+        ],
+        [
+          0.641884117515856,
+          0.653452518121827,
+          null,
+          null
+        ],
+        [
+          0.6494367190137663,
+          0.562376597076309,
+          0.8051645710536278,
+          null
+        ],
+        [
+          0.6342617788087944,
+          0.5728554590666434,
+          0.7921885215378445,
+          0.8195190509003548
+        ]
+      ],
+      "validation_matrix": [
+        [
+          0.7593914365346025,
+          null,
+          null,
+          null
+        ],
+        [
+          0.6475301369585638,
+          0.6991301629991079,
+          null,
+          null
+        ],
+        [
+          0.6983749501461468,
+          0.5840934773401225,
+          0.8002808334080767,
+          null
+        ],
+        [
+          0.66967146213892,
+          0.5364512664465305,
+          0.7820018751774496,
+          0.794745061332766
+        ]
+      ],
+      "selected_epochs": [
+        17,
+        14,
+        8,
+        6
+      ],
+      "T4_training_epochs": 10,
+      "T4_updates": 2460,
+      "A_Dice_foreground": 0.7047062025784092,
+      "T2_before_T4": 0.562376597076309,
+      "T2_after_T4": 0.5728554590666434,
+      "T2_retention_across_T4": 1.0186331757843623,
+      "BWTR_foreground": -0.06181565353840734,
+      "baseline": {
+        "val": 0.5840934773401225,
+        "test": 0.562376597076309
+      },
+      "verification": "passed"
+    },
+    "spatial001": {
+      "spatial": 0.01,
+      "matrix": [
+        [
+          0.6648380769470472,
+          null,
+          null,
+          null
+        ],
+        [
+          0.641884117515856,
+          0.653452518121827,
+          null,
+          null
+        ],
+        [
+          0.6241031035969975,
+          0.5566848655952898,
+          0.8082961491592807,
+          null
+        ],
+        [
+          0.5761300681054604,
+          0.5950404360155135,
+          0.7667800678755388,
+          0.8191209377523959
+        ]
+      ],
+      "validation_matrix": [
+        [
+          0.7593914365346025,
+          null,
+          null,
+          null
+        ],
+        [
+          0.6475301369585638,
+          0.6991301629991079,
+          null,
+          null
+        ],
+        [
+          0.6536958367977583,
+          0.559882746308974,
+          0.8086303442086026,
+          null
+        ],
+        [
+          0.5959667103274199,
+          0.557481139567435,
+          0.7421118338744281,
+          0.7809154014035982
+        ]
+      ],
+      "selected_epochs": [
+        17,
+        14,
+        9,
+        4
+      ],
+      "T4_training_epochs": 10,
+      "T4_updates": 2460,
+      "A_Dice_foreground": 0.6892678774372272,
+      "T2_before_T4": 0.5566848655952898,
+      "T2_after_T4": 0.5950404360155135,
+      "T2_retention_across_T4": 1.068899969786691,
+      "BWTR_foreground": -0.0913934650748292,
+      "baseline": {
+        "val": 0.559882746308974,
+        "test": 0.5566848655952898
+      },
+      "verification": "passed"
+    }
+  }
+}

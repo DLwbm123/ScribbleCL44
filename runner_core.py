@@ -301,11 +301,12 @@ class OrganModel(nn.Module):
 
     def activate_stage(self, stage: int) -> None:
         stage = int(stage)
-        key = str(stage)
         self.active_stage = stage
-        if key not in self.heads:
-            reference = next(self.backbone.parameters())
-            self.heads[key] = OutputHead(2).to(reference.device)
+        for index in range(stage + 1):
+            key = str(index)
+            if key not in self.heads:
+                reference = next(self.backbone.parameters())
+                self.heads[key] = OutputHead(2).to(reference.device)
         for index, head in self.heads.items():
             enabled = int(index) == stage
             for parameter in head.parameters():
@@ -956,6 +957,8 @@ def main(project_scenario: str) -> None:
                         help="reuse the completed T1 paired checkpoint and run T2 onward")
     parser.add_argument("--t3-from", type=Path,
                         help="reuse completed T2 paired state and train full T3/T4 budgets")
+    parser.add_argument("--t4-from", type=Path,
+                        help="reuse completed T3 validation-selected paired state and train only T4")
     parser.add_argument("--organ-t2-epochs", type=int,
                         help="bounded T2 execution budget; keep --epochs-per-task as the LR horizon")
     parser.add_argument("--organ-task", choices=["T1", "T2", "T3", "T4"],
@@ -1084,6 +1087,13 @@ def main(project_scenario: str) -> None:
     if args.max_task is not None and not 1 <= args.max_task <= len(tasks):
         parser.error("--max-task is one-based and outside the task sequence")
     last_stage = len(tasks) - 1 if args.max_task is None else args.max_task - 1
+    if sum(path is not None for path in (args.t2_from, args.t3_from, args.t4_from, args.t3_one_epoch_from)) > 1:
+        parser.error("choose exactly one completed-stage resume source")
+    if args.t4_from and (project_scenario != "organ" or args.method != "zs-derpp"
+                         or last_stage != 3 or args.organ_task or args.organ_t3_probe
+                         or not args.organ_retention_strategy or args.t3_first_epoch_evaluation
+                         or args.t3_each_epoch_evaluation):
+        parser.error("--t4-from requires formal Organ retention T4-only continuation")
     if args.t3_first_epoch_evaluation and (project_scenario != "organ" or last_stage < 2 or args.organ_task):
         parser.error("--t3-first-epoch-evaluation requires Organ T1/T2/T3")
     if args.t3_each_epoch_evaluation and (project_scenario != "organ" or last_stage != 2
@@ -1170,9 +1180,11 @@ def main(project_scenario: str) -> None:
             args.organ_t2_supervision_strategy, task.code, args.der_alpha, args.der_beta,
             args.grad_clip_norm, args.organ_t2_feature_alpha,
             args.organ_retention_strategy) for task in tasks[:last_stage + 1]},
-        "organ_t2_executed_epochs": args.organ_t2_epochs or args.epochs_per_task,
+        "organ_t2_executed_epochs": 0 if args.t4_from else args.organ_t2_epochs or args.epochs_per_task,
         "t2_source": None if args.t2_from is None else args.t2_from.name,
         "t3_source": None if args.t3_from is None else args.t3_from.name,
+        "t4_source": None if args.t4_from is None else args.t4_from.name,
+        "t4_transition_seed": None if args.t4_from is None else args.seed + 3,
         "t2_transition_seed": None if args.t2_from is None else args.seed + 1,
         "batch_size": args.batch_size,
         "workers": args.workers,
@@ -1184,7 +1196,7 @@ def main(project_scenario: str) -> None:
         "organ_independent_task": args.organ_task,
         "t3_one_epoch_source": None if args.t3_one_epoch_from is None else args.t3_one_epoch_from.name,
         "t3_transition_seed": None if args.t3_one_epoch_from is None else args.seed + 2,
-        "t3_executed_epochs": 1 if args.t3_one_epoch_from else args.epochs_per_task,
+        "t3_executed_epochs": 0 if args.t4_from else 1 if args.t3_one_epoch_from else args.epochs_per_task,
         "t3_first_epoch_evaluation": args.t3_first_epoch_evaluation,
         "t3_each_epoch_evaluation": args.t3_each_epoch_evaluation,
         "history_images": use_der or use_derpp,
@@ -1222,9 +1234,9 @@ def main(project_scenario: str) -> None:
     matrix = np.full((len(tasks), len(tasks)), np.nan)
     validation_matrix = np.full((len(tasks), len(tasks)), np.nan)
     stage_rows = []
-    first_stage = 1 if args.t2_from else 2 if (args.t3_one_epoch_from or args.t3_from) else 0
+    first_stage = 3 if args.t4_from else 1 if args.t2_from else 2 if (args.t3_one_epoch_from or args.t3_from) else 0
     if first_stage:
-        source = args.t2_from or args.t3_one_epoch_from or args.t3_from
+        source = args.t4_from or args.t2_from or args.t3_one_epoch_from or args.t3_from
         saved = torch.load(source / f"s{first_stage:02d}_state.pt", map_location="cpu")
         shared_t1 = first_stage == 1 and args.method == "zs-sequential" and saved["method"] == "zs-derpp"
         if saved["stage"] != first_stage - 1 or (saved["method"] != args.method and not shared_t1):
@@ -1245,6 +1257,12 @@ def main(project_scenario: str) -> None:
             if saved.get("task_strategy") != expected:
                 raise ValueError("T3 source does not contain the requested T2 strategy")
             derpp.alpha, derpp.beta = expected["der_alpha"], expected["der_beta"]
+        if first_stage == 3:
+            expected = organ_task_strategy(args.organ_t2_supervision_strategy, "T3", args.der_alpha,
+                args.der_beta, args.grad_clip_norm, args.organ_t2_feature_alpha, args.organ_retention_strategy)
+            if saved.get("task_strategy") != expected:
+                raise ValueError("T4 source does not contain the requested T3 retention strategy")
+            derpp.alpha, derpp.beta = expected["der_alpha"], expected["der_beta"]
         if derpp is not None:
             derpp.load_state_dict(saved["continual"])
         if args.organ_t3_probe:
@@ -1258,8 +1276,8 @@ def main(project_scenario: str) -> None:
             torch.save({"model": model.state_dict(), "continual": None, "stage": 0,
                         "method": args.method, "task_strategy": saved.get("task_strategy")},
                        args.output / "s01_state.pt")
-        if args.t3_from:
-            for prefix in ("s01", "s02"):
+        if args.t3_from or args.t4_from:
+            for prefix in (f"s{index+1:02d}" for index in range(first_stage)):
                 for suffix in (".pt", "_state.pt"):
                     (args.output / (prefix + suffix)).symlink_to((source / (prefix + suffix)).resolve(strict=True))
         del saved
@@ -1279,6 +1297,19 @@ def main(project_scenario: str) -> None:
         torch.manual_seed(args.seed + first_stage)
         np.random.seed(args.seed + first_stage)
         random.seed(args.seed + first_stage)
+    if args.t4_from:
+        baseline = {}
+        for split, field in (("val", "validation_evaluated"), ("test", "evaluated")):
+            if split == "test" and not args.test_evaluation:
+                continue
+            score = _evaluate_task(model, project_scenario, tasks[1], 1, args.data_root,
+                                  split, args.batch_size, device)["benchmark_mean"]
+            expected = stage_rows[2][field]["T2"]["benchmark_mean"]
+            if abs(score - expected) > 1e-6:
+                raise ValueError(f"restored T3 model T2 {split} score differs: {score} vs {expected}")
+            baseline[split] = score
+        (args.output / "t4_retention_baseline.json").write_text(json.dumps(baseline, indent=2) + "\n")
+        print(json.dumps({"t4_retention_baseline": baseline}), flush=True)
     probe = None
     if args.t3_each_epoch_evaluation:
         baseline = {}

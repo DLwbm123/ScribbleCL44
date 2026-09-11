@@ -522,6 +522,9 @@ class DarkExperienceReplayPlus:
         self.sparse_labels: list[torch.Tensor] = []
         self.task_ids: list[int] = []
         self.class_counts: list[int] = []
+        self.source_indices: list[int | None] = []
+        self.replayed_sources: dict[int, set[int]] = {}
+        self.current_stage = 0
 
     def __len__(self) -> int:
         return len(self.examples)
@@ -533,13 +536,16 @@ class DarkExperienceReplayPlus:
         sparse_labels: torch.Tensor,
         task_ids: torch.Tensor,
         class_counts: int,
+        source_indices: torch.Tensor | None = None,
     ) -> None:
         batch = examples.shape[0]
         if any(value.shape[0] != batch for value in (feature_targets, sparse_labels, task_ids)):
             raise ValueError("DER++ buffer fields have different batch sizes")
-        for example, target, label, task_id in zip(
+        if source_indices is not None and len(source_indices) != batch:
+            raise ValueError("DER++ source indices have different batch size")
+        for position, (example, target, label, task_id) in enumerate(zip(
             examples.detach(), feature_targets.detach(), sparse_labels.detach(), task_ids.detach()
-        ):
+        )):
             index = reservoir_index(self.num_seen_examples, self.buffer_size)
             self.num_seen_examples += 1
             if index < 0:
@@ -557,12 +563,14 @@ class DarkExperienceReplayPlus:
                 self.sparse_labels.append(values[2])
                 self.task_ids.append(values[3])
                 self.class_counts.append(values[4])
+                self.source_indices.append(None if source_indices is None else int(source_indices[position]))
             else:
                 self.examples[index] = values[0]
                 self.feature_targets[index] = values[1]
                 self.sparse_labels[index] = values[2]
                 self.task_ids[index] = values[3]
                 self.class_counts[index] = values[4]
+                self.source_indices[index] = None if source_indices is None else int(source_indices[position])
 
     def sample(self, device: torch.device) -> tuple[torch.Tensor, ...]:
         if not self.examples:
@@ -574,6 +582,10 @@ class DarkExperienceReplayPlus:
         labels = torch.stack([self.sparse_labels[index] for index in indices]).to(device)
         task_ids = torch.tensor([self.task_ids[index] for index in indices], device=device)
         class_counts = torch.tensor([self.class_counts[index] for index in indices], device=device)
+        for index in indices:
+            task, source = self.task_ids[index], self.source_indices[index]
+            if task < self.current_stage and source is not None:
+                self.replayed_sources.setdefault(task, set()).add(source)
         return examples, targets, labels, task_ids, class_counts
 
     def feature_penalty(self, model, device: torch.device) -> tuple[torch.Tensor, tuple[torch.Tensor, ...] | None]:
@@ -599,6 +611,9 @@ class DarkExperienceReplayPlus:
             "sparse_labels": None if not self.sparse_labels else torch.stack(self.sparse_labels),
             "task_ids": None if not self.task_ids else torch.tensor(self.task_ids, dtype=torch.int64),
             "class_counts": None if not self.class_counts else torch.tensor(self.class_counts, dtype=torch.int64),
+            "source_indices": self.source_indices,
+            "replayed_sources": {str(k): sorted(v) for k, v in self.replayed_sources.items()},
+            "current_stage": self.current_stage,
         }
 
     def summary(self) -> dict:
@@ -610,6 +625,7 @@ class DarkExperienceReplayPlus:
             "num_seen_examples": self.num_seen_examples,
             "stored_examples": len(self.examples),
             "state_bytes": self.nbytes(),
+            "replayed_unique_source_counts": {str(k): len(v) for k, v in self.replayed_sources.items()},
         }
 
     def nbytes(self) -> int:
