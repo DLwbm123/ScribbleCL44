@@ -1,0 +1,93 @@
+{
+  "checked_at": "2026-09-11 23:27:07 +0800",
+  "status": "running",
+  "gpus_allowed": [
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "jobs": [
+    {
+      "name": "organ_zs-der",
+      "status": "running",
+      "gpu": 3,
+      "finite_step": {
+        "status": "post_step_finite",
+        "stage_zero_based": 0,
+        "epoch_zero_based": 2,
+        "iteration_one_based": 214
+      },
+      "immediate_error": false
+    },
+    {
+      "name": "domain_zs-der",
+      "status": "running",
+      "gpu": 5,
+      "finite_step": {
+        "status": "post_step_finite",
+        "stage_zero_based": 0,
+        "epoch_zero_based": 2,
+        "iteration_one_based": 218
+      },
+      "immediate_error": false
+    },
+    {
+      "name": "organ_zs-er",
+      "status": "running",
+      "gpu": 6,
+      "finite_step": {
+        "status": "post_step_finite",
+        "stage_zero_based": 0,
+        "epoch_zero_based": 1,
+        "iteration_one_based": 146
+      },
+      "immediate_error": false
+    },
+    {
+      "name": "domain_zs-er",
+      "status": "running",
+      "gpu": 3,
+      "finite_step": {
+        "status": "post_step_finite",
+        "stage_zero_based": 0,
+        "epoch_zero_based": 1,
+        "iteration_one_based": 93
+      },
+      "immediate_error": false
+    }
+  ],
+  "checks": {
+    "results": [
+      {
+        "name": "organ_zs-er",
+        "status": "passed",
+        "peak_allocated_mib": 8213.759765625,
+        "peak_reserved_mib": 9220.0
+      },
+      {
+        "name": "domain_zs-er",
+        "status": "passed",
+        "peak_allocated_mib": 8215.05419921875,
+        "peak_reserved_mib": 9216.0
+      },
+      {
+        "name": "organ_zs-der",
+        "status": "passed",
+        "peak_allocated_mib": 8336.83740234375,
+        "peak_reserved_mib": 9326.0
+      },
+      {
+        "name": "domain_zs-der",
+        "status": "passed",
+        "peak_allocated_mib": 8335.37939453125,
+        "peak_reserved_mib": 9356.0
+      }
+    ],
+    "minimum_free_mib": 10856
+  },
+  "visible_process_command": "./main -u run.py",
+  "long_run_management": "detached; no automatic Codex monitoring",
+  "completion_claim": false
+}

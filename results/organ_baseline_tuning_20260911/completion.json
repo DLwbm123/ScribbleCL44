@@ -1,0 +1,1717 @@
+{
+  "complete": true,
+  "checks": "15 jobs; full epoch coverage; finite losses; paired states present; screening test disabled; validation selection",
+  "jobs": [
+    {
+      "name": "zs-ewc_c0",
+      "epochs_per_task": 10,
+      "final_fg": null,
+      "final_validation": 0.19275072518320802,
+      "matrix": [
+        [
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null
+        ]
+      ],
+      "validation_matrix": [
+        [
+          0.6104223306824327,
+          null,
+          null,
+          null
+        ],
+        [
+          0.17964509705220677,
+          0.0003243052225557473,
+          null,
+          null
+        ],
+        [
+          0.06474888072703233,
+          0.11145047105981451,
+          0.8073853244669019,
+          null
+        ],
+        [
+          1.6013750749451554e-11,
+          3.325481589990964e-10,
+          2.5580387808758232e-11,
+          0.7710029003586898
+        ]
+      ],
+      "train_counts": [
+        381,
+        166,
+        711,
+        982
+      ],
+      "model_parameters": [
+        25759262,
+        25759396,
+        25759530,
+        25759664
+      ],
+      "epochs_seconds": 2869.404856631998,
+      "method": "zs-ewc"
+    },
+    {
+      "name": "zs-ewc_c1",
+      "epochs_per_task": 10,
+      "final_fg": null,
+      "final_validation": 0.2755436190277947,
+      "matrix": [
+        [
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null
+        ]
+      ],
+      "validation_matrix": [
+        [
+          0.6104223306824327,
+          null,
+          null,
+          null
+        ],
+        [
+          0.12177683647361548,
+          1.7217488312725408e-10,
+          null,
+          null
+        ],
+        [
+          0.000491401044180812,
+          3.3229335531598356e-10,
+          0.7864115912654087,
+          null
+        ],
+        [
+          0.2359267283745797,
+          1.7115565600056412e-10,
+          0.08846752446765907,
+          0.7777802230977842
+        ]
+      ],
+      "train_counts": [
+        381,
+        166,
+        711,
+        982
+      ],
+      "model_parameters": [
+        25759262,
+        25759396,
+        25759530,
+        25759664
+      ],
+      "epochs_seconds": 2987.0215510406997,
+      "method": "zs-ewc"
+    },
+    {
+      "name": "zs-ewc_c2",
+      "epochs_per_task": 10,
+      "final_fg": null,
+      "final_validation": 0.18956097473735614,
+      "matrix": [
+        [
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null
+        ]
+      ],
+      "validation_matrix": [
+        [
+          0.537658803194501,
+          null,
+          null,
+          null
+        ],
+        [
+          0.07819767040563956,
+          1.5964909606339055e-10,
+          null,
+          null
+        ],
+        [
+          5.730603736549549e-10,
+          2.727926324602663e-10,
+          0.7802850105672694,
+          null
+        ],
+        [
+          4.981916251794575e-10,
+          3.332019979504167e-10,
+          2.5580387808758232e-11,
+          0.7582438980924505
+        ]
+      ],
+      "train_counts": [
+        381,
+        166,
+        711,
+        982
+      ],
+      "model_parameters": [
+        25759262,
+        25759396,
+        25759530,
+        25759664
+      ],
+      "epochs_seconds": 2983.5190023013856,
+      "method": "zs-ewc"
+    },
+    {
+      "name": "zs-ewc_c3",
+      "epochs_per_task": 10,
+      "final_fg": null,
+      "final_validation": 0.19190107304365311,
+      "matrix": [
+        [
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null
+        ]
+      ],
+      "validation_matrix": [
+        [
+          0.6104223306824327,
+          null,
+          null,
+          null
+        ],
+        [
+          0.4100125673807458,
+          3.332019979504167e-10,
+          null,
+          null
+        ],
+        [
+          5.73069407503036e-10,
+          3.332019979504167e-10,
+          0.7699591552092998,
+          null
+        ],
+        [
+          5.73069407503036e-10,
+          3.332019979504167e-10,
+          2.5580387808758232e-11,
+          0.7676042912427606
+        ]
+      ],
+      "train_counts": [
+        381,
+        166,
+        711,
+        982
+      ],
+      "model_parameters": [
+        25759262,
+        25759396,
+        25759530,
+        25759664
+      ],
+      "epochs_seconds": 4878.321718857624,
+      "method": "zs-ewc"
+    },
+    {
+      "name": "zs-ewc_formal",
+      "epochs_per_task": 40,
+      "final_fg": 0.24542825877789193,
+      "final_validation": 0.28288559350458475,
+      "matrix": [
+        [
+          0.5855931211383602,
+          null,
+          null,
+          null
+        ],
+        [
+          0.22851148915211422,
+          0.2473104144018315,
+          null,
+          null
+        ],
+        [
+          5.611724684736699e-10,
+          4.95218043798624e-10,
+          0.8309712169079441,
+          null
+        ],
+        [
+          0.0061760670581976086,
+          4.95218043798624e-10,
+          0.16212799352599397,
+          0.8134089740321581
+        ]
+      ],
+      "validation_matrix": [
+        [
+          0.6313512907173332,
+          null,
+          null,
+          null
+        ],
+        [
+          0.24888407772790483,
+          0.17126919806944751,
+          null,
+          null
+        ],
+        [
+          5.73069407503036e-10,
+          3.332019979504167e-10,
+          0.8332442792806475,
+          null
+        ],
+        [
+          0.06030005438843333,
+          3.332019979504167e-10,
+          0.2931362974540029,
+          0.7781060218427007
+        ]
+      ],
+      "train_counts": [
+        381,
+        166,
+        711,
+        982
+      ],
+      "model_parameters": [
+        25759262,
+        25759396,
+        25759530,
+        25759664
+      ],
+      "epochs_seconds": 20930.288722608704,
+      "method": "zs-ewc"
+    },
+    {
+      "name": "zs-gpm_c0",
+      "epochs_per_task": 10,
+      "final_fg": null,
+      "final_validation": 0.2539684769215335,
+      "matrix": [
+        [
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null
+        ]
+      ],
+      "validation_matrix": [
+        [
+          0.6104223306824327,
+          null,
+          null,
+          null
+        ],
+        [
+          0.16481108930916571,
+          0.10127203010311185,
+          null,
+          null
+        ],
+        [
+          0.0011365255742680125,
+          0.024029360303324875,
+          0.8066950623862696,
+          null
+        ],
+        [
+          5.73069407503036e-10,
+          0.05068180239506706,
+          0.2554379272817375,
+          0.7097541774362601
+        ]
+      ],
+      "train_counts": [
+        381,
+        166,
+        711,
+        982
+      ],
+      "model_parameters": [
+        25759262,
+        25759396,
+        25759530,
+        25759664
+      ],
+      "epochs_seconds": 2838.5691875580233,
+      "method": "zs-gpm"
+    },
+    {
+      "name": "zs-gpm_c1",
+      "epochs_per_task": 10,
+      "final_fg": null,
+      "final_validation": 0.1782061200737759,
+      "matrix": [
+        [
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null
+        ]
+      ],
+      "validation_matrix": [
+        [
+          0.6104223306824327,
+          null,
+          null,
+          null
+        ],
+        [
+          0.5832537896577988,
+          3.332019979504167e-10,
+          null,
+          null
+        ],
+        [
+          5.73069407503036e-10,
+          3.332019979504167e-10,
+          0.7962611527606637,
+          null
+        ],
+        [
+          5.73069407503036e-10,
+          3.332019979504167e-10,
+          2.540444859388073e-11,
+          0.7128244793634277
+        ]
+      ],
+      "train_counts": [
+        381,
+        166,
+        711,
+        982
+      ],
+      "model_parameters": [
+        25759262,
+        25759396,
+        25759530,
+        25759664
+      ],
+      "epochs_seconds": 2907.5878926739097,
+      "method": "zs-gpm"
+    },
+    {
+      "name": "zs-gpm_c2",
+      "epochs_per_task": 10,
+      "final_fg": null,
+      "final_validation": 0.2863039774024522,
+      "matrix": [
+        [
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null
+        ]
+      ],
+      "validation_matrix": [
+        [
+          0.537658803194501,
+          null,
+          null,
+          null
+        ],
+        [
+          0.5209762197075136,
+          3.332019979504167e-10,
+          null,
+          null
+        ],
+        [
+          0.11555035741362811,
+          3.332019979504167e-10,
+          0.49501755233591516,
+          null
+        ],
+        [
+          0.043981083236768276,
+          3.332019979504167e-10,
+          0.4217467956170807,
+          0.679488030422758
+        ]
+      ],
+      "train_counts": [
+        381,
+        166,
+        711,
+        982
+      ],
+      "model_parameters": [
+        25759262,
+        25759396,
+        25759530,
+        25759664
+      ],
+      "epochs_seconds": 3390.927364679752,
+      "method": "zs-gpm"
+    },
+    {
+      "name": "zs-gpm_c3",
+      "epochs_per_task": 10,
+      "final_fg": null,
+      "final_validation": 0.4148573907472818,
+      "matrix": [
+        [
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null
+        ]
+      ],
+      "validation_matrix": [
+        [
+          0.6104223306824327,
+          null,
+          null,
+          null
+        ],
+        [
+          0.6084139076424977,
+          3.332019979504167e-10,
+          null,
+          null
+        ],
+        [
+          0.6029864659153304,
+          3.332019979504167e-10,
+          0.36879696598000766,
+          null
+        ],
+        [
+          0.6135069459127311,
+          3.332019979504167e-10,
+          0.3090955547261726,
+          0.7368270620170214
+        ]
+      ],
+      "train_counts": [
+        381,
+        166,
+        711,
+        982
+      ],
+      "model_parameters": [
+        25759262,
+        25759396,
+        25759530,
+        25759664
+      ],
+      "epochs_seconds": 3398.3001576052047,
+      "method": "zs-gpm"
+    },
+    {
+      "name": "zs-gpm_formal",
+      "epochs_per_task": 40,
+      "final_fg": 0.3109954905581843,
+      "final_validation": 0.2786251610245068,
+      "matrix": [
+        [
+          0.5855931211383602,
+          null,
+          null,
+          null
+        ],
+        [
+          0.5864437765392233,
+          4.95218043798624e-10,
+          null,
+          null
+        ],
+        [
+          0.3973883562484818,
+          4.95218043798624e-10,
+          0.5960930845156595,
+          null
+        ],
+        [
+          0.38329977468909654,
+          4.95218043798624e-10,
+          0.06788241138874238,
+          0.7927997756596802
+        ]
+      ],
+      "validation_matrix": [
+        [
+          0.6313512907173332,
+          null,
+          null,
+          null
+        ],
+        [
+          0.6296095055605265,
+          3.332019979504167e-10,
+          null,
+          null
+        ],
+        [
+          0.423672828139,
+          3.332019979504167e-10,
+          0.6175705644514002,
+          null
+        ],
+        [
+          0.32215354608922575,
+          3.332019979504167e-10,
+          0.03380589491047095,
+          0.7585412027651285
+        ]
+      ],
+      "train_counts": [
+        381,
+        166,
+        711,
+        982
+      ],
+      "model_parameters": [
+        25759262,
+        25759396,
+        25759530,
+        25759664
+      ],
+      "epochs_seconds": 21736.95759840333,
+      "method": "zs-gpm"
+    },
+    {
+      "name": "zs-sequential_c0",
+      "epochs_per_task": 10,
+      "final_fg": null,
+      "final_validation": 0.20376256303802853,
+      "matrix": [
+        [
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null
+        ]
+      ],
+      "validation_matrix": [
+        [
+          0.6104223306824327,
+          null,
+          null,
+          null
+        ],
+        [
+          0.1322496340613729,
+          1.2390349284657847e-10,
+          null,
+          null
+        ],
+        [
+          0.08656180346778616,
+          0.07318859754590995,
+          0.8075288890360713,
+          null
+        ],
+        [
+          0.0634554417725473,
+          1.3922459252404094e-10,
+          2.5580387808758232e-11,
+          0.7515948102147618
+        ]
+      ],
+      "train_counts": [
+        381,
+        166,
+        711,
+        982
+      ],
+      "model_parameters": [
+        25759262,
+        25759396,
+        25759530,
+        25759664
+      ],
+      "epochs_seconds": 2920.410923999967,
+      "method": "zs-sequential"
+    },
+    {
+      "name": "zs-sequential_c1",
+      "epochs_per_task": 10,
+      "final_fg": null,
+      "final_validation": 0.2727882897833531,
+      "matrix": [
+        [
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null
+        ]
+      ],
+      "validation_matrix": [
+        [
+          0.6104223306824327,
+          null,
+          null,
+          null
+        ],
+        [
+          0.11188039637208314,
+          1.7218569452747975e-10,
+          null,
+          null
+        ],
+        [
+          5.635761719353515e-10,
+          2.8776028560264494e-10,
+          0.783129056190497,
+          null
+        ],
+        [
+          0.37243217232225423,
+          3.3309037784411407e-10,
+          8.830804393358283e-05,
+          0.7186326784341344
+        ]
+      ],
+      "train_counts": [
+        381,
+        166,
+        711,
+        982
+      ],
+      "model_parameters": [
+        25759262,
+        25759396,
+        25759530,
+        25759664
+      ],
+      "epochs_seconds": 2869.8800591169856,
+      "method": "zs-sequential"
+    },
+    {
+      "name": "zs-sequential_c2",
+      "epochs_per_task": 10,
+      "final_fg": null,
+      "final_validation": 0.1879228886017512,
+      "matrix": [
+        [
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null
+        ]
+      ],
+      "validation_matrix": [
+        [
+          0.537658803194501,
+          null,
+          null,
+          null
+        ],
+        [
+          0.08240022058058534,
+          1.4720354926470262e-10,
+          null,
+          null
+        ],
+        [
+          5.73069407503036e-10,
+          3.125019526784864e-10,
+          0.7827271269325645,
+          null
+        ],
+        [
+          5.59785535556063e-10,
+          3.332019979504167e-10,
+          2.5580387808758232e-11,
+          0.7516915534884369
+        ]
+      ],
+      "train_counts": [
+        381,
+        166,
+        711,
+        982
+      ],
+      "model_parameters": [
+        25759262,
+        25759396,
+        25759530,
+        25759664
+      ],
+      "epochs_seconds": 2824.2814138571266,
+      "method": "zs-sequential"
+    },
+    {
+      "name": "zs-sequential_c3",
+      "epochs_per_task": 10,
+      "final_fg": null,
+      "final_validation": 0.19000635359335685,
+      "matrix": [
+        [
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null
+        ]
+      ],
+      "validation_matrix": [
+        [
+          0.6104223306824327,
+          null,
+          null,
+          null
+        ],
+        [
+          0.4101976567968964,
+          3.332019979504167e-10,
+          null,
+          null
+        ],
+        [
+          5.73069407503036e-10,
+          3.332019979504167e-10,
+          0.7741729413447962,
+          null
+        ],
+        [
+          5.73069407503036e-10,
+          3.332019979504167e-10,
+          2.5580387808758232e-11,
+          0.7600254134415756
+        ]
+      ],
+      "train_counts": [
+        381,
+        166,
+        711,
+        982
+      ],
+      "model_parameters": [
+        25759262,
+        25759396,
+        25759530,
+        25759664
+      ],
+      "epochs_seconds": 3396.51375372475,
+      "method": "zs-sequential"
+    },
+    {
+      "name": "zs-sequential_formal",
+      "epochs_per_task": 40,
+      "final_fg": 0.2077327593639162,
+      "final_validation": 0.24119968376689488,
+      "matrix": [
+        [
+          0.5855931211383602,
+          null,
+          null,
+          null
+        ],
+        [
+          0.2125450147597427,
+          0.23767212413994593,
+          null,
+          null
+        ],
+        [
+          0.030486944171332474,
+          4.95218043798624e-10,
+          0.8320413103760637,
+          null
+        ],
+        [
+          0.025279659937132416,
+          0.009815294905814417,
+          4.588572746214912e-11,
+          0.7958360825668322
+        ]
+      ],
+      "validation_matrix": [
+        [
+          0.6313512907173332,
+          null,
+          null,
+          null
+        ],
+        [
+          0.23135024197697115,
+          0.17217030330452568,
+          null,
+          null
+        ],
+        [
+          0.03981118940399992,
+          3.332019979504167e-10,
+          0.8385401947363268,
+          null
+        ],
+        [
+          0.1633089024327038,
+          0.025159426098337975,
+          2.5580387808758232e-11,
+          0.7763304065109573
+        ]
+      ],
+      "train_counts": [
+        381,
+        166,
+        711,
+        982
+      ],
+      "model_parameters": [
+        25759262,
+        25759396,
+        25759530,
+        25759664
+      ],
+      "epochs_seconds": 20907.692485780222,
+      "method": "zs-sequential"
+    }
+  ],
+  "selections": {
+    "selected_on": "validation only",
+    "recipes": {
+      "zs-sequential": {
+        "name": "c1",
+        "scales": [
+          0.1,
+          0.1,
+          0.1
+        ],
+        "bn_from": 2,
+        "global_weight": 1.0,
+        "ewc_lambda": 100.0,
+        "gamma": 1.0,
+        "threshold": 0.99,
+        "step": 0.001
+      },
+      "zs-gpm": {
+        "name": "c3",
+        "scales": [
+          0.01,
+          0.01,
+          0.01
+        ],
+        "bn_from": 2,
+        "global_weight": 1.0,
+        "ewc_lambda": 1000.0,
+        "gamma": 1.0,
+        "threshold": 0.999,
+        "step": 0.0
+      },
+      "zs-ewc": {
+        "name": "c1",
+        "scales": [
+          0.1,
+          0.1,
+          0.1
+        ],
+        "bn_from": 2,
+        "global_weight": 1.0,
+        "ewc_lambda": 100.0,
+        "gamma": 1.0,
+        "threshold": 0.99,
+        "step": 0.001
+      }
+    },
+    "candidates": {
+      "zs-sequential": [
+        {
+          "status": "complete",
+          "gpu": 4,
+          "method": "zs-sequential",
+          "recipe": {
+            "name": "c0",
+            "scales": [
+              1.0,
+              0.1,
+              0.1
+            ],
+            "bn_from": 3,
+            "global_weight": 1.0,
+            "ewc_lambda": 1.0,
+            "gamma": 0.1,
+            "threshold": 0.97,
+            "step": 0.001
+          },
+          "validation_mean": 0.20376256303802853,
+          "validation_matrix": [
+            [
+              0.6104223306824327,
+              null,
+              null,
+              null
+            ],
+            [
+              0.1322496340613729,
+              1.2390349284657847e-10,
+              null,
+              null
+            ],
+            [
+              0.08656180346778616,
+              0.07318859754590995,
+              0.8075288890360713,
+              null
+            ],
+            [
+              0.0634554417725473,
+              1.3922459252404094e-10,
+              2.5580387808758232e-11,
+              0.7515948102147618
+            ]
+          ],
+          "test_mean": null,
+          "test_matrix": null
+        },
+        {
+          "status": "complete",
+          "gpu": 7,
+          "method": "zs-sequential",
+          "recipe": {
+            "name": "c1",
+            "scales": [
+              0.1,
+              0.1,
+              0.1
+            ],
+            "bn_from": 2,
+            "global_weight": 1.0,
+            "ewc_lambda": 100.0,
+            "gamma": 1.0,
+            "threshold": 0.99,
+            "step": 0.001
+          },
+          "validation_mean": 0.2727882897833531,
+          "validation_matrix": [
+            [
+              0.6104223306824327,
+              null,
+              null,
+              null
+            ],
+            [
+              0.11188039637208314,
+              1.7218569452747975e-10,
+              null,
+              null
+            ],
+            [
+              5.635761719353515e-10,
+              2.8776028560264494e-10,
+              0.783129056190497,
+              null
+            ],
+            [
+              0.37243217232225423,
+              3.3309037784411407e-10,
+              8.830804393358283e-05,
+              0.7186326784341344
+            ]
+          ],
+          "test_mean": null,
+          "test_matrix": null
+        },
+        {
+          "status": "complete",
+          "gpu": 5,
+          "method": "zs-sequential",
+          "recipe": {
+            "name": "c2",
+            "scales": [
+              0.03,
+              0.03,
+              0.03
+            ],
+            "bn_from": 2,
+            "global_weight": 0.1,
+            "ewc_lambda": 1000.0,
+            "gamma": 1.0,
+            "threshold": 0.999,
+            "step": 0.0
+          },
+          "validation_mean": 0.1879228886017512,
+          "validation_matrix": [
+            [
+              0.537658803194501,
+              null,
+              null,
+              null
+            ],
+            [
+              0.08240022058058534,
+              1.4720354926470262e-10,
+              null,
+              null
+            ],
+            [
+              5.73069407503036e-10,
+              3.125019526784864e-10,
+              0.7827271269325645,
+              null
+            ],
+            [
+              5.59785535556063e-10,
+              3.332019979504167e-10,
+              2.5580387808758232e-11,
+              0.7516915534884369
+            ]
+          ],
+          "test_mean": null,
+          "test_matrix": null
+        },
+        {
+          "status": "complete",
+          "gpu": 6,
+          "method": "zs-sequential",
+          "recipe": {
+            "name": "c3",
+            "scales": [
+              0.01,
+              0.01,
+              0.01
+            ],
+            "bn_from": 2,
+            "global_weight": 1.0,
+            "ewc_lambda": 1000.0,
+            "gamma": 1.0,
+            "threshold": 0.999,
+            "step": 0.0
+          },
+          "validation_mean": 0.19000635359335685,
+          "validation_matrix": [
+            [
+              0.6104223306824327,
+              null,
+              null,
+              null
+            ],
+            [
+              0.4101976567968964,
+              3.332019979504167e-10,
+              null,
+              null
+            ],
+            [
+              5.73069407503036e-10,
+              3.332019979504167e-10,
+              0.7741729413447962,
+              null
+            ],
+            [
+              5.73069407503036e-10,
+              3.332019979504167e-10,
+              2.5580387808758232e-11,
+              0.7600254134415756
+            ]
+          ],
+          "test_mean": null,
+          "test_matrix": null
+        }
+      ],
+      "zs-gpm": [
+        {
+          "status": "complete",
+          "gpu": 6,
+          "method": "zs-gpm",
+          "recipe": {
+            "name": "c0",
+            "scales": [
+              1.0,
+              0.1,
+              0.1
+            ],
+            "bn_from": 3,
+            "global_weight": 1.0,
+            "ewc_lambda": 1.0,
+            "gamma": 0.1,
+            "threshold": 0.97,
+            "step": 0.001
+          },
+          "validation_mean": 0.2539684769215335,
+          "validation_matrix": [
+            [
+              0.6104223306824327,
+              null,
+              null,
+              null
+            ],
+            [
+              0.16481108930916571,
+              0.10127203010311185,
+              null,
+              null
+            ],
+            [
+              0.0011365255742680125,
+              0.024029360303324875,
+              0.8066950623862696,
+              null
+            ],
+            [
+              5.73069407503036e-10,
+              0.05068180239506706,
+              0.2554379272817375,
+              0.7097541774362601
+            ]
+          ],
+          "test_mean": null,
+          "test_matrix": null
+        },
+        {
+          "status": "complete",
+          "gpu": 6,
+          "method": "zs-gpm",
+          "recipe": {
+            "name": "c1",
+            "scales": [
+              0.1,
+              0.1,
+              0.1
+            ],
+            "bn_from": 2,
+            "global_weight": 1.0,
+            "ewc_lambda": 100.0,
+            "gamma": 1.0,
+            "threshold": 0.99,
+            "step": 0.001
+          },
+          "validation_mean": 0.1782061200737759,
+          "validation_matrix": [
+            [
+              0.6104223306824327,
+              null,
+              null,
+              null
+            ],
+            [
+              0.5832537896577988,
+              3.332019979504167e-10,
+              null,
+              null
+            ],
+            [
+              5.73069407503036e-10,
+              3.332019979504167e-10,
+              0.7962611527606637,
+              null
+            ],
+            [
+              5.73069407503036e-10,
+              3.332019979504167e-10,
+              2.540444859388073e-11,
+              0.7128244793634277
+            ]
+          ],
+          "test_mean": null,
+          "test_matrix": null
+        },
+        {
+          "status": "complete",
+          "gpu": 5,
+          "method": "zs-gpm",
+          "recipe": {
+            "name": "c2",
+            "scales": [
+              0.03,
+              0.03,
+              0.03
+            ],
+            "bn_from": 2,
+            "global_weight": 0.1,
+            "ewc_lambda": 1000.0,
+            "gamma": 1.0,
+            "threshold": 0.999,
+            "step": 0.0
+          },
+          "validation_mean": 0.2863039774024522,
+          "validation_matrix": [
+            [
+              0.537658803194501,
+              null,
+              null,
+              null
+            ],
+            [
+              0.5209762197075136,
+              3.332019979504167e-10,
+              null,
+              null
+            ],
+            [
+              0.11555035741362811,
+              3.332019979504167e-10,
+              0.49501755233591516,
+              null
+            ],
+            [
+              0.043981083236768276,
+              3.332019979504167e-10,
+              0.4217467956170807,
+              0.679488030422758
+            ]
+          ],
+          "test_mean": null,
+          "test_matrix": null
+        },
+        {
+          "status": "complete",
+          "gpu": 4,
+          "method": "zs-gpm",
+          "recipe": {
+            "name": "c3",
+            "scales": [
+              0.01,
+              0.01,
+              0.01
+            ],
+            "bn_from": 2,
+            "global_weight": 1.0,
+            "ewc_lambda": 1000.0,
+            "gamma": 1.0,
+            "threshold": 0.999,
+            "step": 0.0
+          },
+          "validation_mean": 0.4148573907472818,
+          "validation_matrix": [
+            [
+              0.6104223306824327,
+              null,
+              null,
+              null
+            ],
+            [
+              0.6084139076424977,
+              3.332019979504167e-10,
+              null,
+              null
+            ],
+            [
+              0.6029864659153304,
+              3.332019979504167e-10,
+              0.36879696598000766,
+              null
+            ],
+            [
+              0.6135069459127311,
+              3.332019979504167e-10,
+              0.3090955547261726,
+              0.7368270620170214
+            ]
+          ],
+          "test_mean": null,
+          "test_matrix": null
+        }
+      ],
+      "zs-ewc": [
+        {
+          "status": "complete",
+          "gpu": 5,
+          "method": "zs-ewc",
+          "recipe": {
+            "name": "c0",
+            "scales": [
+              1.0,
+              0.1,
+              0.1
+            ],
+            "bn_from": 3,
+            "global_weight": 1.0,
+            "ewc_lambda": 1.0,
+            "gamma": 0.1,
+            "threshold": 0.97,
+            "step": 0.001
+          },
+          "validation_mean": 0.19275072518320802,
+          "validation_matrix": [
+            [
+              0.6104223306824327,
+              null,
+              null,
+              null
+            ],
+            [
+              0.17964509705220677,
+              0.0003243052225557473,
+              null,
+              null
+            ],
+            [
+              0.06474888072703233,
+              0.11145047105981451,
+              0.8073853244669019,
+              null
+            ],
+            [
+              1.6013750749451554e-11,
+              3.325481589990964e-10,
+              2.5580387808758232e-11,
+              0.7710029003586898
+            ]
+          ],
+          "test_mean": null,
+          "test_matrix": null
+        },
+        {
+          "status": "complete",
+          "gpu": 7,
+          "method": "zs-ewc",
+          "recipe": {
+            "name": "c1",
+            "scales": [
+              0.1,
+              0.1,
+              0.1
+            ],
+            "bn_from": 2,
+            "global_weight": 1.0,
+            "ewc_lambda": 100.0,
+            "gamma": 1.0,
+            "threshold": 0.99,
+            "step": 0.001
+          },
+          "validation_mean": 0.2755436190277947,
+          "validation_matrix": [
+            [
+              0.6104223306824327,
+              null,
+              null,
+              null
+            ],
+            [
+              0.12177683647361548,
+              1.7217488312725408e-10,
+              null,
+              null
+            ],
+            [
+              0.000491401044180812,
+              3.3229335531598356e-10,
+              0.7864115912654087,
+              null
+            ],
+            [
+              0.2359267283745797,
+              1.7115565600056412e-10,
+              0.08846752446765907,
+              0.7777802230977842
+            ]
+          ],
+          "test_mean": null,
+          "test_matrix": null
+        },
+        {
+          "status": "complete",
+          "gpu": 4,
+          "method": "zs-ewc",
+          "recipe": {
+            "name": "c2",
+            "scales": [
+              0.03,
+              0.03,
+              0.03
+            ],
+            "bn_from": 2,
+            "global_weight": 0.1,
+            "ewc_lambda": 1000.0,
+            "gamma": 1.0,
+            "threshold": 0.999,
+            "step": 0.0
+          },
+          "validation_mean": 0.18956097473735614,
+          "validation_matrix": [
+            [
+              0.537658803194501,
+              null,
+              null,
+              null
+            ],
+            [
+              0.07819767040563956,
+              1.5964909606339055e-10,
+              null,
+              null
+            ],
+            [
+              5.730603736549549e-10,
+              2.727926324602663e-10,
+              0.7802850105672694,
+              null
+            ],
+            [
+              4.981916251794575e-10,
+              3.332019979504167e-10,
+              2.5580387808758232e-11,
+              0.7582438980924505
+            ]
+          ],
+          "test_mean": null,
+          "test_matrix": null
+        },
+        {
+          "status": "complete",
+          "gpu": 7,
+          "method": "zs-ewc",
+          "recipe": {
+            "name": "c3",
+            "scales": [
+              0.01,
+              0.01,
+              0.01
+            ],
+            "bn_from": 2,
+            "global_weight": 1.0,
+            "ewc_lambda": 1000.0,
+            "gamma": 1.0,
+            "threshold": 0.999,
+            "step": 0.0
+          },
+          "validation_mean": 0.19190107304365311,
+          "validation_matrix": [
+            [
+              0.6104223306824327,
+              null,
+              null,
+              null
+            ],
+            [
+              0.4100125673807458,
+              3.332019979504167e-10,
+              null,
+              null
+            ],
+            [
+              5.73069407503036e-10,
+              3.332019979504167e-10,
+              0.7699591552092998,
+              null
+            ],
+            [
+              5.73069407503036e-10,
+              3.332019979504167e-10,
+              2.5580387808758232e-11,
+              0.7676042912427606
+            ]
+          ],
+          "test_mean": null,
+          "test_matrix": null
+        }
+      ]
+    }
+  }
+}
