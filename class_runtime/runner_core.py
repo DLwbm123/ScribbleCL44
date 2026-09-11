@@ -737,6 +737,30 @@ def _sparse_path(root: Path, scenario: str, task: Task, seed: int) -> Path:
     return base / f"{task.code}_v2_s2_seed{seed}.npz"
 
 
+def restore_class_ewc_t1(model, ewc, source: Path, device):
+    """Restore the selected T1 model and its Fisher; retain the new EWC coefficient."""
+    state = torch.load(source / "s01_state.pt", map_location=device, weights_only=True)
+    if state["stage"] != 0 or state["method"] != "zs-ewc":
+        raise ValueError("Class EWC T2 diagnostic requires a completed EWC T1 state")
+    model.load_state_dict(state["model"], strict=True)
+    model.activate_stage(0)
+    saved = state["continual"]
+    scope = dict(model.importance_named_parameters())
+    if set(saved["anchor"]) != set(scope) or set(saved["fisher"]) != set(scope):
+        raise ValueError("restored EWC importance scope does not match T1")
+    for name, parameter in scope.items():
+        if not torch.equal(saved["anchor"][name], parameter):
+            raise ValueError("EWC anchor does not match the selected T1 model")
+        fisher = saved["fisher"][name]
+        if fisher.shape != parameter.shape or not torch.isfinite(fisher).all() or (fisher < 0).any():
+            raise ValueError("invalid restored Fisher")
+    if ewc.gamma != saved["gamma"]:
+        raise ValueError("diagnostic must retain the source EWC gamma")
+    ewc.fisher, ewc.anchor = saved["fisher"], saved["anchor"]
+    summary = json.loads((source / "summary.json").read_text())
+    return summary["stage_rows"][0], summary["source_train_sizes"]["0"], summary["parameter_counts"][0]
+
+
 def main(project_scenario: str) -> None:
     if project_scenario not in TASKS:
         raise ValueError(f"unknown scenario: {project_scenario}")
@@ -778,7 +802,18 @@ def main(project_scenario: str) -> None:
     parser.add_argument("--class-independent-task", choices=["T1", "T2", "T3"])
     parser.add_argument("--validation-only", action="store_true")
     parser.add_argument("--selection-min-epoch", type=int, default=1)
+    parser.add_argument("--class-t2-from", type=Path)
+    parser.add_argument("--diagnostic-epochs", type=int)
     args = parser.parse_args()
+    if args.class_t2_from is not None:
+        if (project_scenario != "class" or args.method != "zs-ewc" or args.max_task != 2
+                or args.class_independent_task or not args.validation_only):
+            parser.error("T2 diagnostic requires Class EWC, max-task=2, validation-only")
+        if args.diagnostic_epochs is None or not 1 <= args.diagnostic_epochs <= args.epochs_per_task:
+            parser.error("diagnostic-epochs must be within the original learning-rate budget")
+    elif args.diagnostic_epochs is not None:
+        parser.error("diagnostic-epochs requires class-t2-from")
+    executed_epochs = args.diagnostic_epochs or args.epochs_per_task
     use_zs = args.method.startswith("zs-")
     use_ewc = args.method.endswith("-ewc")
     use_gpm = args.method.endswith("-gpm")
@@ -924,6 +959,9 @@ def main(project_scenario: str) -> None:
         "mib_kd_weight": args.mib_kd_weight if use_mib else None,
         "max_train_batches": args.max_train_batches,
         "independent_scores": None if args.independent_scores is None else args.independent_scores.name,
+        "diagnostic_only": args.class_t2_from is not None,
+        "executed_epochs_per_new_task": executed_epochs,
+        "reused_prefix_stages": 1 if args.class_t2_from else 0,
     }
     (args.output / "manifest.json").write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n")
     matrix = np.full((len(tasks), len(tasks)), np.nan)
@@ -948,7 +986,18 @@ def main(project_scenario: str) -> None:
             "source": "same-seed untrained model before task A",
         }, indent=2, sort_keys=True) + "\n")
 
-    for stage, task in enumerate(tasks[:last_stage + 1]):
+    first_stage = 0
+    if args.class_t2_from is not None:
+        prefix, train_sizes[0], count = restore_class_ewc_t1(model, ewc, args.class_t2_from, device)
+        stage_rows.append(prefix)
+        parameter_counts.append(count)
+        matrix[0, 0] = prefix["evaluated"]["T1"]["benchmark_mean"]
+        first_stage = 1
+        for name in ("s01.pt", "s01_best.pt", "s01_state.pt"):
+            (args.output / name).symlink_to((args.class_t2_from / name).resolve(strict=True))
+
+    for stage in range(first_stage, last_stage + 1):
+        task = tasks[stage]
         teacher = None
         old_class_count = None
         if use_mib and stage > 0:
@@ -994,12 +1043,13 @@ def main(project_scenario: str) -> None:
         max_iterations = batches_per_epoch * args.epochs_per_task
         iteration = 0
         best = {"benchmark_mean": -1.0, "epoch": None, "iteration": None}
+        probe_best = {"mean_foreground_validation": -1.0}
         best_path = args.output / f"s{stage + 1:02d}_best.pt"
         task_id = stage if project_scenario == "organ" else None
         classes = model.output_channels(stage)
 
         with train_log.open("a") as stream:
-            for epoch in range(args.epochs_per_task):
+            for epoch in range(executed_epochs):
                 model.train()
                 totals = {
                     "loss": [], "pce": [], "global": [], "gd": [], "spatial": [],
@@ -1101,6 +1151,13 @@ def main(project_scenario: str) -> None:
                                 source_indices=batch[2],
                             )
                     iteration += 1
+                    if args.class_t2_from is not None and iteration == 1:
+                        (args.output / "startup.json").write_text(json.dumps({
+                            "stage": stage, "iteration": iteration, "loss": float(loss.detach()),
+                            "ewc_lambda": ewc.lambda_, "restored_fisher_tensors": len(ewc.fisher),
+                            "peak_allocated_mib": torch.cuda.max_memory_allocated(device) / 2**20,
+                            "peak_reserved_mib": torch.cuda.max_memory_reserved(device) / 2**20,
+                        }, indent=2) + "\n")
                     learning_rate = args.lr * max(0.0, 1.0 - iteration / max_iterations) ** 0.9
                     for group in optimizer.param_groups:
                         group["lr"] = learning_rate
@@ -1118,6 +1175,22 @@ def main(project_scenario: str) -> None:
                     adversarial_batches += int(used_adversarial)
                     if iteration % args.validate_every == 0:
                         validation = evaluate(model, val_loader, val.ends, device, task_id, task.classes)
+                        if args.class_t2_from is not None:
+                            old = _evaluate_task(model, project_scenario, tasks[0], 0,
+                                                 args.data_root, "val", args.batch_size, device)
+                            probe = {
+                                "epoch": epoch + 1,
+                                "T1_foreground": old["benchmark_mean"],
+                                "T2_foreground": validation["benchmark_mean"],
+                                "T1_background_inclusive": old["background_inclusive_mean"],
+                                "T2_background_inclusive": validation["background_inclusive_mean"],
+                                "mean_foreground_validation": (old["benchmark_mean"] + validation["benchmark_mean"]) / 2,
+                            }
+                            stream.write(json.dumps({"probe_validation": probe}) + "\n")
+                            if probe["mean_foreground_validation"] > probe_best["mean_foreground_validation"]:
+                                probe_best = probe
+                                torch.save(model.state_dict(), args.output / "probe_best.pt")
+                                (args.output / "probe_best.json").write_text(json.dumps(probe, indent=2) + "\n")
                         stream.write(json.dumps({
                             "stage": stage,
                             "epoch": epoch,
@@ -1158,7 +1231,7 @@ def main(project_scenario: str) -> None:
                 stream.flush()
         final_validation = evaluate(model, val_loader, val.ends, device, task_id, task.classes)
         if final_validation["benchmark_mean"] > best["benchmark_mean"]:
-            best = {**final_validation, "epoch": args.epochs_per_task - 1, "iteration": iteration}
+            best = {**final_validation, "epoch": executed_epochs - 1, "iteration": iteration}
             torch.save(model.state_dict(), best_path)
         model.load_state_dict(torch.load(best_path, map_location=device))
         torch.save(model.state_dict(), args.output / f"s{stage + 1:02d}.pt")
@@ -1296,6 +1369,9 @@ def main(project_scenario: str) -> None:
         "derpp_buffer": None if derpp is None else derpp.summary(),
         "parameter_counts": parameter_counts,
         "source_train_sizes": train_sizes,
+        "diagnostic_only": args.class_t2_from is not None,
+        "executed_epochs_per_new_task": executed_epochs,
+        "reused_prefix_stages": first_stage,
     }
     if project_scenario == "domain":
         independent = None

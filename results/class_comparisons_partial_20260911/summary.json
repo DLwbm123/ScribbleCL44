@@ -3,7 +3,7 @@
   "campaign_status": "in progress",
   "selection": "foreground validation Dice, 80 epochs per task",
   "reporting": "background-inclusive per-patient Dice",
-  "RMA_note": "pending common independent T2/T3 reference runs",
+  "RMA_note": "pending independent T3; common T2 background-inclusive reference is available",
   "completed": {
     "pce_sequential": {
       "background_inclusive_matrix": [
@@ -161,7 +161,7 @@
       "RMA": null,
       "WCD": 0.2660620020926504,
       "MPE": 0.0,
-      "DRR": 0.0,
+      "DRR": 0.010666666666666666,
       "DRR_raw_image_replay": false,
       "selected_epochs": [
         77,
@@ -173,7 +173,8 @@
         80,
         80
       ],
-      "verification": "passed"
+      "verification": "passed",
+      "DRR_note": "16 source slices reused per old task for GPM representation construction; no raw-image replay buffer"
     }
   },
   "protocol": {
@@ -184,27 +185,23 @@
     "train_slices_per_task": 1500,
     "spatial": 0
   },
-  "snapshot_at": "2026-09-11T21:22:40+08:00",
+  "snapshot_at": "2026-09-11T22:24:00+08:00",
   "remaining": {
     "main_s0": {
-      "status": "running",
-      "task": "T1",
-      "completed_epochs": 27,
-      "task_budget": 80,
-      "total_tasks": 3
-    },
-    "ind_T2_s0": {
-      "status": "running",
-      "task": "T2",
-      "completed_epochs": 48,
-      "task_budget": 80,
-      "total_tasks": 1
+      "status": "running"
     },
     "ind_T3_s0": {
-      "status": "queued",
-      "task": "T3",
-      "task_budget": 80,
-      "total_tasks": 1
+      "status": "running"
     }
-  }
+  },
+  "independent_references": {
+    "T2": {
+      "epochs": 80,
+      "selected_epoch": 38,
+      "test_foreground": 0.6729619993236522,
+      "test_background_inclusive": 0.7786178640330347,
+      "validation_foreground": 0.5867097577674392
+    }
+  },
+  "completed_job_count": 6
 }
