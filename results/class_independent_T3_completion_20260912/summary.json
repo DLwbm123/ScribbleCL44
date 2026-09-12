@@ -1,0 +1,10 @@
+{
+  "task": "T3",
+  "epochs": 80,
+  "selection": "foreground validation, all 80 epochs",
+  "foreground": 0.6746877956913865,
+  "background_inclusive": 0.7820229984174101,
+  "selected_epoch_one_based": 48,
+  "train_samples": 1500,
+  "complete": true
+}

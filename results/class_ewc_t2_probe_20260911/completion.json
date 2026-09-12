@@ -1,0 +1,44 @@
+{
+  "q01": {
+    "status": "complete",
+    "exitcode": 0,
+    "ewc_lambda": 1.0,
+    "best_balanced_validation": {
+      "epoch": 6,
+      "T1_foreground": 1.5238175616779385e-10,
+      "T2_foreground": 0.5004185089218475,
+      "T1_background_inclusive": 0.24030582893045593,
+      "T2_background_inclusive": 0.6625108002534236,
+      "mean_foreground_validation": 0.2502092545371146
+    },
+    "audit": "10 finite epochs, 3750 updates, validation only, zero exit"
+  },
+  "q02": {
+    "status": "complete",
+    "exitcode": 0,
+    "ewc_lambda": 10000.0,
+    "best_balanced_validation": {
+      "epoch": 6,
+      "T1_foreground": 1.5238175616779385e-10,
+      "T2_foreground": 0.5763323258974915,
+      "T1_background_inclusive": 0.24072584963975374,
+      "T2_background_inclusive": 0.7135628882899446,
+      "mean_foreground_validation": 0.28816616302493664
+    },
+    "audit": "10 finite epochs, 3750 updates, validation only, zero exit"
+  },
+  "q03": {
+    "status": "complete",
+    "exitcode": 0,
+    "ewc_lambda": 1000.0,
+    "best_balanced_validation": {
+      "epoch": 6,
+      "T1_foreground": 1.5238175616779385e-10,
+      "T2_foreground": 0.5754337214692782,
+      "T1_background_inclusive": 0.24037834350467904,
+      "T2_background_inclusive": 0.7129518112821019,
+      "mean_foreground_validation": 0.28771686081083
+    },
+    "audit": "10 finite epochs, 3750 updates, validation only, zero exit"
+  }
+}

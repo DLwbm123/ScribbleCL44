@@ -1,0 +1,68 @@
+{
+  "checked_at": "2026-09-12 06:34:08 +0000",
+  "complete": false,
+  "jobs": {
+    "zs-er": {
+      "status": "training",
+      "gpu": 2,
+      "completed_epochs": 2,
+      "stage_zero_based": 0,
+      "iteration": 750,
+      "loss": 0.5234017625649771,
+      "cleanup_warning_count": 8
+    },
+    "zs-der": {
+      "status": "training",
+      "gpu": 2,
+      "completed_epochs": 1,
+      "stage_zero_based": 0,
+      "iteration": 375,
+      "loss": 0.397940460284551,
+      "cleanup_warning_count": 4
+    }
+  },
+  "checks": {
+    "results": [
+      {
+        "method": "zs-er",
+        "status": "passed",
+        "peak_allocated_mib": 8287.16455078125,
+        "peak_reserved_mib": 8556.0
+      },
+      {
+        "method": "zs-der",
+        "status": "passed",
+        "peak_allocated_mib": 8335.9404296875,
+        "peak_reserved_mib": 8676.0
+      }
+    ],
+    "minimum_free_mib": 16000
+  },
+  "first_actual_updates": {
+    "zs-er": {
+      "stage": 0,
+      "iteration": 2,
+      "loss": 2.8164520263671875,
+      "feature_loss": 0.0,
+      "replay_pce_loss": 1.2988371849060059,
+      "replay_global_loss": 0.0,
+      "stored_examples": 8,
+      "peak_allocated_mib": 8170.986328125,
+      "peak_reserved_mib": 8494.0
+    },
+    "zs-der": {
+      "stage": 0,
+      "iteration": 2,
+      "loss": 1.5188416242599487,
+      "feature_loss": 0.0012266207486391068,
+      "replay_pce_loss": 0.0,
+      "replay_global_loss": 0.0,
+      "stored_examples": 8,
+      "peak_allocated_mib": 8229.1220703125,
+      "peak_reserved_mib": 8554.0
+    }
+  },
+  "warnings": "NFS multiprocessing finalizer EBUSY cleanup messages; subsequent finite training epochs recorded",
+  "commands": "job / run",
+  "data_cache": "host RAM; exact cached/uncached parity passed on synthetic task inputs"
+}
