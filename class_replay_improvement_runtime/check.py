@@ -10,7 +10,7 @@ from cl_methods import DarkExperienceReplayPlus
 
 torch.set_num_threads(1)
 p = torch.tensor([.1, .2, .3, .4]).view(1, 4, 1, 1).requires_grad_()
-y = torch.zeros((1, 1, 1), dtype=torch.long)
+y = torch.zeros((1, 1, 1), dtype=torch.int16)
 loss = r.partial_background_pce(p, y, (3,))
 assert math.isclose(loss.item(), -math.log(.6), rel_tol=1e-6)
 loss.backward()

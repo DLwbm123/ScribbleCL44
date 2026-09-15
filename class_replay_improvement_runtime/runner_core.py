@@ -369,7 +369,7 @@ def partial_background_pce(probabilities, labels, foreground_classes):
         allowed |= labels.eq(value)
     if not bool(allowed.all()):
         raise ValueError("label is outside the annotated task foreground")
-    mass = probabilities.gather(1, labels.clamp_min(0).unsqueeze(1)).squeeze(1)
+    mass = probabilities.gather(1, labels.long().clamp_min(0).unsqueeze(1)).squeeze(1)
     background = [i for i in range(probabilities.shape[1]) if i not in foreground_classes]
     mass = torch.where(labels.eq(0), probabilities[:, background].sum(1), mass)
     return -mass[known].clamp_min(1e-12).log().sum() / known.sum().clamp_min(1)
