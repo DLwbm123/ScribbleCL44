@@ -41,4 +41,3 @@ penalty, _ = b.feature_penalty(m, torch.device("cpu"))
 assert penalty.item() < 1e-10
 assert m.training and all(not v.training for v in m.modules() if isinstance(v, nn.BatchNorm2d))
 print("IMPROVEMENT_CHECK_PASSED", flush=True)
-
