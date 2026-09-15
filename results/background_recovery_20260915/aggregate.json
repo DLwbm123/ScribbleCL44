@@ -1,0 +1,3958 @@
+{
+  "metric": "patient macro Dice including background",
+  "checkpoint_selection": "unchanged from original run",
+  "training_performed": false,
+  "foreground_tolerance": 0.0001,
+  "hosts": {
+    "my-gpu": {
+      "checked_at": "2026-09-15T08:13:44.320106+00:00",
+      "batches": {
+        "background_recovery_20260915": {
+          "progress": {
+            "current": "r011",
+            "jobs": {
+              "r005": "complete",
+              "r006": "complete",
+              "r007": "complete",
+              "r008": "complete",
+              "r009": "complete",
+              "r010": "complete"
+            },
+            "pid": 1879800,
+            "started_at": 1789459634.0743313,
+            "status": "running",
+            "total": 13,
+            "worker_pid": 1880157
+          },
+          "plan": {
+            "minimum_free_mib": 5000,
+            "jobs": [
+              {
+                "run": "class_independent_spatial_sweep_20260908/jobs/ind_T1_lr0.01",
+                "scenario": "class",
+                "stage": 1,
+                "independent": true,
+                "split": "val",
+                "code": "<project_root>/class_independent_spatial_sweep_20260908/source",
+                "data_root": "<benchmark_data>",
+                "checkpoint": "<project_root>/class_independent_spatial_sweep_20260908/jobs/ind_T1_lr0.01/s01.pt",
+                "tasks": [
+                  {
+                    "code": "T1",
+                    "file": "MMWHS/myo_lv_la.h5",
+                    "classes": [
+                      1,
+                      2,
+                      3
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  }
+                ],
+                "expected_foreground": {
+                  "T1": 0.6540379199118956
+                },
+                "whole_class": false,
+                "id": "r005"
+              },
+              {
+                "run": "class_independent_spatial_sweep_20260908/jobs/ind_T1_lr0.03",
+                "scenario": "class",
+                "stage": 1,
+                "independent": true,
+                "split": "val",
+                "code": "<project_root>/class_independent_spatial_sweep_20260908/source",
+                "data_root": "<benchmark_data>",
+                "checkpoint": "<project_root>/class_independent_spatial_sweep_20260908/jobs/ind_T1_lr0.03/s01.pt",
+                "tasks": [
+                  {
+                    "code": "T1",
+                    "file": "MMWHS/myo_lv_la.h5",
+                    "classes": [
+                      1,
+                      2,
+                      3
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  }
+                ],
+                "expected_foreground": {
+                  "T1": 0.5998295386899529
+                },
+                "whole_class": false,
+                "id": "r006"
+              },
+              {
+                "run": "class_independent_spatial_sweep_20260908/jobs/ind_T2_lr0.01",
+                "scenario": "class",
+                "stage": 1,
+                "independent": true,
+                "split": "val",
+                "code": "<project_root>/class_independent_spatial_sweep_20260908/source",
+                "data_root": "<benchmark_data>",
+                "checkpoint": "<project_root>/class_independent_spatial_sweep_20260908/jobs/ind_T2_lr0.01/s01.pt",
+                "tasks": [
+                  {
+                    "code": "T2",
+                    "file": "MMWHS/ra_rv.h5",
+                    "classes": [
+                      1,
+                      2
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  }
+                ],
+                "expected_foreground": {
+                  "T2": 0.40760990512486817
+                },
+                "whole_class": false,
+                "id": "r007"
+              },
+              {
+                "run": "class_independent_spatial_sweep_20260908/jobs/ind_T2_lr0.03",
+                "scenario": "class",
+                "stage": 1,
+                "independent": true,
+                "split": "val",
+                "code": "<project_root>/class_independent_spatial_sweep_20260908/source",
+                "data_root": "<benchmark_data>",
+                "checkpoint": "<project_root>/class_independent_spatial_sweep_20260908/jobs/ind_T2_lr0.03/s01.pt",
+                "tasks": [
+                  {
+                    "code": "T2",
+                    "file": "MMWHS/ra_rv.h5",
+                    "classes": [
+                      1,
+                      2
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  }
+                ],
+                "expected_foreground": {
+                  "T2": 0.4957264274468745
+                },
+                "whole_class": false,
+                "id": "r008"
+              },
+              {
+                "run": "class_independent_spatial_sweep_20260908/jobs/ind_T3_lr0.01",
+                "scenario": "class",
+                "stage": 1,
+                "independent": true,
+                "split": "val",
+                "code": "<project_root>/class_independent_spatial_sweep_20260908/source",
+                "data_root": "<benchmark_data>",
+                "checkpoint": "<project_root>/class_independent_spatial_sweep_20260908/jobs/ind_T3_lr0.01/s01.pt",
+                "tasks": [
+                  {
+                    "code": "T3",
+                    "file": "MMWHS/ao_pa.h5",
+                    "classes": [
+                      1,
+                      2
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  }
+                ],
+                "expected_foreground": {
+                  "T3": 0.567579583707307
+                },
+                "whole_class": false,
+                "id": "r009"
+              },
+              {
+                "run": "class_independent_spatial_sweep_20260908/jobs/ind_T3_lr0.03",
+                "scenario": "class",
+                "stage": 1,
+                "independent": true,
+                "split": "val",
+                "code": "<project_root>/class_independent_spatial_sweep_20260908/source",
+                "data_root": "<benchmark_data>",
+                "checkpoint": "<project_root>/class_independent_spatial_sweep_20260908/jobs/ind_T3_lr0.03/s01.pt",
+                "tasks": [
+                  {
+                    "code": "T3",
+                    "file": "MMWHS/ao_pa.h5",
+                    "classes": [
+                      1,
+                      2
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  }
+                ],
+                "expected_foreground": {
+                  "T3": 0.5710221644993958
+                },
+                "whole_class": false,
+                "id": "r010"
+              },
+              {
+                "run": "core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/pce_mib_seed42",
+                "scenario": "class",
+                "stage": 3,
+                "independent": false,
+                "split": "test",
+                "code": "<project_root>/class_comparisons_20260910_neutral_restart/source",
+                "data_root": "<benchmark_data>",
+                "checkpoint": "<project_root>/core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/pce_mib_seed42/s03.pt",
+                "tasks": [
+                  {
+                    "code": "T1",
+                    "file": "MMWHS/myo_lv_la.h5",
+                    "classes": [
+                      1,
+                      2,
+                      3
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  },
+                  {
+                    "code": "T2",
+                    "file": "MMWHS/ra_rv.h5",
+                    "classes": [
+                      4,
+                      5
+                    ],
+                    "label_shift": 3,
+                    "head": null
+                  },
+                  {
+                    "code": "T3",
+                    "file": "MMWHS/ao_pa.h5",
+                    "classes": [
+                      6,
+                      7
+                    ],
+                    "label_shift": 5,
+                    "head": null
+                  }
+                ],
+                "expected_foreground": {
+                  "T1": 0.5902401332151764,
+                  "T2": 0.5708084742434053,
+                  "T3": 0.49456969909168547
+                },
+                "whole_class": true,
+                "id": "r011"
+              },
+              {
+                "run": "core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/pce_sequential_seed42",
+                "scenario": "class",
+                "stage": 3,
+                "independent": false,
+                "split": "test",
+                "code": "<project_root>/class_comparisons_20260910_neutral_restart/source",
+                "data_root": "<benchmark_data>",
+                "checkpoint": "<project_root>/core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/pce_sequential_seed42/s03.pt",
+                "tasks": [
+                  {
+                    "code": "T1",
+                    "file": "MMWHS/myo_lv_la.h5",
+                    "classes": [
+                      1,
+                      2,
+                      3
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  },
+                  {
+                    "code": "T2",
+                    "file": "MMWHS/ra_rv.h5",
+                    "classes": [
+                      4,
+                      5
+                    ],
+                    "label_shift": 3,
+                    "head": null
+                  },
+                  {
+                    "code": "T3",
+                    "file": "MMWHS/ao_pa.h5",
+                    "classes": [
+                      6,
+                      7
+                    ],
+                    "label_shift": 5,
+                    "head": null
+                  }
+                ],
+                "expected_foreground": {
+                  "T1": 1.2165263034679748e-10,
+                  "T2": 1.182250823464804e-10,
+                  "T3": 0.5584613549281504
+                },
+                "whole_class": true,
+                "id": "r012"
+              },
+              {
+                "run": "core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/zs_mib_global1_origscale_seed42",
+                "scenario": "class",
+                "stage": 3,
+                "independent": false,
+                "split": "test",
+                "code": "<project_root>/class_comparisons_20260910_neutral_restart/source",
+                "data_root": "<benchmark_data>",
+                "checkpoint": "<project_root>/core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/zs_mib_global1_origscale_seed42/s03.pt",
+                "tasks": [
+                  {
+                    "code": "T1",
+                    "file": "MMWHS/myo_lv_la.h5",
+                    "classes": [
+                      1,
+                      2,
+                      3
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  },
+                  {
+                    "code": "T2",
+                    "file": "MMWHS/ra_rv.h5",
+                    "classes": [
+                      4,
+                      5
+                    ],
+                    "label_shift": 3,
+                    "head": null
+                  },
+                  {
+                    "code": "T3",
+                    "file": "MMWHS/ao_pa.h5",
+                    "classes": [
+                      6,
+                      7
+                    ],
+                    "label_shift": 5,
+                    "head": null
+                  }
+                ],
+                "expected_foreground": {
+                  "T1": 0.7734982766034038,
+                  "T2": 0.7604618042313152,
+                  "T3": 0.6745133057375168
+                },
+                "whole_class": true,
+                "id": "r013"
+              },
+              {
+                "run": "core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/zs_sequential_global1_origscale_seed42",
+                "scenario": "class",
+                "stage": 3,
+                "independent": false,
+                "split": "test",
+                "code": "<project_root>/class_comparisons_20260910_neutral_restart/source",
+                "data_root": "<benchmark_data>",
+                "checkpoint": "<project_root>/core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/zs_sequential_global1_origscale_seed42/s03.pt",
+                "tasks": [
+                  {
+                    "code": "T1",
+                    "file": "MMWHS/myo_lv_la.h5",
+                    "classes": [
+                      1,
+                      2,
+                      3
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  },
+                  {
+                    "code": "T2",
+                    "file": "MMWHS/ra_rv.h5",
+                    "classes": [
+                      4,
+                      5
+                    ],
+                    "label_shift": 3,
+                    "head": null
+                  },
+                  {
+                    "code": "T3",
+                    "file": "MMWHS/ao_pa.h5",
+                    "classes": [
+                      6,
+                      7
+                    ],
+                    "label_shift": 5,
+                    "head": null
+                  }
+                ],
+                "expected_foreground": {
+                  "T1": 1.2674818099044152e-10,
+                  "T2": 1.2191307713805875e-10,
+                  "T3": 0.7253157877679325
+                },
+                "whole_class": true,
+                "id": "r014"
+              },
+              {
+                "run": "class_independent_spatial_sweep_20260908/jobs/cl_spatial_0.01",
+                "scenario": "class",
+                "stage": 3,
+                "independent": false,
+                "split": "val",
+                "code": "<project_root>/class_independent_spatial_sweep_20260908/source",
+                "data_root": "<benchmark_data>",
+                "checkpoint": "<project_root>/class_independent_spatial_sweep_20260908/jobs/cl_spatial_0.01/s03.pt",
+                "tasks": [
+                  {
+                    "code": "T1",
+                    "file": "MMWHS/myo_lv_la.h5",
+                    "classes": [
+                      1,
+                      2,
+                      3
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  },
+                  {
+                    "code": "T2",
+                    "file": "MMWHS/ra_rv.h5",
+                    "classes": [
+                      4,
+                      5
+                    ],
+                    "label_shift": 3,
+                    "head": null
+                  },
+                  {
+                    "code": "T3",
+                    "file": "MMWHS/ao_pa.h5",
+                    "classes": [
+                      6,
+                      7
+                    ],
+                    "label_shift": 5,
+                    "head": null
+                  }
+                ],
+                "expected_foreground": {
+                  "T1": 0.7829531748063608,
+                  "T2": 0.5936382864709708,
+                  "T3": 0.6797483077538072
+                },
+                "whole_class": false,
+                "id": "r015"
+              },
+              {
+                "run": "domain_runs_20260901/runs/d0gpm_r1",
+                "scenario": "domain",
+                "stage": 6,
+                "independent": false,
+                "split": "test",
+                "code": "<project_root>/class_comparisons_20260910_neutral_restart/source",
+                "data_root": "<benchmark_data>",
+                "checkpoint": "<project_root>/domain_runs_20260901/runs/d0gpm_r1/s06.pt",
+                "tasks": [
+                  {
+                    "code": "A",
+                    "file": "Domain_Prostate/BIDMC.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  },
+                  {
+                    "code": "B",
+                    "file": "Domain_Prostate/HK.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  },
+                  {
+                    "code": "C",
+                    "file": "Domain_Prostate/ISBI.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  },
+                  {
+                    "code": "D",
+                    "file": "Domain_Prostate/UCL.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  },
+                  {
+                    "code": "E",
+                    "file": "Domain_Prostate/ISBI_1.5.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  },
+                  {
+                    "code": "F",
+                    "file": "Domain_Prostate/I2CVB.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  }
+                ],
+                "expected_foreground": {
+                  "A": 0.09096634016934634,
+                  "B": 0.09486145275243306,
+                  "C": 0.14225752886818005,
+                  "D": 0.08718902186900901,
+                  "E": 0.1601913022740014,
+                  "F": 0.05822508936550702
+                },
+                "whole_class": false,
+                "id": "r016"
+              },
+              {
+                "run": "domain_runs_20260901/runs/d3p9n_r1",
+                "scenario": "domain",
+                "stage": 6,
+                "independent": false,
+                "split": "test",
+                "code": "<project_root>/class_comparisons_20260910_neutral_restart/source",
+                "data_root": "<benchmark_data>",
+                "checkpoint": "<project_root>/domain_runs_20260901/runs/d3p9n_r1/s06.pt",
+                "tasks": [
+                  {
+                    "code": "A",
+                    "file": "Domain_Prostate/BIDMC.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  },
+                  {
+                    "code": "B",
+                    "file": "Domain_Prostate/HK.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  },
+                  {
+                    "code": "C",
+                    "file": "Domain_Prostate/ISBI.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  },
+                  {
+                    "code": "D",
+                    "file": "Domain_Prostate/UCL.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  },
+                  {
+                    "code": "E",
+                    "file": "Domain_Prostate/ISBI_1.5.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  },
+                  {
+                    "code": "F",
+                    "file": "Domain_Prostate/I2CVB.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  }
+                ],
+                "expected_foreground": {
+                  "A": 0.08881785533632912,
+                  "B": 0.08786799801907108,
+                  "C": 0.12731173831406362,
+                  "D": 0.0745162910000402,
+                  "E": 0.13532535176933458,
+                  "F": 0.053173470360250594
+                },
+                "whole_class": false,
+                "id": "r017"
+              }
+            ],
+            "scope": "existing-checkpoint evaluation only; preserve original split and checkpoint selection"
+          },
+          "results": {
+            "r005": {
+              "background_inclusive_mean": 0.7355648046115728,
+              "checkpoint": "<project_root>/class_independent_spatial_sweep_20260908/jobs/ind_T1_lr0.01/s01.pt",
+              "checkpoint_bytes": 103135602,
+              "checkpoint_mtime": 1788871551.621928,
+              "code": "<project_root>/class_independent_spatial_sweep_20260908/source",
+              "compared_tasks": [
+                "T1"
+              ],
+              "data_root": "<benchmark_data>",
+              "finished_at": 1789459660.2533321,
+              "foreground_max_abs_difference": 0.0,
+              "foreground_parity_passed": true,
+              "gpu_peak_mib": 1060.0,
+              "job_id": "r005",
+              "run": "class_independent_spatial_sweep_20260908/jobs/ind_T1_lr0.01",
+              "scenario": "class",
+              "split": "val",
+              "stage": 1,
+              "status": "complete",
+              "tasks": {
+                "T1": {
+                  "background_dice": 0.980145458710604,
+                  "background_inclusive_mean": 0.7355648046115728,
+                  "classes": [
+                    0,
+                    1,
+                    2,
+                    3
+                  ],
+                  "foreground_mean": 0.6540379199118956,
+                  "patients": 2,
+                  "per_class_including_background": [
+                    0.980145458710604,
+                    0.5012547565754668,
+                    0.6679129427061703,
+                    0.79294606045405
+                  ],
+                  "slices": 200
+                }
+              }
+            },
+            "r009": {
+              "background_inclusive_mean": 0.7111277359436641,
+              "checkpoint": "<project_root>/class_independent_spatial_sweep_20260908/jobs/ind_T3_lr0.01/s01.pt",
+              "checkpoint_bytes": 103135346,
+              "checkpoint_mtime": 1788873284.3815503,
+              "code": "<project_root>/class_independent_spatial_sweep_20260908/source",
+              "compared_tasks": [
+                "T3"
+              ],
+              "data_root": "<benchmark_data>",
+              "finished_at": 1789459775.63382,
+              "foreground_max_abs_difference": 0.0,
+              "foreground_parity_passed": true,
+              "gpu_peak_mib": 1060.0,
+              "job_id": "r009",
+              "run": "class_independent_spatial_sweep_20260908/jobs/ind_T3_lr0.01",
+              "scenario": "class",
+              "split": "val",
+              "stage": 1,
+              "status": "complete",
+              "tasks": {
+                "T3": {
+                  "background_dice": 0.9982240404163781,
+                  "background_inclusive_mean": 0.7111277359436641,
+                  "classes": [
+                    0,
+                    1,
+                    2
+                  ],
+                  "foreground_mean": 0.567579583707307,
+                  "patients": 2,
+                  "per_class_including_background": [
+                    0.9982240404163781,
+                    0.7924481283667293,
+                    0.3427110390478848
+                  ],
+                  "slices": 200
+                }
+              }
+            },
+            "r007": {
+              "background_inclusive_mean": 0.5993175278532009,
+              "checkpoint": "<project_root>/class_independent_spatial_sweep_20260908/jobs/ind_T2_lr0.01/s01.pt",
+              "checkpoint_bytes": 103135346,
+              "checkpoint_mtime": 1788871560.0666928,
+              "code": "<project_root>/class_independent_spatial_sweep_20260908/source",
+              "compared_tasks": [
+                "T2"
+              ],
+              "data_root": "<benchmark_data>",
+              "finished_at": 1789459716.0556998,
+              "foreground_max_abs_difference": 0.0,
+              "foreground_parity_passed": true,
+              "gpu_peak_mib": 1060.0,
+              "job_id": "r007",
+              "run": "class_independent_spatial_sweep_20260908/jobs/ind_T2_lr0.01",
+              "scenario": "class",
+              "split": "val",
+              "stage": 1,
+              "status": "complete",
+              "tasks": {
+                "T2": {
+                  "background_dice": 0.9827327733098666,
+                  "background_inclusive_mean": 0.5993175278532009,
+                  "classes": [
+                    0,
+                    1,
+                    2
+                  ],
+                  "foreground_mean": 0.40760990512486817,
+                  "patients": 2,
+                  "per_class_including_background": [
+                    0.9827327733098666,
+                    0.4425255080868806,
+                    0.3726943021628556
+                  ],
+                  "slices": 200
+                }
+              }
+            },
+            "r006": {
+              "background_inclusive_mean": 0.6925404254251349,
+              "checkpoint": "<project_root>/class_independent_spatial_sweep_20260908/jobs/ind_T1_lr0.03/s01.pt",
+              "checkpoint_bytes": 103135602,
+              "checkpoint_mtime": 1788873315.2928066,
+              "code": "<project_root>/class_independent_spatial_sweep_20260908/source",
+              "compared_tasks": [
+                "T1"
+              ],
+              "data_root": "<benchmark_data>",
+              "finished_at": 1789459687.863944,
+              "foreground_max_abs_difference": 0.0,
+              "foreground_parity_passed": true,
+              "gpu_peak_mib": 1060.0,
+              "job_id": "r006",
+              "run": "class_independent_spatial_sweep_20260908/jobs/ind_T1_lr0.03",
+              "scenario": "class",
+              "split": "val",
+              "stage": 1,
+              "status": "complete",
+              "tasks": {
+                "T1": {
+                  "background_dice": 0.9706730856306811,
+                  "background_inclusive_mean": 0.6925404254251349,
+                  "classes": [
+                    0,
+                    1,
+                    2,
+                    3
+                  ],
+                  "foreground_mean": 0.5998295386899529,
+                  "patients": 2,
+                  "per_class_including_background": [
+                    0.9706730856306811,
+                    0.4473245599019282,
+                    0.5400716511567123,
+                    0.8120924050112183
+                  ],
+                  "slices": 200
+                }
+              }
+            },
+            "r010": {
+              "background_inclusive_mean": 0.7134565612199136,
+              "checkpoint": "<project_root>/class_independent_spatial_sweep_20260908/jobs/ind_T3_lr0.03/s01.pt",
+              "checkpoint_bytes": 103135346,
+              "checkpoint_mtime": 1788877397.6866066,
+              "code": "<project_root>/class_independent_spatial_sweep_20260908/source",
+              "compared_tasks": [
+                "T3"
+              ],
+              "data_root": "<benchmark_data>",
+              "finished_at": 1789459803.9939113,
+              "foreground_max_abs_difference": 0.0,
+              "foreground_parity_passed": true,
+              "gpu_peak_mib": 1060.0,
+              "job_id": "r010",
+              "run": "class_independent_spatial_sweep_20260908/jobs/ind_T3_lr0.03",
+              "scenario": "class",
+              "split": "val",
+              "stage": 1,
+              "status": "complete",
+              "tasks": {
+                "T3": {
+                  "background_dice": 0.9983253546609496,
+                  "background_inclusive_mean": 0.7134565612199136,
+                  "classes": [
+                    0,
+                    1,
+                    2
+                  ],
+                  "foreground_mean": 0.5710221644993958,
+                  "patients": 2,
+                  "per_class_including_background": [
+                    0.9983253546609496,
+                    0.8047537306019086,
+                    0.33729059839688286
+                  ],
+                  "slices": 200
+                }
+              }
+            },
+            "r008": {
+              "background_inclusive_mean": 0.6583311550707275,
+              "checkpoint": "<project_root>/class_independent_spatial_sweep_20260908/jobs/ind_T2_lr0.03/s01.pt",
+              "checkpoint_bytes": 103135346,
+              "checkpoint_mtime": 1788876052.6296093,
+              "code": "<project_root>/class_independent_spatial_sweep_20260908/source",
+              "compared_tasks": [
+                "T2"
+              ],
+              "data_root": "<benchmark_data>",
+              "finished_at": 1789459746.3317795,
+              "foreground_max_abs_difference": 0.0,
+              "foreground_parity_passed": true,
+              "gpu_peak_mib": 1060.0,
+              "job_id": "r008",
+              "run": "class_independent_spatial_sweep_20260908/jobs/ind_T2_lr0.03",
+              "scenario": "class",
+              "split": "val",
+              "stage": 1,
+              "status": "complete",
+              "tasks": {
+                "T2": {
+                  "background_dice": 0.9835406103184337,
+                  "background_inclusive_mean": 0.6583311550707275,
+                  "classes": [
+                    0,
+                    1,
+                    2
+                  ],
+                  "foreground_mean": 0.4957264274468745,
+                  "patients": 2,
+                  "per_class_including_background": [
+                    0.9835406103184337,
+                    0.4594817020607051,
+                    0.5319711528330439
+                  ],
+                  "slices": 200
+                }
+              }
+            }
+          }
+        },
+        "extra": {
+          "progress": {
+            "current": "r004",
+            "finished_at": 1789459841.5156946,
+            "jobs": {
+              "r001": "complete",
+              "r002": "complete",
+              "r003": "complete",
+              "r004": "complete"
+            },
+            "pid": 1879957,
+            "started_at": 1789459704.6382544,
+            "status": "complete",
+            "total": 4,
+            "worker_pid": 1880162
+          },
+          "plan": {
+            "minimum_free_mib": 5000,
+            "jobs": [
+              {
+                "run": "class_replay_improve_20260915_r2/jobs/zs-der-control5",
+                "scenario": "class",
+                "stage": 2,
+                "independent": false,
+                "split": "val",
+                "code": "<project_root>/class_replay_improve_20260915_r2/source_der",
+                "data_root": "<benchmark_data>",
+                "checkpoint": "<project_root>/class_replay_improve_20260915_r2/jobs/zs-der-control5/s02.pt",
+                "tasks": [
+                  {
+                    "code": "T1",
+                    "file": "MMWHS/myo_lv_la.h5",
+                    "classes": [
+                      1,
+                      2,
+                      3
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  },
+                  {
+                    "code": "T2",
+                    "file": "MMWHS/ra_rv.h5",
+                    "classes": [
+                      4,
+                      5
+                    ],
+                    "label_shift": 3,
+                    "head": null
+                  }
+                ],
+                "expected_foreground": {
+                  "T1": 1.5238175616779385e-10,
+                  "T2": 0.28079255551266363
+                },
+                "whole_class": false,
+                "id": "r001"
+              },
+              {
+                "run": "class_replay_improve_20260915_r2/jobs/zs-der-improved5",
+                "scenario": "class",
+                "stage": 2,
+                "independent": false,
+                "split": "val",
+                "code": "<project_root>/class_replay_improve_20260915_r2/source_der",
+                "data_root": "<benchmark_data>",
+                "checkpoint": "<project_root>/class_replay_improve_20260915_r2/jobs/zs-der-improved5/s02.pt",
+                "tasks": [
+                  {
+                    "code": "T1",
+                    "file": "MMWHS/myo_lv_la.h5",
+                    "classes": [
+                      1,
+                      2,
+                      3
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  },
+                  {
+                    "code": "T2",
+                    "file": "MMWHS/ra_rv.h5",
+                    "classes": [
+                      4,
+                      5
+                    ],
+                    "label_shift": 3,
+                    "head": null
+                  }
+                ],
+                "expected_foreground": {
+                  "T1": 1.5238175616779385e-10,
+                  "T2": 0.23793306121202376
+                },
+                "whole_class": false,
+                "id": "r002"
+              },
+              {
+                "run": "class_replay_improve_20260915_r2/jobs/zs-er-control5",
+                "scenario": "class",
+                "stage": 2,
+                "independent": false,
+                "split": "val",
+                "code": "<project_root>/class_replay_improve_20260915_r2/source_er",
+                "data_root": "<benchmark_data>",
+                "checkpoint": "<project_root>/class_replay_improve_20260915_r2/jobs/zs-er-control5/s02.pt",
+                "tasks": [
+                  {
+                    "code": "T1",
+                    "file": "MMWHS/myo_lv_la.h5",
+                    "classes": [
+                      1,
+                      2,
+                      3
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  },
+                  {
+                    "code": "T2",
+                    "file": "MMWHS/ra_rv.h5",
+                    "classes": [
+                      4,
+                      5
+                    ],
+                    "label_shift": 3,
+                    "head": null
+                  }
+                ],
+                "expected_foreground": {
+                  "T1": 1.5238175616779385e-10,
+                  "T2": 0.3576652239065533
+                },
+                "whole_class": false,
+                "id": "r003"
+              },
+              {
+                "run": "class_replay_improve_20260915_r2/jobs/zs-er-improved5",
+                "scenario": "class",
+                "stage": 2,
+                "independent": false,
+                "split": "val",
+                "code": "<project_root>/class_replay_improve_20260915_r2/source_er",
+                "data_root": "<benchmark_data>",
+                "checkpoint": "<project_root>/class_replay_improve_20260915_r2/jobs/zs-er-improved5/s02.pt",
+                "tasks": [
+                  {
+                    "code": "T1",
+                    "file": "MMWHS/myo_lv_la.h5",
+                    "classes": [
+                      1,
+                      2,
+                      3
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  },
+                  {
+                    "code": "T2",
+                    "file": "MMWHS/ra_rv.h5",
+                    "classes": [
+                      4,
+                      5
+                    ],
+                    "label_shift": 3,
+                    "head": null
+                  }
+                ],
+                "expected_foreground": {
+                  "T1": 0.6303500764869802,
+                  "T2": 0.5312762152460178
+                },
+                "whole_class": false,
+                "id": "r004"
+              }
+            ]
+          },
+          "results": {
+            "r003": {
+              "background_inclusive_mean": 0.404902408879075,
+              "checkpoint": "<project_root>/class_replay_improve_20260915_r2/jobs/zs-er-control5/s02.pt",
+              "checkpoint_bytes": 103140958,
+              "checkpoint_mtime": 1789456074.467684,
+              "code": "<project_root>/class_replay_improve_20260915_r2/source_er",
+              "compared_tasks": [
+                "T1",
+                "T2"
+              ],
+              "data_root": "<benchmark_data>",
+              "finished_at": 1789459806.2792354,
+              "foreground_max_abs_difference": 0.0,
+              "foreground_parity_passed": true,
+              "gpu_peak_mib": 1060.0,
+              "job_id": "r003",
+              "run": "class_replay_improve_20260915_r2/jobs/zs-er-control5",
+              "scenario": "class",
+              "split": "val",
+              "stage": 2,
+              "status": "complete",
+              "tasks": {
+                "T1": {
+                  "background_dice": 0.9750942780388061,
+                  "background_inclusive_mean": 0.24377356962398783,
+                  "classes": [
+                    0,
+                    1,
+                    2,
+                    3
+                  ],
+                  "foreground_mean": 1.5238175616779385e-10,
+                  "patients": 2,
+                  "per_class_including_background": [
+                    0.9750942780388061,
+                    1.1834440437396976e-10,
+                    1.5706385515810858e-10,
+                    1.8173700897130318e-10
+                  ],
+                  "slices": 200
+                },
+                "T2": {
+                  "background_dice": 0.9827632965893799,
+                  "background_inclusive_mean": 0.5660312481341622,
+                  "classes": [
+                    0,
+                    4,
+                    5
+                  ],
+                  "foreground_mean": 0.3576652239065533,
+                  "patients": 2,
+                  "per_class_including_background": [
+                    0.9827632965893799,
+                    0.40974852523982286,
+                    0.30558192257328365
+                  ],
+                  "slices": 200
+                }
+              }
+            },
+            "r004": {
+              "background_inclusive_mean": 0.6966451555184099,
+              "checkpoint": "<project_root>/class_replay_improve_20260915_r2/jobs/zs-er-improved5/s02.pt",
+              "checkpoint_bytes": 103140958,
+              "checkpoint_mtime": 1789457297.9609983,
+              "code": "<project_root>/class_replay_improve_20260915_r2/source_er",
+              "compared_tasks": [
+                "T1",
+                "T2"
+              ],
+              "data_root": "<benchmark_data>",
+              "finished_at": 1789459840.5298948,
+              "foreground_max_abs_difference": 0.0,
+              "foreground_parity_passed": true,
+              "gpu_peak_mib": 1060.0,
+              "job_id": "r004",
+              "run": "class_replay_improve_20260915_r2/jobs/zs-er-improved5",
+              "scenario": "class",
+              "split": "val",
+              "stage": 2,
+              "status": "complete",
+              "tasks": {
+                "T1": {
+                  "background_dice": 0.9732915562528452,
+                  "background_inclusive_mean": 0.7160854464284465,
+                  "classes": [
+                    0,
+                    1,
+                    2,
+                    3
+                  ],
+                  "foreground_mean": 0.6303500764869802,
+                  "patients": 2,
+                  "per_class_including_background": [
+                    0.9732915562528452,
+                    0.5794593584847283,
+                    0.5273862763883873,
+                    0.7842045945878252
+                  ],
+                  "slices": 200
+                },
+                "T2": {
+                  "background_dice": 0.9690621633330841,
+                  "background_inclusive_mean": 0.6772048646083731,
+                  "classes": [
+                    0,
+                    4,
+                    5
+                  ],
+                  "foreground_mean": 0.5312762152460178,
+                  "patients": 2,
+                  "per_class_including_background": [
+                    0.9690621633330841,
+                    0.4625331706166821,
+                    0.6000192598753533
+                  ],
+                  "slices": 200
+                }
+              }
+            },
+            "r002": {
+              "background_inclusive_mean": 0.3611788210895426,
+              "checkpoint": "<project_root>/class_replay_improve_20260915_r2/jobs/zs-der-improved5/s02.pt",
+              "checkpoint_bytes": 103140958,
+              "checkpoint_mtime": 1789458806.7833881,
+              "code": "<project_root>/class_replay_improve_20260915_r2/source_der",
+              "compared_tasks": [
+                "T1",
+                "T2"
+              ],
+              "data_root": "<benchmark_data>",
+              "finished_at": 1789459769.9124062,
+              "foreground_max_abs_difference": 0.0,
+              "foreground_parity_passed": true,
+              "gpu_peak_mib": 1060.0,
+              "job_id": "r002",
+              "run": "class_replay_improve_20260915_r2/jobs/zs-der-improved5",
+              "scenario": "class",
+              "split": "val",
+              "stage": 2,
+              "status": "complete",
+              "tasks": {
+                "T1": {
+                  "background_dice": 0.9603270782327435,
+                  "background_inclusive_mean": 0.2400817696724722,
+                  "classes": [
+                    0,
+                    1,
+                    2,
+                    3
+                  ],
+                  "foreground_mean": 1.5238175616779385e-10,
+                  "patients": 2,
+                  "per_class_including_background": [
+                    0.9603270782327435,
+                    1.1834440437396976e-10,
+                    1.5706385515810858e-10,
+                    1.8173700897130318e-10
+                  ],
+                  "slices": 200
+                },
+                "T2": {
+                  "background_dice": 0.9709614950957917,
+                  "background_inclusive_mean": 0.482275872506613,
+                  "classes": [
+                    0,
+                    4,
+                    5
+                  ],
+                  "foreground_mean": 0.23793306121202376,
+                  "patients": 2,
+                  "per_class_including_background": [
+                    0.9709614950957917,
+                    0.2206903428357359,
+                    0.2551757795883116
+                  ],
+                  "slices": 200
+                }
+              }
+            },
+            "r001": {
+              "background_inclusive_mean": 0.37841576850473846,
+              "checkpoint": "<project_root>/class_replay_improve_20260915_r2/jobs/zs-der-control5/s02.pt",
+              "checkpoint_bytes": 103140958,
+              "checkpoint_mtime": 1789458138.506771,
+              "code": "<project_root>/class_replay_improve_20260915_r2/source_der",
+              "compared_tasks": [
+                "T1",
+                "T2"
+              ],
+              "data_root": "<benchmark_data>",
+              "finished_at": 1789459737.316862,
+              "foreground_max_abs_difference": 0.0,
+              "foreground_parity_passed": true,
+              "gpu_peak_mib": 1060.0,
+              "job_id": "r001",
+              "run": "class_replay_improve_20260915_r2/jobs/zs-der-control5",
+              "scenario": "class",
+              "split": "val",
+              "stage": 2,
+              "status": "complete",
+              "tasks": {
+                "T1": {
+                  "background_dice": 0.9708630976857057,
+                  "background_inclusive_mean": 0.24271577453571275,
+                  "classes": [
+                    0,
+                    1,
+                    2,
+                    3
+                  ],
+                  "foreground_mean": 1.5238175616779385e-10,
+                  "patients": 2,
+                  "per_class_including_background": [
+                    0.9708630976857057,
+                    1.1834440437396976e-10,
+                    1.5706385515810858e-10,
+                    1.8173700897130318e-10
+                  ],
+                  "slices": 200
+                },
+                "T2": {
+                  "background_dice": 0.9807621763959651,
+                  "background_inclusive_mean": 0.5141157624737641,
+                  "classes": [
+                    0,
+                    4,
+                    5
+                  ],
+                  "foreground_mean": 0.28079255551266363,
+                  "patients": 2,
+                  "per_class_including_background": [
+                    0.9807621763959651,
+                    0.25623489705742614,
+                    0.305350213967901
+                  ],
+                  "slices": 200
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "jiangsuiyang": {
+      "checked_at": "2026-09-15T16:13:44.541032+08:00",
+      "batches": {
+        "background_recovery_20260915": {
+          "progress": {
+            "current": "r001",
+            "jobs": {},
+            "pid": 36357,
+            "started_at": 1789459633.6601596,
+            "status": "running",
+            "total": 28,
+            "worker_pid": 36361
+          },
+          "plan": {
+            "minimum_free_mib": 5000,
+            "jobs": [
+              {
+                "run": "organ_T4_from_T3best_lr006_spatial_pair10_20260910/runs/spatial0",
+                "scenario": "organ",
+                "stage": 4,
+                "independent": false,
+                "split": "test",
+                "code": "<project_root>/organ_T4_from_T3best_lr006_spatial_pair10_20260910/source",
+                "data_root": "<project_root>/organ_T4_from_T3best_lr006_spatial_pair10_20260910/inputs/data",
+                "checkpoint": "<project_root>/organ_T4_from_T3best_lr006_spatial_pair10_20260910/runs/spatial0/s04.pt",
+                "tasks": [
+                  {
+                    "code": "T1",
+                    "file": "Task_incre/UtahI.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 0
+                  },
+                  {
+                    "code": "T2",
+                    "file": "Task_incre/UCL.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 1
+                  },
+                  {
+                    "code": "T3",
+                    "file": "Task_incre/Lits.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 2
+                  },
+                  {
+                    "code": "T4",
+                    "file": "Task_incre/brain.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 3
+                  }
+                ],
+                "expected_foreground": {
+                  "T1": 0.6342617788087944,
+                  "T2": 0.5728554590666434,
+                  "T3": 0.7921885215378445,
+                  "T4": 0.8195190509003548
+                },
+                "whole_class": false,
+                "id": "r001"
+              },
+              {
+                "run": "organ_T4_from_T3best_lr006_spatial_pair10_20260910/runs/spatial001",
+                "scenario": "organ",
+                "stage": 4,
+                "independent": false,
+                "split": "test",
+                "code": "<project_root>/organ_T4_from_T3best_lr006_spatial_pair10_20260910/source",
+                "data_root": "<project_root>/organ_T4_from_T3best_lr006_spatial_pair10_20260910/inputs/data",
+                "checkpoint": "<project_root>/organ_T4_from_T3best_lr006_spatial_pair10_20260910/runs/spatial001/s04.pt",
+                "tasks": [
+                  {
+                    "code": "T1",
+                    "file": "Task_incre/UtahI.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 0
+                  },
+                  {
+                    "code": "T2",
+                    "file": "Task_incre/UCL.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 1
+                  },
+                  {
+                    "code": "T3",
+                    "file": "Task_incre/Lits.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 2
+                  },
+                  {
+                    "code": "T4",
+                    "file": "Task_incre/brain.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 3
+                  }
+                ],
+                "expected_foreground": {
+                  "T1": 0.5761300681054604,
+                  "T2": 0.5950404360155135,
+                  "T3": 0.7667800678755388,
+                  "T4": 0.8191209377523959
+                },
+                "whole_class": false,
+                "id": "r002"
+              },
+              {
+                "run": "organ_comparisons_20260910/runs/dense-sequential",
+                "scenario": "organ",
+                "stage": 4,
+                "independent": false,
+                "split": "test",
+                "code": "<project_root>/organ_comparisons_20260910/source",
+                "data_root": "<project_root>/organ_comparisons_20260910/inputs/data",
+                "checkpoint": "<project_root>/organ_comparisons_20260910/runs/dense-sequential/s04.pt",
+                "tasks": [
+                  {
+                    "code": "T1",
+                    "file": "Task_incre/UtahI.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 0
+                  },
+                  {
+                    "code": "T2",
+                    "file": "Task_incre/UCL.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 1
+                  },
+                  {
+                    "code": "T3",
+                    "file": "Task_incre/Lits.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 2
+                  },
+                  {
+                    "code": "T4",
+                    "file": "Task_incre/brain.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 3
+                  }
+                ],
+                "expected_foreground": {
+                  "T1": 5.612052380345734e-10,
+                  "T2": 2.4223612294242844e-10,
+                  "T3": 4.58836699173671e-11,
+                  "T4": 0.8500371827030105
+                },
+                "whole_class": false,
+                "id": "r003"
+              },
+              {
+                "run": "organ_comparisons_20260910/runs/pce-sequential",
+                "scenario": "organ",
+                "stage": 4,
+                "independent": false,
+                "split": "test",
+                "code": "<project_root>/organ_comparisons_20260910/source",
+                "data_root": "<project_root>/organ_comparisons_20260910/inputs/data",
+                "checkpoint": "<project_root>/organ_comparisons_20260910/runs/pce-sequential/s04.pt",
+                "tasks": [
+                  {
+                    "code": "T1",
+                    "file": "Task_incre/UtahI.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 0
+                  },
+                  {
+                    "code": "T2",
+                    "file": "Task_incre/UCL.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 1
+                  },
+                  {
+                    "code": "T3",
+                    "file": "Task_incre/Lits.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 2
+                  },
+                  {
+                    "code": "T4",
+                    "file": "Task_incre/brain.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 3
+                  }
+                ],
+                "expected_foreground": {
+                  "T1": 4.59021161402307e-10,
+                  "T2": 0.002227854636289612,
+                  "T3": 0.2024363031879329,
+                  "T4": 0.7758592969231111
+                },
+                "whole_class": false,
+                "id": "r004"
+              },
+              {
+                "run": "organ_comparisons_20260910/runs/zs-ewc",
+                "scenario": "organ",
+                "stage": 4,
+                "independent": false,
+                "split": "test",
+                "code": "<project_root>/organ_comparisons_20260910/source",
+                "data_root": "<project_root>/organ_comparisons_20260910/inputs/data",
+                "checkpoint": "<project_root>/organ_comparisons_20260910/runs/zs-ewc/s04.pt",
+                "tasks": [
+                  {
+                    "code": "T1",
+                    "file": "Task_incre/UtahI.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 0
+                  },
+                  {
+                    "code": "T2",
+                    "file": "Task_incre/UCL.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 1
+                  },
+                  {
+                    "code": "T3",
+                    "file": "Task_incre/Lits.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 2
+                  },
+                  {
+                    "code": "T4",
+                    "file": "Task_incre/brain.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 3
+                  }
+                ],
+                "expected_foreground": {
+                  "T1": 0.08329571803709049,
+                  "T2": 0.019295961787481795,
+                  "T3": 4.588572746214912e-11,
+                  "T4": 0.8056727093399656
+                },
+                "whole_class": false,
+                "id": "r005"
+              },
+              {
+                "run": "organ_comparisons_20260910/runs/zs-gpm",
+                "scenario": "organ",
+                "stage": 4,
+                "independent": false,
+                "split": "test",
+                "code": "<project_root>/organ_comparisons_20260910/source",
+                "data_root": "<project_root>/organ_comparisons_20260910/inputs/data",
+                "checkpoint": "<project_root>/organ_comparisons_20260910/runs/zs-gpm/s04.pt",
+                "tasks": [
+                  {
+                    "code": "T1",
+                    "file": "Task_incre/UtahI.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 0
+                  },
+                  {
+                    "code": "T2",
+                    "file": "Task_incre/UCL.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 1
+                  },
+                  {
+                    "code": "T3",
+                    "file": "Task_incre/Lits.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 2
+                  },
+                  {
+                    "code": "T4",
+                    "file": "Task_incre/brain.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 3
+                  }
+                ],
+                "expected_foreground": {
+                  "T1": 0.1506604738070943,
+                  "T2": 0.07643478495720915,
+                  "T3": 0.037345867468355,
+                  "T4": 0.7558446812134286
+                },
+                "whole_class": false,
+                "id": "r006"
+              },
+              {
+                "run": "organ_comparisons_20260910/runs/zs-sequential",
+                "scenario": "organ",
+                "stage": 4,
+                "independent": false,
+                "split": "test",
+                "code": "<project_root>/organ_comparisons_20260910/source",
+                "data_root": "<project_root>/organ_comparisons_20260910/inputs/data",
+                "checkpoint": "<project_root>/organ_comparisons_20260910/runs/zs-sequential/s04.pt",
+                "tasks": [
+                  {
+                    "code": "T1",
+                    "file": "Task_incre/UtahI.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 0
+                  },
+                  {
+                    "code": "T2",
+                    "file": "Task_incre/UCL.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 1
+                  },
+                  {
+                    "code": "T3",
+                    "file": "Task_incre/Lits.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 2
+                  },
+                  {
+                    "code": "T4",
+                    "file": "Task_incre/brain.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 3
+                  }
+                ],
+                "expected_foreground": {
+                  "T1": 2.9825660906223594e-10,
+                  "T2": 0.034532687015410034,
+                  "T3": 4.588572746214912e-11,
+                  "T4": 0.8173811235241583
+                },
+                "whole_class": false,
+                "id": "r007"
+              },
+              {
+                "run": "organ_baseline_tuning_20260911/runs/zs-ewc_formal",
+                "scenario": "organ",
+                "stage": 4,
+                "independent": false,
+                "split": "test",
+                "code": "<project_root>/organ_baseline_tuning_20260911/source",
+                "data_root": "<project_root>/organ_baseline_tuning_20260911/inputs/data",
+                "checkpoint": "<project_root>/organ_baseline_tuning_20260911/runs/zs-ewc_formal/s04.pt",
+                "tasks": [
+                  {
+                    "code": "T1",
+                    "file": "Task_incre/UtahI.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 0
+                  },
+                  {
+                    "code": "T2",
+                    "file": "Task_incre/UCL.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 1
+                  },
+                  {
+                    "code": "T3",
+                    "file": "Task_incre/Lits.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 2
+                  },
+                  {
+                    "code": "T4",
+                    "file": "Task_incre/brain.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 3
+                  }
+                ],
+                "expected_foreground": {
+                  "T1": 0.0061760670581976086,
+                  "T2": 4.95218043798624e-10,
+                  "T3": 0.16212799352599397,
+                  "T4": 0.8134089740321581
+                },
+                "whole_class": false,
+                "id": "r008"
+              },
+              {
+                "run": "organ_baseline_tuning_20260911/runs/zs-gpm_formal",
+                "scenario": "organ",
+                "stage": 4,
+                "independent": false,
+                "split": "test",
+                "code": "<project_root>/organ_baseline_tuning_20260911/source",
+                "data_root": "<project_root>/organ_baseline_tuning_20260911/inputs/data",
+                "checkpoint": "<project_root>/organ_baseline_tuning_20260911/runs/zs-gpm_formal/s04.pt",
+                "tasks": [
+                  {
+                    "code": "T1",
+                    "file": "Task_incre/UtahI.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 0
+                  },
+                  {
+                    "code": "T2",
+                    "file": "Task_incre/UCL.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 1
+                  },
+                  {
+                    "code": "T3",
+                    "file": "Task_incre/Lits.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 2
+                  },
+                  {
+                    "code": "T4",
+                    "file": "Task_incre/brain.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 3
+                  }
+                ],
+                "expected_foreground": {
+                  "T1": 0.38329977468909654,
+                  "T2": 4.95218043798624e-10,
+                  "T3": 0.06788241138874238,
+                  "T4": 0.7927997756596802
+                },
+                "whole_class": false,
+                "id": "r009"
+              },
+              {
+                "run": "organ_baseline_tuning_20260911/runs/zs-sequential_formal",
+                "scenario": "organ",
+                "stage": 4,
+                "independent": false,
+                "split": "test",
+                "code": "<project_root>/organ_baseline_tuning_20260911/source",
+                "data_root": "<project_root>/organ_baseline_tuning_20260911/inputs/data",
+                "checkpoint": "<project_root>/organ_baseline_tuning_20260911/runs/zs-sequential_formal/s04.pt",
+                "tasks": [
+                  {
+                    "code": "T1",
+                    "file": "Task_incre/UtahI.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 0
+                  },
+                  {
+                    "code": "T2",
+                    "file": "Task_incre/UCL.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 1
+                  },
+                  {
+                    "code": "T3",
+                    "file": "Task_incre/Lits.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 2
+                  },
+                  {
+                    "code": "T4",
+                    "file": "Task_incre/brain.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 3
+                  }
+                ],
+                "expected_foreground": {
+                  "T1": 0.025279659937132416,
+                  "T2": 0.009815294905814417,
+                  "T3": 4.588572746214912e-11,
+                  "T4": 0.7958360825668322
+                },
+                "whole_class": false,
+                "id": "r010"
+              },
+              {
+                "run": "organ_metrics_T134_half_20260909/runs/ind_T4",
+                "scenario": "organ",
+                "stage": 1,
+                "independent": true,
+                "split": "test",
+                "code": "<project_root>/organ_metrics_T134_half_20260909/source",
+                "data_root": "<project_root>/organ_metrics_T134_half_20260909/inputs/data",
+                "checkpoint": "<project_root>/organ_metrics_T134_half_20260909/runs/ind_T4/s01.pt",
+                "tasks": [
+                  {
+                    "code": "T4",
+                    "file": "Task_incre/brain.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 0
+                  }
+                ],
+                "expected_foreground": {
+                  "T4": 0.8191791569120478
+                },
+                "whole_class": false,
+                "id": "r011"
+              },
+              {
+                "run": "organ_metrics_half_20260909/runs/ind_T3",
+                "scenario": "organ",
+                "stage": 1,
+                "independent": true,
+                "split": "test",
+                "code": "<project_root>/organ_metrics_half_20260909/source",
+                "data_root": "<project_root>/organ_metrics_half_20260909/inputs/data",
+                "checkpoint": "<project_root>/organ_metrics_half_20260909/runs/ind_T3/s01.pt",
+                "tasks": [
+                  {
+                    "code": "T3",
+                    "file": "Task_incre/Lits.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 0
+                  }
+                ],
+                "expected_foreground": {
+                  "T3": 0.8749289952746678
+                },
+                "whole_class": false,
+                "id": "r012"
+              },
+              {
+                "run": "organ_T3_lr006_spatial_pair10_20260910/runs/spatial0",
+                "scenario": "organ",
+                "stage": 3,
+                "independent": false,
+                "split": "test",
+                "code": "<project_root>/organ_T3_lr006_spatial_pair10_20260910/source",
+                "data_root": "<project_root>/organ_T3_lr006_spatial_pair10_20260910/inputs/data",
+                "checkpoint": "<project_root>/organ_T3_lr006_spatial_pair10_20260910/runs/spatial0/s03.pt",
+                "tasks": [
+                  {
+                    "code": "T1",
+                    "file": "Task_incre/UtahI.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 0
+                  },
+                  {
+                    "code": "T2",
+                    "file": "Task_incre/UCL.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 1
+                  },
+                  {
+                    "code": "T3",
+                    "file": "Task_incre/Lits.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 2
+                  }
+                ],
+                "expected_foreground": {
+                  "T1": 0.6494367190137663,
+                  "T2": 0.562376597076309,
+                  "T3": 0.8051645710536278
+                },
+                "whole_class": false,
+                "id": "r013"
+              },
+              {
+                "run": "organ_T3_lr006_spatial_pair10_20260910/runs/spatial001",
+                "scenario": "organ",
+                "stage": 3,
+                "independent": false,
+                "split": "test",
+                "code": "<project_root>/organ_T3_lr006_spatial_pair10_20260910/source",
+                "data_root": "<project_root>/organ_T3_lr006_spatial_pair10_20260910/inputs/data",
+                "checkpoint": "<project_root>/organ_T3_lr006_spatial_pair10_20260910/runs/spatial001/s03.pt",
+                "tasks": [
+                  {
+                    "code": "T1",
+                    "file": "Task_incre/UtahI.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 0
+                  },
+                  {
+                    "code": "T2",
+                    "file": "Task_incre/UCL.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 1
+                  },
+                  {
+                    "code": "T3",
+                    "file": "Task_incre/Lits.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 2
+                  }
+                ],
+                "expected_foreground": {
+                  "T1": 0.6241031035969975,
+                  "T2": 0.5566848655952898,
+                  "T3": 0.8082961491592807
+                },
+                "whole_class": false,
+                "id": "r014"
+              },
+              {
+                "run": "organ_baseline_tuning_20260911/runs/zs-ewc_c0",
+                "scenario": "organ",
+                "stage": 4,
+                "independent": false,
+                "split": "val",
+                "code": "<project_root>/organ_baseline_tuning_20260911/source",
+                "data_root": "<project_root>/organ_baseline_tuning_20260911/inputs/data",
+                "checkpoint": "<project_root>/organ_baseline_tuning_20260911/runs/zs-ewc_c0/s04.pt",
+                "tasks": [
+                  {
+                    "code": "T1",
+                    "file": "Task_incre/UtahI.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 0
+                  },
+                  {
+                    "code": "T2",
+                    "file": "Task_incre/UCL.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 1
+                  },
+                  {
+                    "code": "T3",
+                    "file": "Task_incre/Lits.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 2
+                  },
+                  {
+                    "code": "T4",
+                    "file": "Task_incre/brain.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 3
+                  }
+                ],
+                "expected_foreground": {
+                  "T1": 1.6013750749451554e-11,
+                  "T2": 3.325481589990964e-10,
+                  "T3": 2.5580387808758232e-11,
+                  "T4": 0.7710029003586898
+                },
+                "whole_class": false,
+                "id": "r015"
+              },
+              {
+                "run": "organ_baseline_tuning_20260911/runs/zs-ewc_c1",
+                "scenario": "organ",
+                "stage": 4,
+                "independent": false,
+                "split": "val",
+                "code": "<project_root>/organ_baseline_tuning_20260911/source",
+                "data_root": "<project_root>/organ_baseline_tuning_20260911/inputs/data",
+                "checkpoint": "<project_root>/organ_baseline_tuning_20260911/runs/zs-ewc_c1/s04.pt",
+                "tasks": [
+                  {
+                    "code": "T1",
+                    "file": "Task_incre/UtahI.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 0
+                  },
+                  {
+                    "code": "T2",
+                    "file": "Task_incre/UCL.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 1
+                  },
+                  {
+                    "code": "T3",
+                    "file": "Task_incre/Lits.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 2
+                  },
+                  {
+                    "code": "T4",
+                    "file": "Task_incre/brain.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 3
+                  }
+                ],
+                "expected_foreground": {
+                  "T1": 0.2359267283745797,
+                  "T2": 1.7115565600056412e-10,
+                  "T3": 0.08846752446765907,
+                  "T4": 0.7777802230977842
+                },
+                "whole_class": false,
+                "id": "r016"
+              },
+              {
+                "run": "organ_baseline_tuning_20260911/runs/zs-ewc_c2",
+                "scenario": "organ",
+                "stage": 4,
+                "independent": false,
+                "split": "val",
+                "code": "<project_root>/organ_baseline_tuning_20260911/source",
+                "data_root": "<project_root>/organ_baseline_tuning_20260911/inputs/data",
+                "checkpoint": "<project_root>/organ_baseline_tuning_20260911/runs/zs-ewc_c2/s04.pt",
+                "tasks": [
+                  {
+                    "code": "T1",
+                    "file": "Task_incre/UtahI.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 0
+                  },
+                  {
+                    "code": "T2",
+                    "file": "Task_incre/UCL.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 1
+                  },
+                  {
+                    "code": "T3",
+                    "file": "Task_incre/Lits.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 2
+                  },
+                  {
+                    "code": "T4",
+                    "file": "Task_incre/brain.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 3
+                  }
+                ],
+                "expected_foreground": {
+                  "T1": 4.981916251794575e-10,
+                  "T2": 3.332019979504167e-10,
+                  "T3": 2.5580387808758232e-11,
+                  "T4": 0.7582438980924505
+                },
+                "whole_class": false,
+                "id": "r017"
+              },
+              {
+                "run": "organ_baseline_tuning_20260911/runs/zs-ewc_c3",
+                "scenario": "organ",
+                "stage": 4,
+                "independent": false,
+                "split": "val",
+                "code": "<project_root>/organ_baseline_tuning_20260911/source",
+                "data_root": "<project_root>/organ_baseline_tuning_20260911/inputs/data",
+                "checkpoint": "<project_root>/organ_baseline_tuning_20260911/runs/zs-ewc_c3/s04.pt",
+                "tasks": [
+                  {
+                    "code": "T1",
+                    "file": "Task_incre/UtahI.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 0
+                  },
+                  {
+                    "code": "T2",
+                    "file": "Task_incre/UCL.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 1
+                  },
+                  {
+                    "code": "T3",
+                    "file": "Task_incre/Lits.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 2
+                  },
+                  {
+                    "code": "T4",
+                    "file": "Task_incre/brain.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 3
+                  }
+                ],
+                "expected_foreground": {
+                  "T1": 5.73069407503036e-10,
+                  "T2": 3.332019979504167e-10,
+                  "T3": 2.5580387808758232e-11,
+                  "T4": 0.7676042912427606
+                },
+                "whole_class": false,
+                "id": "r018"
+              },
+              {
+                "run": "organ_baseline_tuning_20260911/runs/zs-gpm_c0",
+                "scenario": "organ",
+                "stage": 4,
+                "independent": false,
+                "split": "val",
+                "code": "<project_root>/organ_baseline_tuning_20260911/source",
+                "data_root": "<project_root>/organ_baseline_tuning_20260911/inputs/data",
+                "checkpoint": "<project_root>/organ_baseline_tuning_20260911/runs/zs-gpm_c0/s04.pt",
+                "tasks": [
+                  {
+                    "code": "T1",
+                    "file": "Task_incre/UtahI.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 0
+                  },
+                  {
+                    "code": "T2",
+                    "file": "Task_incre/UCL.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 1
+                  },
+                  {
+                    "code": "T3",
+                    "file": "Task_incre/Lits.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 2
+                  },
+                  {
+                    "code": "T4",
+                    "file": "Task_incre/brain.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 3
+                  }
+                ],
+                "expected_foreground": {
+                  "T1": 5.73069407503036e-10,
+                  "T2": 0.05068180239506706,
+                  "T3": 0.2554379272817375,
+                  "T4": 0.7097541774362601
+                },
+                "whole_class": false,
+                "id": "r019"
+              },
+              {
+                "run": "organ_baseline_tuning_20260911/runs/zs-gpm_c1",
+                "scenario": "organ",
+                "stage": 4,
+                "independent": false,
+                "split": "val",
+                "code": "<project_root>/organ_baseline_tuning_20260911/source",
+                "data_root": "<project_root>/organ_baseline_tuning_20260911/inputs/data",
+                "checkpoint": "<project_root>/organ_baseline_tuning_20260911/runs/zs-gpm_c1/s04.pt",
+                "tasks": [
+                  {
+                    "code": "T1",
+                    "file": "Task_incre/UtahI.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 0
+                  },
+                  {
+                    "code": "T2",
+                    "file": "Task_incre/UCL.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 1
+                  },
+                  {
+                    "code": "T3",
+                    "file": "Task_incre/Lits.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 2
+                  },
+                  {
+                    "code": "T4",
+                    "file": "Task_incre/brain.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 3
+                  }
+                ],
+                "expected_foreground": {
+                  "T1": 5.73069407503036e-10,
+                  "T2": 3.332019979504167e-10,
+                  "T3": 2.540444859388073e-11,
+                  "T4": 0.7128244793634277
+                },
+                "whole_class": false,
+                "id": "r020"
+              },
+              {
+                "run": "organ_baseline_tuning_20260911/runs/zs-gpm_c2",
+                "scenario": "organ",
+                "stage": 4,
+                "independent": false,
+                "split": "val",
+                "code": "<project_root>/organ_baseline_tuning_20260911/source",
+                "data_root": "<project_root>/organ_baseline_tuning_20260911/inputs/data",
+                "checkpoint": "<project_root>/organ_baseline_tuning_20260911/runs/zs-gpm_c2/s04.pt",
+                "tasks": [
+                  {
+                    "code": "T1",
+                    "file": "Task_incre/UtahI.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 0
+                  },
+                  {
+                    "code": "T2",
+                    "file": "Task_incre/UCL.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 1
+                  },
+                  {
+                    "code": "T3",
+                    "file": "Task_incre/Lits.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 2
+                  },
+                  {
+                    "code": "T4",
+                    "file": "Task_incre/brain.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 3
+                  }
+                ],
+                "expected_foreground": {
+                  "T1": 0.043981083236768276,
+                  "T2": 3.332019979504167e-10,
+                  "T3": 0.4217467956170807,
+                  "T4": 0.679488030422758
+                },
+                "whole_class": false,
+                "id": "r021"
+              },
+              {
+                "run": "organ_baseline_tuning_20260911/runs/zs-gpm_c3",
+                "scenario": "organ",
+                "stage": 4,
+                "independent": false,
+                "split": "val",
+                "code": "<project_root>/organ_baseline_tuning_20260911/source",
+                "data_root": "<project_root>/organ_baseline_tuning_20260911/inputs/data",
+                "checkpoint": "<project_root>/organ_baseline_tuning_20260911/runs/zs-gpm_c3/s04.pt",
+                "tasks": [
+                  {
+                    "code": "T1",
+                    "file": "Task_incre/UtahI.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 0
+                  },
+                  {
+                    "code": "T2",
+                    "file": "Task_incre/UCL.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 1
+                  },
+                  {
+                    "code": "T3",
+                    "file": "Task_incre/Lits.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 2
+                  },
+                  {
+                    "code": "T4",
+                    "file": "Task_incre/brain.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 3
+                  }
+                ],
+                "expected_foreground": {
+                  "T1": 0.6135069459127311,
+                  "T2": 3.332019979504167e-10,
+                  "T3": 0.3090955547261726,
+                  "T4": 0.7368270620170214
+                },
+                "whole_class": false,
+                "id": "r022"
+              },
+              {
+                "run": "organ_baseline_tuning_20260911/runs/zs-sequential_c0",
+                "scenario": "organ",
+                "stage": 4,
+                "independent": false,
+                "split": "val",
+                "code": "<project_root>/organ_baseline_tuning_20260911/source",
+                "data_root": "<project_root>/organ_baseline_tuning_20260911/inputs/data",
+                "checkpoint": "<project_root>/organ_baseline_tuning_20260911/runs/zs-sequential_c0/s04.pt",
+                "tasks": [
+                  {
+                    "code": "T1",
+                    "file": "Task_incre/UtahI.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 0
+                  },
+                  {
+                    "code": "T2",
+                    "file": "Task_incre/UCL.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 1
+                  },
+                  {
+                    "code": "T3",
+                    "file": "Task_incre/Lits.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 2
+                  },
+                  {
+                    "code": "T4",
+                    "file": "Task_incre/brain.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 3
+                  }
+                ],
+                "expected_foreground": {
+                  "T1": 0.0634554417725473,
+                  "T2": 1.3922459252404094e-10,
+                  "T3": 2.5580387808758232e-11,
+                  "T4": 0.7515948102147618
+                },
+                "whole_class": false,
+                "id": "r023"
+              },
+              {
+                "run": "organ_baseline_tuning_20260911/runs/zs-sequential_c1",
+                "scenario": "organ",
+                "stage": 4,
+                "independent": false,
+                "split": "val",
+                "code": "<project_root>/organ_baseline_tuning_20260911/source",
+                "data_root": "<project_root>/organ_baseline_tuning_20260911/inputs/data",
+                "checkpoint": "<project_root>/organ_baseline_tuning_20260911/runs/zs-sequential_c1/s04.pt",
+                "tasks": [
+                  {
+                    "code": "T1",
+                    "file": "Task_incre/UtahI.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 0
+                  },
+                  {
+                    "code": "T2",
+                    "file": "Task_incre/UCL.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 1
+                  },
+                  {
+                    "code": "T3",
+                    "file": "Task_incre/Lits.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 2
+                  },
+                  {
+                    "code": "T4",
+                    "file": "Task_incre/brain.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 3
+                  }
+                ],
+                "expected_foreground": {
+                  "T1": 0.37243217232225423,
+                  "T2": 3.3309037784411407e-10,
+                  "T3": 8.830804393358283e-05,
+                  "T4": 0.7186326784341344
+                },
+                "whole_class": false,
+                "id": "r024"
+              },
+              {
+                "run": "organ_baseline_tuning_20260911/runs/zs-sequential_c2",
+                "scenario": "organ",
+                "stage": 4,
+                "independent": false,
+                "split": "val",
+                "code": "<project_root>/organ_baseline_tuning_20260911/source",
+                "data_root": "<project_root>/organ_baseline_tuning_20260911/inputs/data",
+                "checkpoint": "<project_root>/organ_baseline_tuning_20260911/runs/zs-sequential_c2/s04.pt",
+                "tasks": [
+                  {
+                    "code": "T1",
+                    "file": "Task_incre/UtahI.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 0
+                  },
+                  {
+                    "code": "T2",
+                    "file": "Task_incre/UCL.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 1
+                  },
+                  {
+                    "code": "T3",
+                    "file": "Task_incre/Lits.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 2
+                  },
+                  {
+                    "code": "T4",
+                    "file": "Task_incre/brain.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 3
+                  }
+                ],
+                "expected_foreground": {
+                  "T1": 5.59785535556063e-10,
+                  "T2": 3.332019979504167e-10,
+                  "T3": 2.5580387808758232e-11,
+                  "T4": 0.7516915534884369
+                },
+                "whole_class": false,
+                "id": "r025"
+              },
+              {
+                "run": "organ_baseline_tuning_20260911/runs/zs-sequential_c3",
+                "scenario": "organ",
+                "stage": 4,
+                "independent": false,
+                "split": "val",
+                "code": "<project_root>/organ_baseline_tuning_20260911/source",
+                "data_root": "<project_root>/organ_baseline_tuning_20260911/inputs/data",
+                "checkpoint": "<project_root>/organ_baseline_tuning_20260911/runs/zs-sequential_c3/s04.pt",
+                "tasks": [
+                  {
+                    "code": "T1",
+                    "file": "Task_incre/UtahI.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 0
+                  },
+                  {
+                    "code": "T2",
+                    "file": "Task_incre/UCL.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 1
+                  },
+                  {
+                    "code": "T3",
+                    "file": "Task_incre/Lits.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 2
+                  },
+                  {
+                    "code": "T4",
+                    "file": "Task_incre/brain.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 3
+                  }
+                ],
+                "expected_foreground": {
+                  "T1": 5.73069407503036e-10,
+                  "T2": 3.332019979504167e-10,
+                  "T3": 2.5580387808758232e-11,
+                  "T4": 0.7600254134415756
+                },
+                "whole_class": false,
+                "id": "r026"
+              },
+              {
+                "run": "organ_metrics_half_20260909/runs/organ_no_replay",
+                "scenario": "organ",
+                "stage": 4,
+                "independent": false,
+                "split": "test",
+                "code": "<project_root>/organ_metrics_half_20260909/source",
+                "data_root": "<project_root>/organ_metrics_half_20260909/inputs/data",
+                "checkpoint": "<project_root>/organ_metrics_half_20260909/runs/organ_no_replay/s04.pt",
+                "tasks": [
+                  {
+                    "code": "T1",
+                    "file": "Task_incre/UtahI.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 0
+                  },
+                  {
+                    "code": "T2",
+                    "file": "Task_incre/UCL.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 1
+                  },
+                  {
+                    "code": "T3",
+                    "file": "Task_incre/Lits.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 2
+                  },
+                  {
+                    "code": "T4",
+                    "file": "Task_incre/brain.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 3
+                  }
+                ],
+                "expected_foreground": {
+                  "T1": 0.01601458955561903,
+                  "T2": 0.009588540934287137,
+                  "T3": 0.004562842587099715,
+                  "T4": 0.8228229643065443
+                },
+                "whole_class": false,
+                "id": "r027"
+              },
+              {
+                "run": "organ_metrics_half_20260909/runs/organ_retention",
+                "scenario": "organ",
+                "stage": 4,
+                "independent": false,
+                "split": "test",
+                "code": "<project_root>/organ_metrics_half_20260909/source",
+                "data_root": "<project_root>/organ_metrics_half_20260909/inputs/data",
+                "checkpoint": "<project_root>/organ_metrics_half_20260909/runs/organ_retention/s04.pt",
+                "tasks": [
+                  {
+                    "code": "T1",
+                    "file": "Task_incre/UtahI.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 0
+                  },
+                  {
+                    "code": "T2",
+                    "file": "Task_incre/UCL.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 1
+                  },
+                  {
+                    "code": "T3",
+                    "file": "Task_incre/Lits.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 2
+                  },
+                  {
+                    "code": "T4",
+                    "file": "Task_incre/brain.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 3
+                  }
+                ],
+                "expected_foreground": {
+                  "T1": 0.5655142409790693,
+                  "T2": 0.22842043653614713,
+                  "T3": 0.8536527462802365,
+                  "T4": 0.8065287985338309
+                },
+                "whole_class": false,
+                "id": "r028"
+              }
+            ],
+            "scope": "existing-checkpoint evaluation only; preserve original split and checkpoint selection"
+          },
+          "results": {}
+        },
+        "legacy": {
+          "progress": {
+            "current": "l004",
+            "jobs": {
+              "l001": "complete",
+              "l002": "complete",
+              "l003": "complete"
+            },
+            "pid": 37837,
+            "started_at": 1789459788.6674948,
+            "status": "running",
+            "total": 17,
+            "worker_pid": 40411
+          },
+          "plan": {
+            "minimum_free_mib": 5000,
+            "jobs": [
+              {
+                "run": "legacy_joint/h4m8q",
+                "scenario": "domain",
+                "stage": 1,
+                "independent": false,
+                "split": "test",
+                "code": "<legacy_home>/q1d7f",
+                "data_root": "<project_root>/replay_comparisons_20260911/inputs/domain/data",
+                "checkpoint": "<legacy_home>/q1d7f/runs/h4m8q/s01.pt",
+                "tasks": [
+                  {
+                    "code": "A",
+                    "file": "Domain_Prostate/BIDMC.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  },
+                  {
+                    "code": "B",
+                    "file": "Domain_Prostate/HK.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  },
+                  {
+                    "code": "C",
+                    "file": "Domain_Prostate/ISBI.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  },
+                  {
+                    "code": "D",
+                    "file": "Domain_Prostate/UCL.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  },
+                  {
+                    "code": "E",
+                    "file": "Domain_Prostate/ISBI_1.5.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  },
+                  {
+                    "code": "F",
+                    "file": "Domain_Prostate/I2CVB.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  }
+                ],
+                "expected_foreground": {
+                  "A": 0.15715881129576026,
+                  "B": 0.13766652225659556,
+                  "C": 0.34388060456693914,
+                  "D": 0.041717396365266564,
+                  "E": 0.06585434909597228,
+                  "F": 0.0982604661558901
+                },
+                "whole_class": false,
+                "id": "l001"
+              },
+              {
+                "run": "legacy_joint/k7v2n",
+                "scenario": "domain",
+                "stage": 1,
+                "independent": false,
+                "split": "test",
+                "code": "<legacy_home>/q1d7f",
+                "data_root": "<project_root>/replay_comparisons_20260911/inputs/domain/data",
+                "checkpoint": "<legacy_home>/q1d7f/runs/k7v2n/s01.pt",
+                "tasks": [
+                  {
+                    "code": "A",
+                    "file": "Domain_Prostate/BIDMC.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  },
+                  {
+                    "code": "B",
+                    "file": "Domain_Prostate/HK.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  },
+                  {
+                    "code": "C",
+                    "file": "Domain_Prostate/ISBI.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  },
+                  {
+                    "code": "D",
+                    "file": "Domain_Prostate/UCL.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  },
+                  {
+                    "code": "E",
+                    "file": "Domain_Prostate/ISBI_1.5.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  },
+                  {
+                    "code": "F",
+                    "file": "Domain_Prostate/I2CVB.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  }
+                ],
+                "expected_foreground": {
+                  "A": 0.08602465696903407,
+                  "B": 0.42232966199466543,
+                  "C": 0.19838319795915077,
+                  "D": 0.021151620661527565,
+                  "E": 0.010004459185274714,
+                  "F": 0.06995107603725818
+                },
+                "whole_class": false,
+                "id": "l002"
+              },
+              {
+                "run": "legacy_joint/p3x6d",
+                "scenario": "domain",
+                "stage": 1,
+                "independent": false,
+                "split": "test",
+                "code": "<legacy_home>/q1d7f",
+                "data_root": "<project_root>/replay_comparisons_20260911/inputs/domain/data",
+                "checkpoint": "<legacy_home>/q1d7f/runs/p3x6d/s01.pt",
+                "tasks": [
+                  {
+                    "code": "A",
+                    "file": "Domain_Prostate/BIDMC.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  },
+                  {
+                    "code": "B",
+                    "file": "Domain_Prostate/HK.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  },
+                  {
+                    "code": "C",
+                    "file": "Domain_Prostate/ISBI.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  },
+                  {
+                    "code": "D",
+                    "file": "Domain_Prostate/UCL.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  },
+                  {
+                    "code": "E",
+                    "file": "Domain_Prostate/ISBI_1.5.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  },
+                  {
+                    "code": "F",
+                    "file": "Domain_Prostate/I2CVB.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  }
+                ],
+                "expected_foreground": {
+                  "A": 0.0030294655142529777,
+                  "B": 0.006922691633330913,
+                  "C": 0.058278231157417384,
+                  "D": 0.003943783185137646,
+                  "E": 0.010934486762816581,
+                  "F": 0.0012940972335248283
+                },
+                "whole_class": false,
+                "id": "l003"
+              },
+              {
+                "run": "legacy_joint/r8c4w",
+                "scenario": "domain",
+                "stage": 1,
+                "independent": false,
+                "split": "test",
+                "code": "<legacy_home>/q1d7f",
+                "data_root": "<project_root>/replay_comparisons_20260911/inputs/domain/data",
+                "checkpoint": "<legacy_home>/q1d7f/runs/r8c4w/s01.pt",
+                "tasks": [
+                  {
+                    "code": "A",
+                    "file": "Domain_Prostate/BIDMC.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  },
+                  {
+                    "code": "B",
+                    "file": "Domain_Prostate/HK.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  },
+                  {
+                    "code": "C",
+                    "file": "Domain_Prostate/ISBI.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  },
+                  {
+                    "code": "D",
+                    "file": "Domain_Prostate/UCL.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  },
+                  {
+                    "code": "E",
+                    "file": "Domain_Prostate/ISBI_1.5.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  },
+                  {
+                    "code": "F",
+                    "file": "Domain_Prostate/I2CVB.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  }
+                ],
+                "expected_foreground": {
+                  "A": 0.3026871669929258,
+                  "B": 0.45535416675262025,
+                  "C": 0.4967923162860117,
+                  "D": 0.23373452193571742,
+                  "E": 0.47455932449778704,
+                  "F": 0.2749887262398185
+                },
+                "whole_class": false,
+                "id": "l004"
+              },
+              {
+                "run": "legacy_joint/t5n9b",
+                "scenario": "domain",
+                "stage": 1,
+                "independent": false,
+                "split": "test",
+                "code": "<legacy_home>/q1d7f",
+                "data_root": "<project_root>/replay_comparisons_20260911/inputs/domain/data",
+                "checkpoint": "<legacy_home>/q1d7f/runs/t5n9b/s01.pt",
+                "tasks": [
+                  {
+                    "code": "A",
+                    "file": "Domain_Prostate/BIDMC.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  },
+                  {
+                    "code": "B",
+                    "file": "Domain_Prostate/HK.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  },
+                  {
+                    "code": "C",
+                    "file": "Domain_Prostate/ISBI.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  },
+                  {
+                    "code": "D",
+                    "file": "Domain_Prostate/UCL.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  },
+                  {
+                    "code": "E",
+                    "file": "Domain_Prostate/ISBI_1.5.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  },
+                  {
+                    "code": "F",
+                    "file": "Domain_Prostate/I2CVB.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  }
+                ],
+                "expected_foreground": {
+                  "A": 0.4122781839866306,
+                  "B": 0.5003095995316738,
+                  "C": 0.5701722675965137,
+                  "D": 0.561849359655012,
+                  "E": 0.5144406383932307,
+                  "F": 0.3559959108021899
+                },
+                "whole_class": false,
+                "id": "l005"
+              },
+              {
+                "run": "legacy_joint/u2f7k",
+                "scenario": "domain",
+                "stage": 1,
+                "independent": false,
+                "split": "test",
+                "code": "<legacy_home>/q1d7f",
+                "data_root": "<project_root>/replay_comparisons_20260911/inputs/domain/data",
+                "checkpoint": "<legacy_home>/q1d7f/runs/u2f7k/s01.pt",
+                "tasks": [
+                  {
+                    "code": "A",
+                    "file": "Domain_Prostate/BIDMC.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  },
+                  {
+                    "code": "B",
+                    "file": "Domain_Prostate/HK.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  },
+                  {
+                    "code": "C",
+                    "file": "Domain_Prostate/ISBI.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  },
+                  {
+                    "code": "D",
+                    "file": "Domain_Prostate/UCL.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  },
+                  {
+                    "code": "E",
+                    "file": "Domain_Prostate/ISBI_1.5.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  },
+                  {
+                    "code": "F",
+                    "file": "Domain_Prostate/I2CVB.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  }
+                ],
+                "expected_foreground": {
+                  "A": 0.4458379347683991,
+                  "B": 0.591113841421744,
+                  "C": 0.6139167943815522,
+                  "D": 0.6129202995239745,
+                  "E": 0.5480495527665831,
+                  "F": 0.43647354603133603
+                },
+                "whole_class": false,
+                "id": "l006"
+              },
+              {
+                "run": "legacy_joint/w6d3s",
+                "scenario": "domain",
+                "stage": 1,
+                "independent": false,
+                "split": "test",
+                "code": "<legacy_home>/q1d7f",
+                "data_root": "<project_root>/replay_comparisons_20260911/inputs/domain/data",
+                "checkpoint": "<legacy_home>/q1d7f/runs/w6d3s/s01.pt",
+                "tasks": [
+                  {
+                    "code": "A",
+                    "file": "Domain_Prostate/BIDMC.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  },
+                  {
+                    "code": "B",
+                    "file": "Domain_Prostate/HK.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  },
+                  {
+                    "code": "C",
+                    "file": "Domain_Prostate/ISBI.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  },
+                  {
+                    "code": "D",
+                    "file": "Domain_Prostate/UCL.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  },
+                  {
+                    "code": "E",
+                    "file": "Domain_Prostate/ISBI_1.5.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  },
+                  {
+                    "code": "F",
+                    "file": "Domain_Prostate/I2CVB.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  }
+                ],
+                "expected_foreground": {
+                  "A": 0.46351469191408284,
+                  "B": 0.5375427556111202,
+                  "C": 0.5723226652220037,
+                  "D": 0.53859484814521,
+                  "E": 0.5812139793060772,
+                  "F": 0.3056153319153172
+                },
+                "whole_class": false,
+                "id": "l007"
+              },
+              {
+                "run": "legacy_domain/m7v2q",
+                "scenario": "domain",
+                "stage": 1,
+                "independent": false,
+                "split": "test",
+                "code": "<legacy_home>/q1d7f",
+                "data_root": "<project_root>/replay_comparisons_20260911/inputs/domain/data",
+                "checkpoint": "<legacy_home>/q1d7f/runs/m7v2q/s01.pt",
+                "tasks": [
+                  {
+                    "code": "A",
+                    "file": "Domain_Prostate/BIDMC.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  }
+                ],
+                "expected_foreground": {
+                  "A": 0.7261413306722405
+                },
+                "whole_class": false,
+                "purpose": "initial-learned-task diagonal for inclusive BWTR",
+                "id": "l008"
+              },
+              {
+                "run": "legacy_domain/m7v2q",
+                "scenario": "domain",
+                "stage": 2,
+                "independent": false,
+                "split": "test",
+                "code": "<legacy_home>/q1d7f",
+                "data_root": "<project_root>/replay_comparisons_20260911/inputs/domain/data",
+                "checkpoint": "<legacy_home>/q1d7f/runs/m7v2q/s02.pt",
+                "tasks": [
+                  {
+                    "code": "B",
+                    "file": "Domain_Prostate/HK.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  }
+                ],
+                "expected_foreground": {
+                  "B": 0.5480566225857612
+                },
+                "whole_class": false,
+                "purpose": "initial-learned-task diagonal for inclusive BWTR",
+                "id": "l009"
+              },
+              {
+                "run": "legacy_domain/m7v2q",
+                "scenario": "domain",
+                "stage": 3,
+                "independent": false,
+                "split": "test",
+                "code": "<legacy_home>/q1d7f",
+                "data_root": "<project_root>/replay_comparisons_20260911/inputs/domain/data",
+                "checkpoint": "<legacy_home>/q1d7f/runs/m7v2q/s03.pt",
+                "tasks": [
+                  {
+                    "code": "C",
+                    "file": "Domain_Prostate/ISBI.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  }
+                ],
+                "expected_foreground": {
+                  "C": 0.6972386103956152
+                },
+                "whole_class": false,
+                "purpose": "initial-learned-task diagonal for inclusive BWTR",
+                "id": "l010"
+              },
+              {
+                "run": "legacy_domain/m7v2q",
+                "scenario": "domain",
+                "stage": 4,
+                "independent": false,
+                "split": "test",
+                "code": "<legacy_home>/q1d7f",
+                "data_root": "<project_root>/replay_comparisons_20260911/inputs/domain/data",
+                "checkpoint": "<legacy_home>/q1d7f/runs/m7v2q/s04.pt",
+                "tasks": [
+                  {
+                    "code": "D",
+                    "file": "Domain_Prostate/UCL.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  }
+                ],
+                "expected_foreground": {
+                  "D": 0.5637143460711539
+                },
+                "whole_class": false,
+                "purpose": "initial-learned-task diagonal for inclusive BWTR",
+                "id": "l011"
+              },
+              {
+                "run": "legacy_domain/m7v2q",
+                "scenario": "domain",
+                "stage": 5,
+                "independent": false,
+                "split": "test",
+                "code": "<legacy_home>/q1d7f",
+                "data_root": "<project_root>/replay_comparisons_20260911/inputs/domain/data",
+                "checkpoint": "<legacy_home>/q1d7f/runs/m7v2q/s05.pt",
+                "tasks": [
+                  {
+                    "code": "E",
+                    "file": "Domain_Prostate/ISBI_1.5.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  }
+                ],
+                "expected_foreground": {
+                  "E": 0.7387527764632954
+                },
+                "whole_class": false,
+                "purpose": "initial-learned-task diagonal for inclusive BWTR",
+                "id": "l012"
+              },
+              {
+                "run": "legacy_domain/t4m7b",
+                "scenario": "domain",
+                "stage": 1,
+                "independent": false,
+                "split": "test",
+                "code": "<legacy_home>/q1d7f",
+                "data_root": "<project_root>/replay_comparisons_20260911/inputs/domain/data",
+                "checkpoint": "<legacy_nas>/runs/t4m7b/s01.pt",
+                "tasks": [
+                  {
+                    "code": "A",
+                    "file": "Domain_Prostate/BIDMC.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  }
+                ],
+                "expected_foreground": {
+                  "A": 0.5522536703436313
+                },
+                "whole_class": false,
+                "purpose": "initial-learned-task diagonal for inclusive BWTR",
+                "id": "l013"
+              },
+              {
+                "run": "legacy_domain/t4m7b",
+                "scenario": "domain",
+                "stage": 2,
+                "independent": false,
+                "split": "test",
+                "code": "<legacy_home>/q1d7f",
+                "data_root": "<project_root>/replay_comparisons_20260911/inputs/domain/data",
+                "checkpoint": "<legacy_nas>/runs/t4m7b/s02.pt",
+                "tasks": [
+                  {
+                    "code": "B",
+                    "file": "Domain_Prostate/HK.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  }
+                ],
+                "expected_foreground": {
+                  "B": 0.6949239032276612
+                },
+                "whole_class": false,
+                "purpose": "initial-learned-task diagonal for inclusive BWTR",
+                "id": "l014"
+              },
+              {
+                "run": "legacy_domain/t4m7b",
+                "scenario": "domain",
+                "stage": 3,
+                "independent": false,
+                "split": "test",
+                "code": "<legacy_home>/q1d7f",
+                "data_root": "<project_root>/replay_comparisons_20260911/inputs/domain/data",
+                "checkpoint": "<legacy_nas>/runs/t4m7b/s03.pt",
+                "tasks": [
+                  {
+                    "code": "C",
+                    "file": "Domain_Prostate/ISBI.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  }
+                ],
+                "expected_foreground": {
+                  "C": 0.7035922620815506
+                },
+                "whole_class": false,
+                "purpose": "initial-learned-task diagonal for inclusive BWTR",
+                "id": "l015"
+              },
+              {
+                "run": "legacy_domain/t4m7b",
+                "scenario": "domain",
+                "stage": 4,
+                "independent": false,
+                "split": "test",
+                "code": "<legacy_home>/q1d7f",
+                "data_root": "<project_root>/replay_comparisons_20260911/inputs/domain/data",
+                "checkpoint": "<legacy_nas>/runs/t4m7b/s04.pt",
+                "tasks": [
+                  {
+                    "code": "D",
+                    "file": "Domain_Prostate/UCL.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  }
+                ],
+                "expected_foreground": {
+                  "D": 0.6936488383746104
+                },
+                "whole_class": false,
+                "purpose": "initial-learned-task diagonal for inclusive BWTR",
+                "id": "l016"
+              },
+              {
+                "run": "legacy_domain/t4m7b",
+                "scenario": "domain",
+                "stage": 5,
+                "independent": false,
+                "split": "test",
+                "code": "<legacy_home>/q1d7f",
+                "data_root": "<project_root>/replay_comparisons_20260911/inputs/domain/data",
+                "checkpoint": "<legacy_nas>/runs/t4m7b/s05.pt",
+                "tasks": [
+                  {
+                    "code": "E",
+                    "file": "Domain_Prostate/ISBI_1.5.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": null
+                  }
+                ],
+                "expected_foreground": {
+                  "E": 0.7493391192971641
+                },
+                "whole_class": false,
+                "purpose": "initial-learned-task diagonal for inclusive BWTR",
+                "id": "l017"
+              }
+            ]
+          },
+          "results": {
+            "l001": {
+              "background_inclusive_mean": 0.5654188560261618,
+              "checkpoint": "<legacy_home>/q1d7f/runs/h4m8q/s01.pt",
+              "checkpoint_bytes": 103132828,
+              "checkpoint_mtime": 1788312750.5996182,
+              "code": "<legacy_home>/q1d7f",
+              "compared_tasks": [
+                "A",
+                "B",
+                "C",
+                "D",
+                "E",
+                "F"
+              ],
+              "data_root": "<project_root>/replay_comparisons_20260911/inputs/domain/data",
+              "finished_at": 1789459864.1772153,
+              "foreground_max_abs_difference": 0.0,
+              "foreground_parity_passed": true,
+              "gpu_peak_mib": 1062.0,
+              "job_id": "l001",
+              "run": "legacy_joint/h4m8q",
+              "scenario": "domain",
+              "split": "test",
+              "stage": 1,
+              "status": "complete",
+              "tasks": {
+                "A": {
+                  "background_dice": 0.985951442406033,
+                  "background_inclusive_mean": 0.5715551268508966,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.15715881129576026,
+                  "patients": 3,
+                  "per_class_including_background": [
+                    0.985951442406033,
+                    0.15715881129576026
+                  ],
+                  "slices": 126
+                },
+                "B": {
+                  "background_dice": 0.9920554641966005,
+                  "background_inclusive_mean": 0.5648609932265981,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.13766652225659556,
+                  "patients": 3,
+                  "per_class_including_background": [
+                    0.9920554641966005,
+                    0.13766652225659556
+                  ],
+                  "slices": 72
+                },
+                "C": {
+                  "background_dice": 0.9902070943325183,
+                  "background_inclusive_mean": 0.6670438494497287,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.34388060456693914,
+                  "patients": 8,
+                  "per_class_including_background": [
+                    0.9902070943325184,
+                    0.3438806045669391
+                  ],
+                  "slices": 158
+                },
+                "D": {
+                  "background_dice": 0.9919776944702638,
+                  "background_inclusive_mean": 0.5168475454177652,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.041717396365266564,
+                  "patients": 4,
+                  "per_class_including_background": [
+                    0.9919776944702638,
+                    0.041717396365266564
+                  ],
+                  "slices": 100
+                },
+                "E": {
+                  "background_dice": 0.9867477029941849,
+                  "background_inclusive_mean": 0.5263010260450787,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.06585434909597228,
+                  "patients": 8,
+                  "per_class_including_background": [
+                    0.9867477029941849,
+                    0.06585434909597228
+                  ],
+                  "slices": 254
+                },
+                "F": {
+                  "background_dice": 0.993548724177917,
+                  "background_inclusive_mean": 0.5459045951669035,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.0982604661558901,
+                  "patients": 5,
+                  "per_class_including_background": [
+                    0.993548724177917,
+                    0.0982604661558901
+                  ],
+                  "slices": 320
+                }
+              }
+            },
+            "l002": {
+              "background_inclusive_mean": 0.5610269308352646,
+              "checkpoint": "<legacy_home>/q1d7f/runs/k7v2n/s01.pt",
+              "checkpoint_bytes": 103132828,
+              "checkpoint_mtime": 1788312750.5776181,
+              "code": "<legacy_home>/q1d7f",
+              "compared_tasks": [
+                "A",
+                "B",
+                "C",
+                "D",
+                "E",
+                "F"
+              ],
+              "data_root": "<project_root>/replay_comparisons_20260911/inputs/domain/data",
+              "finished_at": 1789459942.1000257,
+              "foreground_max_abs_difference": 0.0,
+              "foreground_parity_passed": true,
+              "gpu_peak_mib": 1062.0,
+              "job_id": "l002",
+              "run": "legacy_joint/k7v2n",
+              "scenario": "domain",
+              "split": "test",
+              "stage": 1,
+              "status": "complete",
+              "tasks": {
+                "A": {
+                  "background_dice": 0.9827014229230572,
+                  "background_inclusive_mean": 0.5343630399460456,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.08602465696903407,
+                  "patients": 3,
+                  "per_class_including_background": [
+                    0.9827014229230572,
+                    0.08602465696903407
+                  ],
+                  "slices": 126
+                },
+                "B": {
+                  "background_dice": 0.9923194900359972,
+                  "background_inclusive_mean": 0.7073245760153313,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.42232966199466543,
+                  "patients": 3,
+                  "per_class_including_background": [
+                    0.9923194900359972,
+                    0.42232966199466543
+                  ],
+                  "slices": 72
+                },
+                "C": {
+                  "background_dice": 0.9874511363065395,
+                  "background_inclusive_mean": 0.592917167132845,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.19838319795915077,
+                  "patients": 8,
+                  "per_class_including_background": [
+                    0.9874511363065395,
+                    0.19838319795915077
+                  ],
+                  "slices": 158
+                },
+                "D": {
+                  "background_dice": 0.9885516677329145,
+                  "background_inclusive_mean": 0.5048516441972211,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.021151620661527565,
+                  "patients": 4,
+                  "per_class_including_background": [
+                    0.9885516677329145,
+                    0.021151620661527565
+                  ],
+                  "slices": 100
+                },
+                "E": {
+                  "background_dice": 0.9831408825934574,
+                  "background_inclusive_mean": 0.4965726708893661,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.010004459185274714,
+                  "patients": 8,
+                  "per_class_including_background": [
+                    0.9831408825934576,
+                    0.010004459185274714
+                  ],
+                  "slices": 254
+                },
+                "F": {
+                  "background_dice": 0.9903138976242983,
+                  "background_inclusive_mean": 0.5301324868307782,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.06995107603725818,
+                  "patients": 5,
+                  "per_class_including_background": [
+                    0.9903138976242983,
+                    0.06995107603725818
+                  ],
+                  "slices": 320
+                }
+              }
+            },
+            "l003": {
+              "background_inclusive_mean": 0.5015093878855986,
+              "checkpoint": "<legacy_home>/q1d7f/runs/p3x6d/s01.pt",
+              "checkpoint_bytes": 103132828,
+              "checkpoint_mtime": 1788312750.6136181,
+              "code": "<legacy_home>/q1d7f",
+              "compared_tasks": [
+                "A",
+                "B",
+                "C",
+                "D",
+                "E",
+                "F"
+              ],
+              "data_root": "<project_root>/replay_comparisons_20260911/inputs/domain/data",
+              "finished_at": 1789460019.6920047,
+              "foreground_max_abs_difference": 0.0,
+              "foreground_parity_passed": true,
+              "gpu_peak_mib": 1062.0,
+              "job_id": "l003",
+              "run": "legacy_joint/p3x6d",
+              "scenario": "domain",
+              "split": "test",
+              "stage": 1,
+              "status": "complete",
+              "tasks": {
+                "A": {
+                  "background_dice": 0.9806469343750074,
+                  "background_inclusive_mean": 0.4918381999446302,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.0030294655142529777,
+                  "patients": 3,
+                  "per_class_including_background": [
+                    0.9806469343750074,
+                    0.0030294655142529777
+                  ],
+                  "slices": 126
+                },
+                "B": {
+                  "background_dice": 0.9907830377914483,
+                  "background_inclusive_mean": 0.49885286471238954,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.006922691633330913,
+                  "patients": 3,
+                  "per_class_including_background": [
+                    0.9907830377914483,
+                    0.006922691633330913
+                  ],
+                  "slices": 72
+                },
+                "C": {
+                  "background_dice": 0.9886135939033557,
+                  "background_inclusive_mean": 0.5234459125303865,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.058278231157417384,
+                  "patients": 8,
+                  "per_class_including_background": [
+                    0.9886135939033557,
+                    0.05827823115741738
+                  ],
+                  "slices": 158
+                },
+                "D": {
+                  "background_dice": 0.9919159484044466,
+                  "background_inclusive_mean": 0.49792986579479215,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.003943783185137646,
+                  "patients": 4,
+                  "per_class_including_background": [
+                    0.9919159484044466,
+                    0.003943783185137646
+                  ],
+                  "slices": 100
+                },
+                "E": {
+                  "background_dice": 0.987474546902507,
+                  "background_inclusive_mean": 0.49920451683266176,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.010934486762816581,
+                  "patients": 8,
+                  "per_class_including_background": [
+                    0.987474546902507,
+                    0.010934486762816581
+                  ],
+                  "slices": 254
+                },
+                "F": {
+                  "background_dice": 0.9942758377639376,
+                  "background_inclusive_mean": 0.49778496749873125,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.0012940972335248283,
+                  "patients": 5,
+                  "per_class_including_background": [
+                    0.9942758377639376,
+                    0.0012940972335248283
+                  ],
+                  "slices": 320
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
