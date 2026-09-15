@@ -98,7 +98,7 @@ v6c43 采用 2026-09-10 同批次 checkpoint 复评值；早期公开归档的 A
 
 ## 3. Organ 持续学习
 
-### 3.1 已有含背景测试结果
+### 3.1 Organ 主方法与对照总览
 
 ER 的 4 阶段已完成，采用 T1/T3/T4 训练集减半、T2 保持完整的协议，40 epochs/任务、buffer=64。历史 u5k2n 只是 T4 epoch 21 时保存的 partial checkpoint，不能视为完成的正式对照。
 
@@ -106,6 +106,19 @@ ER 的 4 阶段已完成，采用 T1/T3/T4 训练集减半、T2 保持完整的�
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | ZS-ER | 完成；40/40/40/40 | 0.715004 | 0.642424 | 0.879449 | 0.901029 | 0.784476 | S013 |
 | ZS-DER++ / u5k2n | 未完成；T4 epoch 21 | 0.763569 | 0.497127 | 0.920583 | 0.891977 | 0.768314 | S014 |
+| ZS-DER++ / spatial0 | 训练完成；60/60/10/10；补评已完成 | 0.814544 | 0.784317 | 0.887446 | 0.905929 | 0.848059 | S015 |
+| dense-sequential | 训练完成；60/60/10/10；含背景补评待完成 | NA | NA | NA | NA | NA | S016 |
+| pce-sequential | 训练完成；60/60/10/10；含背景补评待完成 | NA | NA | NA | NA | NA | S017 |
+| zs-sequential | 训练完成；60/60/10/10；含背景补评待完成 | NA | NA | NA | NA | NA | S018 |
+| zs-ewc | 训练完成；60/60/10/10；含背景补评待完成 | NA | NA | NA | NA | NA | S019 |
+| zs-gpm | 训练完成；60/60/10/10；含背景补评待完成 | NA | NA | NA | NA | NA | S020 |
+| zs-sequential（调参后） | 训练完成；40/40/40/40；含背景补评待完成 | NA | NA | NA | NA | NA | S021 |
+| zs-ewc（调参后） | 训练完成；40/40/40/40；含背景补评待完成 | NA | NA | NA | NA | NA | S022 |
+| zs-gpm（调参后） | 训练完成；40/40/40/40；含背景补评待完成 | NA | NA | NA | NA | NA | S023 |
+
+因此，Organ-CL 并非只有 ZS-ER 有训练结果。上版将已经具备含背景分项的记录单列，容易造成只有 ER 的误解；现在把已完成训练的主方法和对照统一展示。不同预算仍不能直接作为匹配对照。
+
+2026-09-15 18:45 北京时间实查：原 Organ 背景补评队列仍停留在第一项 r001，后面 27 项尚未启动；该首轮 worker 未使用后来启用的 HDF5 内存缓存，出现大量 NAS 逐切片读取（进程累计读取量约 1 TB），是补评延迟，不能解读为训练失败或方法没有结果。缓存检查确认同一 brain.h5 的 1,223 张测试切片可在 12.7 秒载入，之后抽取三张切片只需 0.0084 秒。主方法同一 checkpoint 的单独缓存复评已于 18:50 完成，耗时约 70 秒，含背景 A-Dice=0.848059；四任务前景重放最大差为 0。原进程保留。cached 批次是同一 checkpoint 的补评重试，不是新训练实验。
 
 | ER 阶段 | T1 | T2 | T3 | T4 |
 | --- | --- | --- | --- | --- |
@@ -122,30 +135,30 @@ ER 的 4 阶段已完成，采用 T1/T3/T4 训练集减半、T2 保持完整的�
 
 | 批次 / run | 用途 | 完成阶段 | 配置预算 | 含背景 A-Dice | 来源 |
 | --- | --- | --- | --- | --- | --- |
-| organ_T3_lr006_spatial_pair10_20260910/runs/spatial0 | 已保存阶段测试 | 3 | 60/60/10 | NA | S015 |
-| organ_T3_lr006_spatial_pair10_20260910/runs/spatial001 | 已保存阶段测试 | 3 | 60/60/10 | NA | S016 |
-| organ_T4_from_T3best_lr006_spatial_pair10_20260910/runs/spatial0 | 已保存阶段测试 | 4 | 60/60/10/10 | NA | S017 |
-| organ_T4_from_T3best_lr006_spatial_pair10_20260910/runs/spatial001 | 已保存阶段测试 | 4 | 60/60/10/10 | NA | S018 |
-| organ_baseline_tuning_20260911/runs/zs-ewc_c0 | 筛选验证 | 4 | 10 | NA | S019 |
-| organ_baseline_tuning_20260911/runs/zs-ewc_c1 | 筛选验证 | 4 | 10 | NA | S020 |
-| organ_baseline_tuning_20260911/runs/zs-ewc_c2 | 筛选验证 | 4 | 10 | NA | S021 |
-| organ_baseline_tuning_20260911/runs/zs-ewc_c3 | 筛选验证 | 4 | 10 | NA | S022 |
-| organ_baseline_tuning_20260911/runs/zs-ewc_formal | 已保存阶段测试 | 4 | 40 | NA | S023 |
-| organ_baseline_tuning_20260911/runs/zs-gpm_c0 | 筛选验证 | 4 | 10 | NA | S024 |
-| organ_baseline_tuning_20260911/runs/zs-gpm_c1 | 筛选验证 | 4 | 10 | NA | S025 |
-| organ_baseline_tuning_20260911/runs/zs-gpm_c2 | 筛选验证 | 4 | 10 | NA | S026 |
-| organ_baseline_tuning_20260911/runs/zs-gpm_c3 | 筛选验证 | 4 | 10 | NA | S027 |
-| organ_baseline_tuning_20260911/runs/zs-gpm_formal | 已保存阶段测试 | 4 | 40 | NA | S028 |
-| organ_baseline_tuning_20260911/runs/zs-sequential_c0 | 筛选验证 | 4 | 10 | NA | S029 |
-| organ_baseline_tuning_20260911/runs/zs-sequential_c1 | 筛选验证 | 4 | 10 | NA | S030 |
-| organ_baseline_tuning_20260911/runs/zs-sequential_c2 | 筛选验证 | 4 | 10 | NA | S031 |
-| organ_baseline_tuning_20260911/runs/zs-sequential_c3 | 筛选验证 | 4 | 10 | NA | S032 |
-| organ_baseline_tuning_20260911/runs/zs-sequential_formal | 已保存阶段测试 | 4 | 40 | NA | S033 |
-| organ_comparisons_20260910/runs/dense-sequential | 已保存阶段测试 | 4 | 60/60/10/10 | NA | S034 |
-| organ_comparisons_20260910/runs/pce-sequential | 已保存阶段测试 | 4 | 60/60/10/10 | NA | S035 |
-| organ_comparisons_20260910/runs/zs-ewc | 已保存阶段测试 | 4 | 60/60/10/10 | NA | S036 |
-| organ_comparisons_20260910/runs/zs-gpm | 已保存阶段测试 | 4 | 60/60/10/10 | NA | S037 |
-| organ_comparisons_20260910/runs/zs-sequential | 已保存阶段测试 | 4 | 60/60/10/10 | NA | S038 |
+| organ_T3_lr006_spatial_pair10_20260910/runs/spatial0 | 已保存阶段测试 | 3 | 60/60/10 | NA | S024 |
+| organ_T3_lr006_spatial_pair10_20260910/runs/spatial001 | 已保存阶段测试 | 3 | 60/60/10 | NA | S025 |
+| organ_T4_from_T3best_lr006_spatial_pair10_20260910/runs/spatial0 | 已保存阶段测试 | 4 | 60/60/10/10 | 0.848059 | S015 |
+| organ_T4_from_T3best_lr006_spatial_pair10_20260910/runs/spatial001 | 已保存阶段测试 | 4 | 60/60/10/10 | NA | S026 |
+| organ_baseline_tuning_20260911/runs/zs-ewc_c0 | 筛选验证 | 4 | 10 | NA | S027 |
+| organ_baseline_tuning_20260911/runs/zs-ewc_c1 | 筛选验证 | 4 | 10 | NA | S028 |
+| organ_baseline_tuning_20260911/runs/zs-ewc_c2 | 筛选验证 | 4 | 10 | NA | S029 |
+| organ_baseline_tuning_20260911/runs/zs-ewc_c3 | 筛选验证 | 4 | 10 | NA | S030 |
+| organ_baseline_tuning_20260911/runs/zs-ewc_formal | 已保存阶段测试 | 4 | 40 | NA | S022 |
+| organ_baseline_tuning_20260911/runs/zs-gpm_c0 | 筛选验证 | 4 | 10 | NA | S031 |
+| organ_baseline_tuning_20260911/runs/zs-gpm_c1 | 筛选验证 | 4 | 10 | NA | S032 |
+| organ_baseline_tuning_20260911/runs/zs-gpm_c2 | 筛选验证 | 4 | 10 | NA | S033 |
+| organ_baseline_tuning_20260911/runs/zs-gpm_c3 | 筛选验证 | 4 | 10 | NA | S034 |
+| organ_baseline_tuning_20260911/runs/zs-gpm_formal | 已保存阶段测试 | 4 | 40 | NA | S023 |
+| organ_baseline_tuning_20260911/runs/zs-sequential_c0 | 筛选验证 | 4 | 10 | NA | S035 |
+| organ_baseline_tuning_20260911/runs/zs-sequential_c1 | 筛选验证 | 4 | 10 | NA | S036 |
+| organ_baseline_tuning_20260911/runs/zs-sequential_c2 | 筛选验证 | 4 | 10 | NA | S037 |
+| organ_baseline_tuning_20260911/runs/zs-sequential_c3 | 筛选验证 | 4 | 10 | NA | S038 |
+| organ_baseline_tuning_20260911/runs/zs-sequential_formal | 已保存阶段测试 | 4 | 40 | NA | S021 |
+| organ_comparisons_20260910/runs/dense-sequential | 已保存阶段测试 | 4 | 60/60/10/10 | NA | S016 |
+| organ_comparisons_20260910/runs/pce-sequential | 已保存阶段测试 | 4 | 60/60/10/10 | NA | S017 |
+| organ_comparisons_20260910/runs/zs-ewc | 已保存阶段测试 | 4 | 60/60/10/10 | NA | S019 |
+| organ_comparisons_20260910/runs/zs-gpm | 已保存阶段测试 | 4 | 60/60/10/10 | NA | S020 |
+| organ_comparisons_20260910/runs/zs-sequential | 已保存阶段测试 | 4 | 60/60/10/10 | NA | S018 |
 | organ_metrics_T134_half_20260909/runs/ind_T4 | 已保存阶段测试 | 1 | 80 | NA | S039 |
 | organ_metrics_half_20260909/runs/ind_T3 | 已保存阶段测试 | 1 | 80 | NA | S040 |
 | organ_metrics_half_20260909/runs/organ_no_replay | 已保存阶段测试 | 4 | 60 | NA | S041 |
@@ -174,7 +187,12 @@ A=BIDMC，B=HK，C=ISBI，D=UCL，E=ISBI_1.5，F=I2CVB。以下值来自已归�
 | ZS-GPM / m7v2q | 150 × 6 | 0.616881 | 0.668102 | 0.675925 | 0.563415 | 0.621460 | 0.799747 | 0.657588 | S045 |
 | ZS-Joint / y9h4m | 5 epochs；短诊断 | 0.803333 | 0.761996 | 0.825177 | 0.794688 | 0.796832 | 0.674033 | 0.776010 | S046 |
 
-这里可比较保存 checkpoint 的含背景最终分数，但没有所有阶段的含背景矩阵，故不复用归档 CSV 中按前景计算的 BWTR/E-FWT。9 月 11 日新启动的 Domain ER、DER 均失败，见 3.3；不要用它们覆盖这两项历史完成结果。
+| Domain run | 含背景 BWTR | 依据 |
+| --- | --- | --- |
+| m7v2q | -0.234234 | 最终含背景分项 + s01–s05 对角线补评 |
+| t4m7b | -0.087966 | 最终含背景分项 + s01–s05 对角线补评 |
+
+这里可比较保存 checkpoint 的含背景最终分数。已完成对角线补评的模型可重算含背景 BWTR；E-FWT 所需的其余矩阵仍不完整，不复用归档 CSV 中按前景计算的旧值。9 月 11 日新启动的 Domain ER、DER 均失败，见 3.3；不要用它们覆盖这两项历史完成结果。
 
 ## 5. GPU 3 改进实验快照
 
@@ -366,7 +384,7 @@ A=BIDMC，B=HK，C=ISBI，D=UCL，E=ISBI_1.5，F=I2CVB。以下值来自已归�
 | --- | --- | --- | --- | --- | --- | --- |
 | my-gpu | class_comparisons_20260910/dense_smoke | 1 | 1 | 工程/短诊断；仅当前任务验证 | 0.244697 | S086 |
 | my-gpu | class_comparisons_20260910/gpm_smoke | 2 | 1 | 工程/短诊断；仅当前任务验证 | 0.326683 | S087 |
-| my-gpu | class_independent_spatial_sweep_20260908/jobs/cl_spatial_0.01 | 3 | 40 | 含背景分项缺失 | NA | S088 |
+| my-gpu | class_independent_spatial_sweep_20260908/jobs/cl_spatial_0.01 | 3 | 40 | checkpoint 补评；已见任务验证 | 0.775111 | S088 |
 | my-gpu | class_independent_spatial_sweep_20260908/jobs/ind_T1_lr0.01 | 1 | 20 | checkpoint 补评；已见任务验证 | 0.735565 | S089 |
 | my-gpu | class_independent_spatial_sweep_20260908/jobs/ind_T1_lr0.03 | 1 | 20 | checkpoint 补评；已见任务验证 | 0.692540 | S090 |
 | my-gpu | class_independent_spatial_sweep_20260908/jobs/ind_T2_lr0.01 | 1 | 20 | checkpoint 补评；已见任务验证 | 0.599318 | S091 |
@@ -378,14 +396,14 @@ A=BIDMC，B=HK，C=ISBI，D=UCL，E=ISBI_1.5，F=I2CVB。以下值来自已归�
 | my-gpu | class_replay_improve_20260915/jobs/zs-der-smoke | 2 | 80/1/60 | 工程/短诊断；仅当前任务验证 | 0.324897 | S097 |
 | my-gpu | class_replay_improve_20260915_r2/jobs/zs-der-smoke | 2 | 80/1/60 | 工程/短诊断；仅当前任务验证 | 0.324897 | S098 |
 | my-gpu | class_replay_improve_20260915_r2/jobs/zs-er-smoke | 2 | 80/1/60 | 工程/短诊断；仅当前任务验证 | 0.318258 | S099 |
-| my-gpu | core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/pce_mib_seed42 | 3 | 150 | 含背景分项缺失 | NA | S100 |
-| my-gpu | core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/pce_sequential_seed42 | 3 | 150 | 含背景分项缺失 | NA | S101 |
-| my-gpu | core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/zs_mib_global1_origscale_seed42 | 3 | 150 | 含背景分项缺失 | NA | S102 |
-| my-gpu | core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/zs_sequential_global1_origscale_seed42 | 3 | 150 | 含背景分项缺失 | NA | S103 |
+| my-gpu | core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/pce_mib_seed42 | 3 | 150 | checkpoint 补评；测试 | 0.666446 | S100 |
+| my-gpu | core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/pce_sequential_seed42 | 3 | 150 | checkpoint 补评；测试 | 0.423118 | S101 |
+| my-gpu | core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/zs_mib_global1_origscale_seed42 | 3 | 150 | checkpoint 补评；测试 | 0.805777 | S102 |
+| my-gpu | core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/zs_sequential_global1_origscale_seed42 | 3 | 150 | checkpoint 补评；测试 | 0.461417 | S103 |
 | my-gpu | domain_joint_runs_20260901/runs/j0b2l15_r1 | — | 150 | 含背景分项缺失 | NA | S104 |
 | my-gpu | domain_joint_runs_20260901/runs/j1b4l30_r1 | — | 150 | 含背景分项缺失 | NA | S105 |
-| my-gpu | domain_runs_20260901/runs/d0gpm_r1 | 6 | 150 | 含背景分项缺失 | NA | S106 |
-| my-gpu | domain_runs_20260901/runs/d3p9n_r1 | 6 | 150 | 含背景分项缺失 | NA | S107 |
+| my-gpu | domain_runs_20260901/runs/d0gpm_r1 | 6 | 150 | checkpoint 补评；测试 | 0.469249 | S106 |
+| my-gpu | domain_runs_20260901/runs/d3p9n_r1 | 6 | 150 | checkpoint 补评；测试 | 0.451765 | S107 |
 | my-gpu | domain_runs_20260901/smoke/joint_smoke_b8 | — | 1 | 工程/短诊断；含背景分项缺失 | NA | S108 |
 | my-gpu | scribblecl_domain_organ_20260809/runs/domain/domain_pce_ft_seed42_20260809T082951Z | — | 未记录 | 含背景分项缺失 | NA | S109 |
 | my-gpu | scribblecl_domain_organ_20260809/runs/organ/organ_pce_ft_seed42_20260809T083415Z | — | 未记录 | 含背景分项缺失 | NA | S110 |
@@ -453,10 +471,10 @@ A=BIDMC，B=HK，C=ISBI，D=UCL，E=ISBI_1.5，F=I2CVB。以下值来自已归�
 | h4m8q | .03 | 1 | PASS | 0.565419 | S142 |
 | k7v2n | .06 | 1 | PASS | 0.561027 | S143 |
 | p3x6d | .10 | 1 | PASS | 0.501509 | S144 |
-| r8c4w | .02 | 3 | PASS | NA | S141 |
-| t5n9b | .03 | 3 | PASS | NA | S141 |
-| u2f7k | .04 | 3 | PASS | NA | S141 |
-| w6d3s | .03 | 5 | PASS | NA | S141 |
+| r8c4w | .02 | 3 | PASS | 0.677230 | S145 |
+| t5n9b | .03 | 3 | PASS | 0.736325 | S146 |
+| u2f7k | .04 | 3 | PASS | 0.765420 | S147 |
+| w6d3s | .03 | 5 | PASS | 0.743595 | S148 |
 | y9h4m | .04 | 5 | PASS | 0.776010 | 见第 4 节 |
 
 Joint 的 y9h4m 已在第 4 节由归档背景复评文件补齐；其余 Joint 随本次补评更新，两类 replay 参数筛选仍缺背景分项。Domain 参数筛选中 f7r4x 的 minibatch=16 超出当时 24 GB 显存条件，属于不可行候选，不是完成的零分实验。
@@ -467,24 +485,24 @@ Joint 的 y9h4m 已在第 4 节由归档背景复评文件补齐；其余 Joint 
 
 | run | 变体 | 记录状态 | best checkpoint epoch（原始索引） | best 含背景 Dice | last 含背景 Dice | 来源 |
 | --- | --- | --- | --- | --- | --- | --- |
-| static_A0_sgd_seed42 | fg_only | completed | 4 | 0.146502 | 0.105977 | S145 |
-| static_A_ratio_sgd_seed42 | legacy_ratio | completed | 10 | 0.509141 | 0.373760 | S145 |
-| static_Dense_v2_sgd_seed42 | dense | completed | 136 | 0.818302 | 0.811501 | S145 |
+| static_A0_sgd_seed42 | fg_only | completed | 4 | 0.146502 | 0.105977 | S149 |
+| static_A_ratio_sgd_seed42 | legacy_ratio | completed | 10 | 0.509141 | 0.373760 | S149 |
+| static_Dense_v2_sgd_seed42 | dense | completed | 136 | 0.818302 | 0.811501 | S149 |
 
 | run | 记录任务 | 指标限制 | 含背景 Dice | 来源 |
 | --- | --- | --- | --- | --- |
-| coverage_runs/B1/pce_seed42_stage1 | 1 | 历史阶段指标；背景口径未确认 | NA | S146 |
-| coverage_runs/B1/zs_seed42_stage1 | 1 | 历史阶段指标；背景口径未确认 | NA | S147 |
-| coverage_runs/B2/pce_seed42_stage1 | 1 | 历史阶段指标；背景口径未确认 | NA | S148 |
-| coverage_runs/B2/zs_seed42_stage1 | 1 | 历史阶段指标；背景口径未确认 | NA | S149 |
-| coverage_runs/B3/pce_seed42_stage1 | 1 | 历史阶段指标；背景口径未确认 | NA | S150 |
-| coverage_runs/B3/zs_seed42_stage1 | 1 | 历史阶段指标；背景口径未确认 | NA | S151 |
-| coverage_runs/Dense/dense_seed42_stage1 | 1 | 历史阶段指标；背景口径未确认 | NA | S152 |
-| overfit/pce_mib_seed42_stage2 | 1,2 | 历史阶段指标；背景口径未确认 | NA | S153 |
-| overfit/pce_seed42_stage1 | 1 | 历史阶段指标；背景口径未确认 | NA | S154 |
-| overfit/zs_mib_seed42_stage2 | 1,2 | 历史阶段指标；背景口径未确认 | NA | S155 |
-| overfit/zs_seed42_stage1 | 1 | 历史阶段指标；背景口径未确认 | NA | S156 |
-| overfit_fixed/pce_mib_seed42_stage2 | 1,2 | 历史阶段指标；背景口径未确认 | NA | S157 |
+| coverage_runs/B1/pce_seed42_stage1 | 1 | 历史阶段指标；背景口径未确认 | NA | S150 |
+| coverage_runs/B1/zs_seed42_stage1 | 1 | 历史阶段指标；背景口径未确认 | NA | S151 |
+| coverage_runs/B2/pce_seed42_stage1 | 1 | 历史阶段指标；背景口径未确认 | NA | S152 |
+| coverage_runs/B2/zs_seed42_stage1 | 1 | 历史阶段指标；背景口径未确认 | NA | S153 |
+| coverage_runs/B3/pce_seed42_stage1 | 1 | 历史阶段指标；背景口径未确认 | NA | S154 |
+| coverage_runs/B3/zs_seed42_stage1 | 1 | 历史阶段指标；背景口径未确认 | NA | S155 |
+| coverage_runs/Dense/dense_seed42_stage1 | 1 | 历史阶段指标；背景口径未确认 | NA | S156 |
+| overfit/pce_mib_seed42_stage2 | 1,2 | 历史阶段指标；背景口径未确认 | NA | S157 |
+| overfit/pce_seed42_stage1 | 1 | 历史阶段指标；背景口径未确认 | NA | S158 |
+| overfit/zs_mib_seed42_stage2 | 1,2 | 历史阶段指标；背景口径未确认 | NA | S159 |
+| overfit/zs_seed42_stage1 | 1 | 历史阶段指标；背景口径未确认 | NA | S160 |
+| overfit_fixed/pce_mib_seed42_stage2 | 1,2 | 历史阶段指标；背景口径未确认 | NA | S161 |
 
 ## 8. 无完整 summary 的产物索引
 
@@ -492,108 +510,108 @@ Joint 的 y9h4m 已在第 4 节由归档背景复评文件补齐；其余 Joint 
 
 | 位置 | 批次 / run | 证据状态 | 配置预算 | 完整含背景 Dice | 来源 |
 | --- | --- | --- | --- | --- | --- |
-| my-gpu | class_comparisons_20260910/jobs/pce_sequential | 无最终 summary | 80 | NA | S158 |
-| my-gpu | class_comparisons_20260910/jobs/zs_sequential | 无最终 summary | 80 | NA | S159 |
-| my-gpu | class_er_gpu3_20260913/jobs/zs-er | 无最终 summary | 80 | NA | S160 |
-| my-gpu | class_independent_spatial_sweep_20260908/jobs/cl_spatial_0.001 | 无最终 summary | 40 | NA | S161 |
-| my-gpu | class_independent_spatial_sweep_20260908/jobs/ind_T1_formal | 无最终 summary | 80 | NA | S162 |
-| my-gpu | class_independent_spatial_sweep_20260908/smoke_cl_spatial_original | 无最终 summary | 1 | NA | S163 |
-| my-gpu | class_independent_spatial_sweep_20260908/smoke_ind_T3 | 无最终 summary | 1 | NA | S164 |
-| my-gpu | class_replay_comparisons_20260912/jobs/zs-der | 无最终 summary | 80 | NA | S165 |
-| my-gpu | class_replay_comparisons_20260912/jobs/zs-er | 无最终 summary | 80 | NA | S166 |
-| my-gpu | class_replay_improve_20260915/jobs/zs-der-control5 | 无最终 summary | 80/5/60 | NA | S167 |
-| my-gpu | class_replay_improve_20260915/jobs/zs-er-smoke | 无最终 summary | 80/1/60 | NA | S168 |
-| my-gpu | class_replay_resume_20260913/jobs/zs-der | 无最终 summary | 80 | NA | S169 |
-| my-gpu | class_replay_resume_20260913/jobs/zs-er | 无最终 summary | 80 | NA | S170 |
-| my-gpu | core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/zs_mib_raw_global1_diagnostic_stopped_iter1000_seed42 | 无最终 summary | 150 | NA | S171 |
-| my-gpu | core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/zs_sequential_raw_global1_diagnostic_stopped_iter1200_seed42 | 无最终 summary | 150 | NA | S172 |
-| my-gpu | domain_joint_c3fix_20260902/runs/c3adam_e5_s42 | 历史 manifest 标 running；未确认存活 | 5 | NA | S173 |
-| my-gpu | domain_joint_c3fix_20260902/runs/c3adamgd_e5_s42 | 历史 manifest 标 running；未确认存活 | 5 | NA | S174 |
-| my-gpu | domain_joint_c3fix_20260902/runs/c3sgd_e3_s42 | 历史 manifest 标 running；未确认存活 | 3 | NA | S175 |
-| my-gpu | domain_joint_validation_20260902/runs/balpce_b4e20_s42 | 历史 manifest 标 running；未确认存活 | 20 | NA | S176 |
-| my-gpu | domain_joint_validation_20260902/runs/balzs_b4e20_s42 | 历史 manifest 标 running；未确认存活 | 20 | NA | S177 |
-| my-gpu | organ_runs_20260901/runs/o1seq_r1 | 无最终 summary | 150 | NA | S178 |
-| my-gpu | organ_runs_20260901/runs/o2ewc_r1 | 无最终 summary | 150 | NA | S179 |
-| my-gpu | organ_runs_20260901/runs/u2k7m | 无最终 summary | 150 | NA | S180 |
-| my-gpu | organ_runs_20260901/runs/u2k7m_r1 | 无最终 summary | 150 | NA | S181 |
-| my-gpu | organ_runs_20260901/runs/u2k7m_r2 | 无最终 summary | 150 | NA | S182 |
-| my-gpu | organ_runs_20260901/runs/v3p8n | 无最终 summary | 150 | NA | S183 |
-| my-gpu | organ_runs_20260901/runs/v3p8n_r1 | 无最终 summary | 150 | NA | S184 |
-| my-gpu | organ_runs_20260901/runs/v3p8n_r2 | 无最终 summary | 150 | NA | S185 |
-| jiangsuiyang | class_independent_spatial_sweep_20260908/jobs/ind_T1_lr0.01 | 无最终 summary | 20 | NA | S186 |
-| jiangsuiyang | class_independent_spatial_sweep_20260908/jobs/ind_T2_lr0.01 | 无最终 summary | 20 | NA | S187 |
-| jiangsuiyang | class_independent_spatial_sweep_20260908/jobs/ind_T3_lr0.01 | 无最终 summary | 20 | NA | S188 |
-| jiangsuiyang | class_independent_spatial_sweep_20260908/smoke_cl_spatial | 无最终 summary | 1 | NA | S189 |
-| jiangsuiyang | independent80_seed42_20260906/smoke_class_T2_scribble | complete | 1 | NA | S190 |
-| jiangsuiyang | independent80_seed42_20260906/smoke_domain_A_full | complete | 1 | NA | S191 |
-| jiangsuiyang | organ_CL_throughput_20260908/spatial_off/run | 无最终 summary | 2 | NA | S192 |
-| jiangsuiyang | organ_T13_half_cl_20260908/balance_checks_20260908_v2/balanced_current_full_replay/run | 无最终 summary | 60 | NA | S193 |
-| jiangsuiyang | organ_T13_half_cl_20260908/balance_checks_20260908_v2/feature_replay_only/run | 无最终 summary | 60 | NA | S194 |
-| jiangsuiyang | organ_T13_half_cl_20260908/balance_checks_20260908_v2/no_replay_losses/run | 无最终 summary | 60 | NA | S195 |
-| jiangsuiyang | organ_T13_half_cl_20260908/balance_checks_20260908_v2/supervision_replay_only/run | 无最终 summary | 60 | NA | S196 |
-| jiangsuiyang | organ_T13_half_cl_20260908/diagnostic_t2_seed43_v3/run | 无最终 summary | 60 | NA | S197 |
-| jiangsuiyang | organ_T13_half_cl_20260908/formal_controls_20260908/alpha0 | 无最终 summary | 60 | NA | S198 |
-| jiangsuiyang | organ_T13_half_cl_20260908/formal_controls_20260908/alpha01 | 无最终 summary | 60 | NA | S199 |
-| jiangsuiyang | organ_T13_half_cl_20260908/formal_controls_20260908/no_spatial | 无最终 summary | 60 | NA | S200 |
-| jiangsuiyang | organ_T13_half_cl_20260908/run | 无最终 summary | 80 | NA | S201 |
-| jiangsuiyang | organ_T13_half_cl_20260908/run60 | 无最终 summary | 60 | NA | S202 |
-| jiangsuiyang | organ_T13_half_cl_20260908/short_checks_20260908/clean_bn/run | 无最终 summary | 60 | NA | S203 |
-| jiangsuiyang | organ_T13_half_cl_20260908/short_checks_20260908/clean_bn_clip5_126/run | 无最终 summary | 60 | NA | S204 |
-| jiangsuiyang | organ_T13_half_cl_20260908/short_checks_20260908/clip5/run | 无最终 summary | 60 | NA | S205 |
-| jiangsuiyang | organ_T13_half_cl_20260908/short_checks_20260908/clip5_126/run | 无最终 summary | 60 | NA | S206 |
-| jiangsuiyang | organ_T13_half_cl_20260908/short_checks_20260908/clip5_420/run | 无最终 summary | 60 | NA | S207 |
-| jiangsuiyang | organ_T13_half_cl_20260908/short_checks_20260908/clip5_seed44_126/run | 无最终 summary | 60 | NA | S208 |
-| jiangsuiyang | organ_T13_half_cl_20260908/short_checks_20260908/frozen_bn_126/run | 无最终 summary | 60 | NA | S209 |
-| jiangsuiyang | organ_T13_half_cl_20260908/short_checks_20260908/frozen_bn_clip5_126/run | 无最终 summary | 60 | NA | S210 |
-| jiangsuiyang | organ_T13_half_cl_20260908/short_checks_20260908/lr003/run | 无最终 summary | 60 | NA | S211 |
-| jiangsuiyang | organ_T13_half_cl_20260908/short_checks_20260908/lr003_126/run | 无最终 summary | 60 | NA | S212 |
-| jiangsuiyang | organ_T13_half_cl_20260908/short_checks_20260908/lr003_clip5/run | 无最终 summary | 60 | NA | S213 |
-| jiangsuiyang | organ_T13_half_cl_20260908/short_checks_20260908/lr003_clip5_126/run | 无最终 summary | 60 | NA | S214 |
-| jiangsuiyang | organ_T13_half_cl_20260908/small_alpha_checks_20260908/alpha_0.01/run | 无最终 summary | 60 | NA | S215 |
-| jiangsuiyang | organ_T13_half_cl_20260908/small_alpha_checks_20260908/alpha_0.05/run | 无最终 summary | 60 | NA | S216 |
-| jiangsuiyang | organ_T13_half_cl_20260908/small_alpha_checks_20260908/alpha_0.1/run | 无最终 summary | 60 | NA | S217 |
-| jiangsuiyang | organ_T2_coverage_20260908/runs/cl_fg20 | 无最终 summary | 80 | NA | S218 |
-| jiangsuiyang | organ_T2_coverage_20260908/runs/cl_fg40 | 无最终 summary | 80 | NA | S219 |
-| jiangsuiyang | organ_T2_coverage_20260908/runs/stability_gate | 无最终 summary | 2 | NA | S220 |
-| jiangsuiyang | organ_T2_coverage_20260908/runs/sw_lr01_g0 | 无最终 summary | 20 | NA | S221 |
-| jiangsuiyang | organ_T2_coverage_20260908/runs/sw_lr01_g01 | 无最终 summary | 20 | NA | S222 |
-| jiangsuiyang | organ_T2_coverage_20260908/runs/sw_lr03_g0 | 无最终 summary | 20 | NA | S223 |
-| jiangsuiyang | organ_T2_coverage_20260908/runs/sw_lr03_g01 | 无最终 summary | 20 | NA | S224 |
-| jiangsuiyang | organ_T34_lr006_spatial_pair20_20260910/runs/spatial0 | 无最终 summary | 20 | NA | S225 |
-| jiangsuiyang | organ_T34_lr006_spatial_pair20_20260910/runs/spatial001 | 无最终 summary | 20 | NA | S226 |
-| jiangsuiyang | organ_batch8_probe_20260908/b8_spatial_on/run | 无最终 summary | 1 | NA | S227 |
-| jiangsuiyang | organ_metrics_half_20260909/prefix_T2 | 无最终 summary | 60 | NA | S228 |
-| jiangsuiyang | organ_metrics_half_20260909/runs/ind_T4 | 无最终 summary | 80 | NA | S229 |
-| jiangsuiyang | organ_t3_retention_probe_20260909/R0 | 无最终 summary | 60 | NA | S230 |
-| jiangsuiyang | organ_t3_retention_probe_20260909/R1 | 无最终 summary | 60 | NA | S231 |
-| jiangsuiyang | organ_t3_retention_probe_20260909/R2 | 无最终 summary | 60 | NA | S232 |
-| jiangsuiyang | organ_t3_retention_probe_20260909/R3 | 无最终 summary | 60 | NA | S233 |
-| jiangsuiyang | organ_t3_retention_probe_20260909/frozen | 无最终 summary | 60 | NA | S234 |
-| jiangsuiyang | replay_comparisons_20260911/runs/domain_zs-der | 无最终 summary | 80 | NA | S235 |
-| jiangsuiyang | replay_comparisons_20260911/runs/domain_zs-er | 无最终 summary | 80 | NA | S236 |
-| jiangsuiyang | replay_comparisons_20260911/runs/organ_zs-der | 无最终 summary | 40 | NA | S237 |
-| jiangsuiyang | tune_independent_A_07261_seed42_20260907_1303/independent | stopped_protocol_mismatch | 150 | NA | S238 |
-| jiangsuiyang | tune_independent_A_07261_seed42_20260907_1303/oracle | stopped_protocol_mismatch | 150 | NA | S239 |
-| jiangsuiyang | tune_independent_A_07261_seed42_20260907_1303/parity/independent | 历史 manifest 标 running；未确认存活 | 150 | NA | S240 |
-| jiangsuiyang | tune_independent_A_07261_seed42_20260907_1303/parity/oracle | 历史 manifest 标 running；未确认存活 | 150 | NA | S241 |
-| jiangsuiyang | tune_independent_A_07261_seed42_20260907_1303/parity_deterministic/independent | 历史 manifest 标 running；未确认存活 | 150 | NA | S242 |
-| jiangsuiyang | tune_independent_A_07261_seed42_20260907_1303/parity_deterministic/oracle | 历史 manifest 标 running；未确认存活 | 150 | NA | S243 |
-| jiangsuiyang | tune_independent_A_07261_seed42_20260907_1303/parity_pattern_f5_b10/independent | 历史 manifest 标 running；未确认存活 | 150 | NA | S244 |
-| jiangsuiyang | tune_independent_A_07261_seed42_20260907_1303/parity_pattern_f5_b10/oracle | 历史 manifest 标 running；未确认存活 | 150 | NA | S245 |
-| jiangsuiyang | tune_independent_A_07261_seed42_20260907_1303/parity_pattern_f5_b10/oracle_repeat | 历史 manifest 标 running；未确认存活 | 150 | NA | S246 |
-| jiangsuiyang | tune_independent_A_07261_seed42_20260907_1303/parity_repeat/independent | 历史 manifest 标 running；未确认存活 | 150 | NA | S247 |
-| jiangsuiyang | tune_independent_A_07261_seed42_20260907_1303/parity_repeat/oracle | 历史 manifest 标 running；未确认存活 | 150 | NA | S248 |
-| jiangsuiyang | tune_independent_A_07261_seed42_20260907_1303/parity_repeat/oracle_repeat | 历史 manifest 标 running；未确认存活 | 150 | NA | S249 |
-| jiangsuiyang | zs_independent_search_seed42_20260906_inclusive_aborted_20260906_2128/tuning/class_T2_c01 | 历史 manifest 标 running；未确认存活 | 20 | NA | S250 |
-| jiangsuiyang | zs_independent_search_seed42_20260906_inclusive_aborted_20260906_2128/tuning/class_T2_c02 | 历史 manifest 标 running；未确认存活 | 20 | NA | S251 |
-| jiangsuiyang | zs_independent_search_seed42_20260906_inclusive_aborted_20260906_2128/tuning/class_T2_c03 | 历史 manifest 标 running；未确认存活 | 20 | NA | S252 |
-| jiangsuiyang | zs_independent_search_seed42_20260906_inclusive_aborted_20260906_2128/tuning/class_T2_c04 | 历史 manifest 标 running；未确认存活 | 20 | NA | S253 |
-| jiangsuiyang | zs_independent_search_seed42_20260906_inclusive_aborted_20260906_2128/tuning/domain_C_c01 | 历史 manifest 标 running；未确认存活 | 20 | NA | S254 |
-| jiangsuiyang | zs_independent_search_seed42_20260906_inclusive_aborted_20260906_2128/tuning/domain_C_c02 | 历史 manifest 标 running；未确认存活 | 20 | NA | S255 |
-| jiangsuiyang | zs_independent_search_seed42_20260906_inclusive_aborted_20260906_2128/tuning/domain_C_c03 | 历史 manifest 标 running；未确认存活 | 20 | NA | S256 |
-| jiangsuiyang | zs_independent_search_seed42_20260906_inclusive_aborted_20260906_2128/tuning/domain_C_c04 | 历史 manifest 标 running；未确认存活 | 20 | NA | S257 |
-| jiangsuiyang | zs_independent_tuning_seed42_20260906/smoke_class_T2 | complete | 2 | NA | S258 |
-| jiangsuiyang | zs_independent_tuning_seed42_20260906/smoke_domain_B_skiptest | complete | 1 | NA | S259 |
+| my-gpu | class_comparisons_20260910/jobs/pce_sequential | 无最终 summary | 80 | NA | S162 |
+| my-gpu | class_comparisons_20260910/jobs/zs_sequential | 无最终 summary | 80 | NA | S163 |
+| my-gpu | class_er_gpu3_20260913/jobs/zs-er | 无最终 summary | 80 | NA | S164 |
+| my-gpu | class_independent_spatial_sweep_20260908/jobs/cl_spatial_0.001 | 无最终 summary | 40 | NA | S165 |
+| my-gpu | class_independent_spatial_sweep_20260908/jobs/ind_T1_formal | 无最终 summary | 80 | NA | S166 |
+| my-gpu | class_independent_spatial_sweep_20260908/smoke_cl_spatial_original | 无最终 summary | 1 | NA | S167 |
+| my-gpu | class_independent_spatial_sweep_20260908/smoke_ind_T3 | 无最终 summary | 1 | NA | S168 |
+| my-gpu | class_replay_comparisons_20260912/jobs/zs-der | 无最终 summary | 80 | NA | S169 |
+| my-gpu | class_replay_comparisons_20260912/jobs/zs-er | 无最终 summary | 80 | NA | S170 |
+| my-gpu | class_replay_improve_20260915/jobs/zs-der-control5 | 无最终 summary | 80/5/60 | NA | S171 |
+| my-gpu | class_replay_improve_20260915/jobs/zs-er-smoke | 无最终 summary | 80/1/60 | NA | S172 |
+| my-gpu | class_replay_resume_20260913/jobs/zs-der | 无最终 summary | 80 | NA | S173 |
+| my-gpu | class_replay_resume_20260913/jobs/zs-er | 无最终 summary | 80 | NA | S174 |
+| my-gpu | core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/zs_mib_raw_global1_diagnostic_stopped_iter1000_seed42 | 无最终 summary | 150 | NA | S175 |
+| my-gpu | core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/zs_sequential_raw_global1_diagnostic_stopped_iter1200_seed42 | 无最终 summary | 150 | NA | S176 |
+| my-gpu | domain_joint_c3fix_20260902/runs/c3adam_e5_s42 | 历史 manifest 标 running；未确认存活 | 5 | NA | S177 |
+| my-gpu | domain_joint_c3fix_20260902/runs/c3adamgd_e5_s42 | 历史 manifest 标 running；未确认存活 | 5 | NA | S178 |
+| my-gpu | domain_joint_c3fix_20260902/runs/c3sgd_e3_s42 | 历史 manifest 标 running；未确认存活 | 3 | NA | S179 |
+| my-gpu | domain_joint_validation_20260902/runs/balpce_b4e20_s42 | 历史 manifest 标 running；未确认存活 | 20 | NA | S180 |
+| my-gpu | domain_joint_validation_20260902/runs/balzs_b4e20_s42 | 历史 manifest 标 running；未确认存活 | 20 | NA | S181 |
+| my-gpu | organ_runs_20260901/runs/o1seq_r1 | 无最终 summary | 150 | NA | S182 |
+| my-gpu | organ_runs_20260901/runs/o2ewc_r1 | 无最终 summary | 150 | NA | S183 |
+| my-gpu | organ_runs_20260901/runs/u2k7m | 无最终 summary | 150 | NA | S184 |
+| my-gpu | organ_runs_20260901/runs/u2k7m_r1 | 无最终 summary | 150 | NA | S185 |
+| my-gpu | organ_runs_20260901/runs/u2k7m_r2 | 无最终 summary | 150 | NA | S186 |
+| my-gpu | organ_runs_20260901/runs/v3p8n | 无最终 summary | 150 | NA | S187 |
+| my-gpu | organ_runs_20260901/runs/v3p8n_r1 | 无最终 summary | 150 | NA | S188 |
+| my-gpu | organ_runs_20260901/runs/v3p8n_r2 | 无最终 summary | 150 | NA | S189 |
+| jiangsuiyang | class_independent_spatial_sweep_20260908/jobs/ind_T1_lr0.01 | 无最终 summary | 20 | NA | S190 |
+| jiangsuiyang | class_independent_spatial_sweep_20260908/jobs/ind_T2_lr0.01 | 无最终 summary | 20 | NA | S191 |
+| jiangsuiyang | class_independent_spatial_sweep_20260908/jobs/ind_T3_lr0.01 | 无最终 summary | 20 | NA | S192 |
+| jiangsuiyang | class_independent_spatial_sweep_20260908/smoke_cl_spatial | 无最终 summary | 1 | NA | S193 |
+| jiangsuiyang | independent80_seed42_20260906/smoke_class_T2_scribble | complete | 1 | NA | S194 |
+| jiangsuiyang | independent80_seed42_20260906/smoke_domain_A_full | complete | 1 | NA | S195 |
+| jiangsuiyang | organ_CL_throughput_20260908/spatial_off/run | 无最终 summary | 2 | NA | S196 |
+| jiangsuiyang | organ_T13_half_cl_20260908/balance_checks_20260908_v2/balanced_current_full_replay/run | 无最终 summary | 60 | NA | S197 |
+| jiangsuiyang | organ_T13_half_cl_20260908/balance_checks_20260908_v2/feature_replay_only/run | 无最终 summary | 60 | NA | S198 |
+| jiangsuiyang | organ_T13_half_cl_20260908/balance_checks_20260908_v2/no_replay_losses/run | 无最终 summary | 60 | NA | S199 |
+| jiangsuiyang | organ_T13_half_cl_20260908/balance_checks_20260908_v2/supervision_replay_only/run | 无最终 summary | 60 | NA | S200 |
+| jiangsuiyang | organ_T13_half_cl_20260908/diagnostic_t2_seed43_v3/run | 无最终 summary | 60 | NA | S201 |
+| jiangsuiyang | organ_T13_half_cl_20260908/formal_controls_20260908/alpha0 | 无最终 summary | 60 | NA | S202 |
+| jiangsuiyang | organ_T13_half_cl_20260908/formal_controls_20260908/alpha01 | 无最终 summary | 60 | NA | S203 |
+| jiangsuiyang | organ_T13_half_cl_20260908/formal_controls_20260908/no_spatial | 无最终 summary | 60 | NA | S204 |
+| jiangsuiyang | organ_T13_half_cl_20260908/run | 无最终 summary | 80 | NA | S205 |
+| jiangsuiyang | organ_T13_half_cl_20260908/run60 | 无最终 summary | 60 | NA | S206 |
+| jiangsuiyang | organ_T13_half_cl_20260908/short_checks_20260908/clean_bn/run | 无最终 summary | 60 | NA | S207 |
+| jiangsuiyang | organ_T13_half_cl_20260908/short_checks_20260908/clean_bn_clip5_126/run | 无最终 summary | 60 | NA | S208 |
+| jiangsuiyang | organ_T13_half_cl_20260908/short_checks_20260908/clip5/run | 无最终 summary | 60 | NA | S209 |
+| jiangsuiyang | organ_T13_half_cl_20260908/short_checks_20260908/clip5_126/run | 无最终 summary | 60 | NA | S210 |
+| jiangsuiyang | organ_T13_half_cl_20260908/short_checks_20260908/clip5_420/run | 无最终 summary | 60 | NA | S211 |
+| jiangsuiyang | organ_T13_half_cl_20260908/short_checks_20260908/clip5_seed44_126/run | 无最终 summary | 60 | NA | S212 |
+| jiangsuiyang | organ_T13_half_cl_20260908/short_checks_20260908/frozen_bn_126/run | 无最终 summary | 60 | NA | S213 |
+| jiangsuiyang | organ_T13_half_cl_20260908/short_checks_20260908/frozen_bn_clip5_126/run | 无最终 summary | 60 | NA | S214 |
+| jiangsuiyang | organ_T13_half_cl_20260908/short_checks_20260908/lr003/run | 无最终 summary | 60 | NA | S215 |
+| jiangsuiyang | organ_T13_half_cl_20260908/short_checks_20260908/lr003_126/run | 无最终 summary | 60 | NA | S216 |
+| jiangsuiyang | organ_T13_half_cl_20260908/short_checks_20260908/lr003_clip5/run | 无最终 summary | 60 | NA | S217 |
+| jiangsuiyang | organ_T13_half_cl_20260908/short_checks_20260908/lr003_clip5_126/run | 无最终 summary | 60 | NA | S218 |
+| jiangsuiyang | organ_T13_half_cl_20260908/small_alpha_checks_20260908/alpha_0.01/run | 无最终 summary | 60 | NA | S219 |
+| jiangsuiyang | organ_T13_half_cl_20260908/small_alpha_checks_20260908/alpha_0.05/run | 无最终 summary | 60 | NA | S220 |
+| jiangsuiyang | organ_T13_half_cl_20260908/small_alpha_checks_20260908/alpha_0.1/run | 无最终 summary | 60 | NA | S221 |
+| jiangsuiyang | organ_T2_coverage_20260908/runs/cl_fg20 | 无最终 summary | 80 | NA | S222 |
+| jiangsuiyang | organ_T2_coverage_20260908/runs/cl_fg40 | 无最终 summary | 80 | NA | S223 |
+| jiangsuiyang | organ_T2_coverage_20260908/runs/stability_gate | 无最终 summary | 2 | NA | S224 |
+| jiangsuiyang | organ_T2_coverage_20260908/runs/sw_lr01_g0 | 无最终 summary | 20 | NA | S225 |
+| jiangsuiyang | organ_T2_coverage_20260908/runs/sw_lr01_g01 | 无最终 summary | 20 | NA | S226 |
+| jiangsuiyang | organ_T2_coverage_20260908/runs/sw_lr03_g0 | 无最终 summary | 20 | NA | S227 |
+| jiangsuiyang | organ_T2_coverage_20260908/runs/sw_lr03_g01 | 无最终 summary | 20 | NA | S228 |
+| jiangsuiyang | organ_T34_lr006_spatial_pair20_20260910/runs/spatial0 | 无最终 summary | 20 | NA | S229 |
+| jiangsuiyang | organ_T34_lr006_spatial_pair20_20260910/runs/spatial001 | 无最终 summary | 20 | NA | S230 |
+| jiangsuiyang | organ_batch8_probe_20260908/b8_spatial_on/run | 无最终 summary | 1 | NA | S231 |
+| jiangsuiyang | organ_metrics_half_20260909/prefix_T2 | 无最终 summary | 60 | NA | S232 |
+| jiangsuiyang | organ_metrics_half_20260909/runs/ind_T4 | 无最终 summary | 80 | NA | S233 |
+| jiangsuiyang | organ_t3_retention_probe_20260909/R0 | 无最终 summary | 60 | NA | S234 |
+| jiangsuiyang | organ_t3_retention_probe_20260909/R1 | 无最终 summary | 60 | NA | S235 |
+| jiangsuiyang | organ_t3_retention_probe_20260909/R2 | 无最终 summary | 60 | NA | S236 |
+| jiangsuiyang | organ_t3_retention_probe_20260909/R3 | 无最终 summary | 60 | NA | S237 |
+| jiangsuiyang | organ_t3_retention_probe_20260909/frozen | 无最终 summary | 60 | NA | S238 |
+| jiangsuiyang | replay_comparisons_20260911/runs/domain_zs-der | 无最终 summary | 80 | NA | S239 |
+| jiangsuiyang | replay_comparisons_20260911/runs/domain_zs-er | 无最终 summary | 80 | NA | S240 |
+| jiangsuiyang | replay_comparisons_20260911/runs/organ_zs-der | 无最终 summary | 40 | NA | S241 |
+| jiangsuiyang | tune_independent_A_07261_seed42_20260907_1303/independent | stopped_protocol_mismatch | 150 | NA | S242 |
+| jiangsuiyang | tune_independent_A_07261_seed42_20260907_1303/oracle | stopped_protocol_mismatch | 150 | NA | S243 |
+| jiangsuiyang | tune_independent_A_07261_seed42_20260907_1303/parity/independent | 历史 manifest 标 running；未确认存活 | 150 | NA | S244 |
+| jiangsuiyang | tune_independent_A_07261_seed42_20260907_1303/parity/oracle | 历史 manifest 标 running；未确认存活 | 150 | NA | S245 |
+| jiangsuiyang | tune_independent_A_07261_seed42_20260907_1303/parity_deterministic/independent | 历史 manifest 标 running；未确认存活 | 150 | NA | S246 |
+| jiangsuiyang | tune_independent_A_07261_seed42_20260907_1303/parity_deterministic/oracle | 历史 manifest 标 running；未确认存活 | 150 | NA | S247 |
+| jiangsuiyang | tune_independent_A_07261_seed42_20260907_1303/parity_pattern_f5_b10/independent | 历史 manifest 标 running；未确认存活 | 150 | NA | S248 |
+| jiangsuiyang | tune_independent_A_07261_seed42_20260907_1303/parity_pattern_f5_b10/oracle | 历史 manifest 标 running；未确认存活 | 150 | NA | S249 |
+| jiangsuiyang | tune_independent_A_07261_seed42_20260907_1303/parity_pattern_f5_b10/oracle_repeat | 历史 manifest 标 running；未确认存活 | 150 | NA | S250 |
+| jiangsuiyang | tune_independent_A_07261_seed42_20260907_1303/parity_repeat/independent | 历史 manifest 标 running；未确认存活 | 150 | NA | S251 |
+| jiangsuiyang | tune_independent_A_07261_seed42_20260907_1303/parity_repeat/oracle | 历史 manifest 标 running；未确认存活 | 150 | NA | S252 |
+| jiangsuiyang | tune_independent_A_07261_seed42_20260907_1303/parity_repeat/oracle_repeat | 历史 manifest 标 running；未确认存活 | 150 | NA | S253 |
+| jiangsuiyang | zs_independent_search_seed42_20260906_inclusive_aborted_20260906_2128/tuning/class_T2_c01 | 历史 manifest 标 running；未确认存活 | 20 | NA | S254 |
+| jiangsuiyang | zs_independent_search_seed42_20260906_inclusive_aborted_20260906_2128/tuning/class_T2_c02 | 历史 manifest 标 running；未确认存活 | 20 | NA | S255 |
+| jiangsuiyang | zs_independent_search_seed42_20260906_inclusive_aborted_20260906_2128/tuning/class_T2_c03 | 历史 manifest 标 running；未确认存活 | 20 | NA | S256 |
+| jiangsuiyang | zs_independent_search_seed42_20260906_inclusive_aborted_20260906_2128/tuning/class_T2_c04 | 历史 manifest 标 running；未确认存活 | 20 | NA | S257 |
+| jiangsuiyang | zs_independent_search_seed42_20260906_inclusive_aborted_20260906_2128/tuning/domain_C_c01 | 历史 manifest 标 running；未确认存活 | 20 | NA | S258 |
+| jiangsuiyang | zs_independent_search_seed42_20260906_inclusive_aborted_20260906_2128/tuning/domain_C_c02 | 历史 manifest 标 running；未确认存活 | 20 | NA | S259 |
+| jiangsuiyang | zs_independent_search_seed42_20260906_inclusive_aborted_20260906_2128/tuning/domain_C_c03 | 历史 manifest 标 running；未确认存活 | 20 | NA | S260 |
+| jiangsuiyang | zs_independent_search_seed42_20260906_inclusive_aborted_20260906_2128/tuning/domain_C_c04 | 历史 manifest 标 running；未确认存活 | 20 | NA | S261 |
+| jiangsuiyang | zs_independent_tuning_seed42_20260906/smoke_class_T2 | complete | 2 | NA | S262 |
+| jiangsuiyang | zs_independent_tuning_seed42_20260906/smoke_domain_B_skiptest | complete | 1 | NA | S263 |
 
 ## 8A. Checkpoint 检索与本次补评
 
@@ -601,14 +619,15 @@ Joint 的 y9h4m 已在第 4 节由归档背景复评文件补齐；其余 Joint 
 
 配套保存了[补评标量与路径占位配置](../results/background_recovery_20260915/aggregate.json)和[补评脚本](../reevaluate_background.py)。原始权重、数据及训练日志保留在服务器。执行时将脚本以中性名称 run.py 放入私有运行目录，并提供恢复实际路径后的 plan.json；不得把公开占位路径直接视为可执行配置。
 
-本次快照已有 **13 个补评通过一致性检查**。后台队列可在快照后继续产生结果；以下状态不是永久实时状态。
+本次快照已有 **35 个补评通过一致性检查**。后台队列可在快照后继续产生结果；以下状态不是永久实时状态。
 
 | 服务器 | 批次 | 计划评估数 | 完成且一致 | 状态 | 快照时间 |
 | --- | --- | --- | --- | --- | --- |
-| my-gpu | background_recovery_20260915 | 13 | 6 | running | 2026-09-15T08:13:44.320106+00:00 |
-| my-gpu | background_recovery_20260915/extra | 4 | 4 | complete | 2026-09-15T08:13:44.320106+00:00 |
-| jiangsuiyang | background_recovery_20260915 | 28 | 0 | running | 2026-09-15T16:13:44.541032+08:00 |
-| jiangsuiyang | background_recovery_20260915/legacy | 17 | 3 | running | 2026-09-15T16:13:44.541032+08:00 |
+| my-gpu | background_recovery_20260915 | 13 | 13 | complete | 2026-09-15T10:45:47.777305+00:00 |
+| my-gpu | background_recovery_20260915/extra | 4 | 4 | complete | 2026-09-15T10:45:47.777305+00:00 |
+| jiangsuiyang | background_recovery_20260915 | 28 | 0 | running | 2026-09-15T18:45:47.878669+08:00 |
+| jiangsuiyang | background_recovery_20260915/legacy | 17 | 17 | complete | 2026-09-15T18:45:47.878669+08:00 |
+| jiangsuiyang | background_recovery_20260915/cached | 1 | 1 | complete | 2026-09-15T10:50:56.771032+00:00 |
 
 | 服务器 | 原 run | 阶段 | 划分 | 确切 checkpoint | 补评状态 | 含背景均值 | 补评来源 |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -618,62 +637,63 @@ Joint 的 y9h4m 已在第 4 节由归档背景复评文件补齐；其余 Joint 
 | my-gpu | class_independent_spatial_sweep_20260908/jobs/ind_T2_lr0.03 | 1 | val | `class_independent_spatial_sweep_20260908/jobs/ind_T2_lr0.03/s01.pt` | complete | 0.658331 | S092 |
 | my-gpu | class_independent_spatial_sweep_20260908/jobs/ind_T3_lr0.01 | 1 | val | `class_independent_spatial_sweep_20260908/jobs/ind_T3_lr0.01/s01.pt` | complete | 0.711128 | S093 |
 | my-gpu | class_independent_spatial_sweep_20260908/jobs/ind_T3_lr0.03 | 1 | val | `class_independent_spatial_sweep_20260908/jobs/ind_T3_lr0.03/s01.pt` | complete | 0.713457 | S094 |
-| my-gpu | core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/pce_mib_seed42 | 3 | test | `core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/pce_mib_seed42/s03.pt` | 已定位；后台待评 | NA | S260 |
-| my-gpu | core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/pce_sequential_seed42 | 3 | test | `core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/pce_sequential_seed42/s03.pt` | 已定位；后台待评 | NA | S261 |
-| my-gpu | core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/zs_mib_global1_origscale_seed42 | 3 | test | `core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/zs_mib_global1_origscale_seed42/s03.pt` | 已定位；后台待评 | NA | S262 |
-| my-gpu | core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/zs_sequential_global1_origscale_seed42 | 3 | test | `core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/zs_sequential_global1_origscale_seed42/s03.pt` | 已定位；后台待评 | NA | S263 |
-| my-gpu | class_independent_spatial_sweep_20260908/jobs/cl_spatial_0.01 | 3 | val | `class_independent_spatial_sweep_20260908/jobs/cl_spatial_0.01/s03.pt` | 已定位；后台待评 | NA | S264 |
-| my-gpu | domain_runs_20260901/runs/d0gpm_r1 | 6 | test | `domain_runs_20260901/runs/d0gpm_r1/s06.pt` | 已定位；后台待评 | NA | S265 |
-| my-gpu | domain_runs_20260901/runs/d3p9n_r1 | 6 | test | `domain_runs_20260901/runs/d3p9n_r1/s06.pt` | 已定位；后台待评 | NA | S266 |
+| my-gpu | core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/pce_mib_seed42 | 3 | test | `core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/pce_mib_seed42/s03.pt` | complete | 0.666446 | S100 |
+| my-gpu | core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/pce_sequential_seed42 | 3 | test | `core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/pce_sequential_seed42/s03.pt` | complete | 0.423118 | S101 |
+| my-gpu | core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/zs_mib_global1_origscale_seed42 | 3 | test | `core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/zs_mib_global1_origscale_seed42/s03.pt` | complete | 0.805777 | S102 |
+| my-gpu | core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/zs_sequential_global1_origscale_seed42 | 3 | test | `core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/zs_sequential_global1_origscale_seed42/s03.pt` | complete | 0.461417 | S103 |
+| my-gpu | class_independent_spatial_sweep_20260908/jobs/cl_spatial_0.01 | 3 | val | `class_independent_spatial_sweep_20260908/jobs/cl_spatial_0.01/s03.pt` | complete | 0.775111 | S088 |
+| my-gpu | domain_runs_20260901/runs/d0gpm_r1 | 6 | test | `domain_runs_20260901/runs/d0gpm_r1/s06.pt` | complete | 0.469249 | S106 |
+| my-gpu | domain_runs_20260901/runs/d3p9n_r1 | 6 | test | `domain_runs_20260901/runs/d3p9n_r1/s06.pt` | complete | 0.451765 | S107 |
 | my-gpu | class_replay_improve_20260915_r2/jobs/zs-der-control5 | 2 | val | `class_replay_improve_20260915_r2/jobs/zs-der-control5/s02.pt` | complete | 0.378416 | S050 |
 | my-gpu | class_replay_improve_20260915_r2/jobs/zs-der-improved5 | 2 | val | `class_replay_improve_20260915_r2/jobs/zs-der-improved5/s02.pt` | complete | 0.361179 | S051 |
 | my-gpu | class_replay_improve_20260915_r2/jobs/zs-er-control5 | 2 | val | `class_replay_improve_20260915_r2/jobs/zs-er-control5/s02.pt` | complete | 0.404902 | S048 |
 | my-gpu | class_replay_improve_20260915_r2/jobs/zs-er-improved5 | 2 | val | `class_replay_improve_20260915_r2/jobs/zs-er-improved5/s02.pt` | complete | 0.696645 | S049 |
-| jiangsuiyang | organ_T4_from_T3best_lr006_spatial_pair10_20260910/runs/spatial0 | 4 | test | `organ_T4_from_T3best_lr006_spatial_pair10_20260910/runs/spatial0/s04.pt` | 已定位；后台待评 | NA | S267 |
-| jiangsuiyang | organ_T4_from_T3best_lr006_spatial_pair10_20260910/runs/spatial001 | 4 | test | `organ_T4_from_T3best_lr006_spatial_pair10_20260910/runs/spatial001/s04.pt` | 已定位；后台待评 | NA | S268 |
-| jiangsuiyang | organ_comparisons_20260910/runs/dense-sequential | 4 | test | `organ_comparisons_20260910/runs/dense-sequential/s04.pt` | 已定位；后台待评 | NA | S269 |
-| jiangsuiyang | organ_comparisons_20260910/runs/pce-sequential | 4 | test | `organ_comparisons_20260910/runs/pce-sequential/s04.pt` | 已定位；后台待评 | NA | S270 |
-| jiangsuiyang | organ_comparisons_20260910/runs/zs-ewc | 4 | test | `organ_comparisons_20260910/runs/zs-ewc/s04.pt` | 已定位；后台待评 | NA | S271 |
-| jiangsuiyang | organ_comparisons_20260910/runs/zs-gpm | 4 | test | `organ_comparisons_20260910/runs/zs-gpm/s04.pt` | 已定位；后台待评 | NA | S272 |
-| jiangsuiyang | organ_comparisons_20260910/runs/zs-sequential | 4 | test | `organ_comparisons_20260910/runs/zs-sequential/s04.pt` | 已定位；后台待评 | NA | S273 |
-| jiangsuiyang | organ_baseline_tuning_20260911/runs/zs-ewc_formal | 4 | test | `organ_baseline_tuning_20260911/runs/zs-ewc_formal/s04.pt` | 已定位；后台待评 | NA | S274 |
-| jiangsuiyang | organ_baseline_tuning_20260911/runs/zs-gpm_formal | 4 | test | `organ_baseline_tuning_20260911/runs/zs-gpm_formal/s04.pt` | 已定位；后台待评 | NA | S275 |
-| jiangsuiyang | organ_baseline_tuning_20260911/runs/zs-sequential_formal | 4 | test | `organ_baseline_tuning_20260911/runs/zs-sequential_formal/s04.pt` | 已定位；后台待评 | NA | S276 |
-| jiangsuiyang | organ_metrics_T134_half_20260909/runs/ind_T4 | 1 | test | `organ_metrics_T134_half_20260909/runs/ind_T4/s01.pt` | 已定位；后台待评 | NA | S277 |
-| jiangsuiyang | organ_metrics_half_20260909/runs/ind_T3 | 1 | test | `organ_metrics_half_20260909/runs/ind_T3/s01.pt` | 已定位；后台待评 | NA | S278 |
-| jiangsuiyang | organ_T3_lr006_spatial_pair10_20260910/runs/spatial0 | 3 | test | `organ_T3_lr006_spatial_pair10_20260910/runs/spatial0/s03.pt` | 已定位；后台待评 | NA | S279 |
-| jiangsuiyang | organ_T3_lr006_spatial_pair10_20260910/runs/spatial001 | 3 | test | `organ_T3_lr006_spatial_pair10_20260910/runs/spatial001/s03.pt` | 已定位；后台待评 | NA | S280 |
-| jiangsuiyang | organ_baseline_tuning_20260911/runs/zs-ewc_c0 | 4 | val | `organ_baseline_tuning_20260911/runs/zs-ewc_c0/s04.pt` | 已定位；后台待评 | NA | S281 |
-| jiangsuiyang | organ_baseline_tuning_20260911/runs/zs-ewc_c1 | 4 | val | `organ_baseline_tuning_20260911/runs/zs-ewc_c1/s04.pt` | 已定位；后台待评 | NA | S282 |
-| jiangsuiyang | organ_baseline_tuning_20260911/runs/zs-ewc_c2 | 4 | val | `organ_baseline_tuning_20260911/runs/zs-ewc_c2/s04.pt` | 已定位；后台待评 | NA | S283 |
-| jiangsuiyang | organ_baseline_tuning_20260911/runs/zs-ewc_c3 | 4 | val | `organ_baseline_tuning_20260911/runs/zs-ewc_c3/s04.pt` | 已定位；后台待评 | NA | S284 |
-| jiangsuiyang | organ_baseline_tuning_20260911/runs/zs-gpm_c0 | 4 | val | `organ_baseline_tuning_20260911/runs/zs-gpm_c0/s04.pt` | 已定位；后台待评 | NA | S285 |
-| jiangsuiyang | organ_baseline_tuning_20260911/runs/zs-gpm_c1 | 4 | val | `organ_baseline_tuning_20260911/runs/zs-gpm_c1/s04.pt` | 已定位；后台待评 | NA | S286 |
-| jiangsuiyang | organ_baseline_tuning_20260911/runs/zs-gpm_c2 | 4 | val | `organ_baseline_tuning_20260911/runs/zs-gpm_c2/s04.pt` | 已定位；后台待评 | NA | S287 |
-| jiangsuiyang | organ_baseline_tuning_20260911/runs/zs-gpm_c3 | 4 | val | `organ_baseline_tuning_20260911/runs/zs-gpm_c3/s04.pt` | 已定位；后台待评 | NA | S288 |
-| jiangsuiyang | organ_baseline_tuning_20260911/runs/zs-sequential_c0 | 4 | val | `organ_baseline_tuning_20260911/runs/zs-sequential_c0/s04.pt` | 已定位；后台待评 | NA | S289 |
-| jiangsuiyang | organ_baseline_tuning_20260911/runs/zs-sequential_c1 | 4 | val | `organ_baseline_tuning_20260911/runs/zs-sequential_c1/s04.pt` | 已定位；后台待评 | NA | S290 |
-| jiangsuiyang | organ_baseline_tuning_20260911/runs/zs-sequential_c2 | 4 | val | `organ_baseline_tuning_20260911/runs/zs-sequential_c2/s04.pt` | 已定位；后台待评 | NA | S291 |
-| jiangsuiyang | organ_baseline_tuning_20260911/runs/zs-sequential_c3 | 4 | val | `organ_baseline_tuning_20260911/runs/zs-sequential_c3/s04.pt` | 已定位；后台待评 | NA | S292 |
-| jiangsuiyang | organ_metrics_half_20260909/runs/organ_no_replay | 4 | test | `organ_metrics_half_20260909/runs/organ_no_replay/s04.pt` | 已定位；后台待评 | NA | S293 |
-| jiangsuiyang | organ_metrics_half_20260909/runs/organ_retention | 4 | test | `organ_metrics_half_20260909/runs/organ_retention/s04.pt` | 已定位；后台待评 | NA | S294 |
+| jiangsuiyang | organ_T4_from_T3best_lr006_spatial_pair10_20260910/runs/spatial0 | 4 | test | `organ_T4_from_T3best_lr006_spatial_pair10_20260910/runs/spatial0/s04.pt` | 已定位；后台待评 | NA | S264 |
+| jiangsuiyang | organ_T4_from_T3best_lr006_spatial_pair10_20260910/runs/spatial001 | 4 | test | `organ_T4_from_T3best_lr006_spatial_pair10_20260910/runs/spatial001/s04.pt` | 已定位；后台待评 | NA | S265 |
+| jiangsuiyang | organ_comparisons_20260910/runs/dense-sequential | 4 | test | `organ_comparisons_20260910/runs/dense-sequential/s04.pt` | 已定位；后台待评 | NA | S266 |
+| jiangsuiyang | organ_comparisons_20260910/runs/pce-sequential | 4 | test | `organ_comparisons_20260910/runs/pce-sequential/s04.pt` | 已定位；后台待评 | NA | S267 |
+| jiangsuiyang | organ_comparisons_20260910/runs/zs-ewc | 4 | test | `organ_comparisons_20260910/runs/zs-ewc/s04.pt` | 已定位；后台待评 | NA | S268 |
+| jiangsuiyang | organ_comparisons_20260910/runs/zs-gpm | 4 | test | `organ_comparisons_20260910/runs/zs-gpm/s04.pt` | 已定位；后台待评 | NA | S269 |
+| jiangsuiyang | organ_comparisons_20260910/runs/zs-sequential | 4 | test | `organ_comparisons_20260910/runs/zs-sequential/s04.pt` | 已定位；后台待评 | NA | S270 |
+| jiangsuiyang | organ_baseline_tuning_20260911/runs/zs-ewc_formal | 4 | test | `organ_baseline_tuning_20260911/runs/zs-ewc_formal/s04.pt` | 已定位；后台待评 | NA | S271 |
+| jiangsuiyang | organ_baseline_tuning_20260911/runs/zs-gpm_formal | 4 | test | `organ_baseline_tuning_20260911/runs/zs-gpm_formal/s04.pt` | 已定位；后台待评 | NA | S272 |
+| jiangsuiyang | organ_baseline_tuning_20260911/runs/zs-sequential_formal | 4 | test | `organ_baseline_tuning_20260911/runs/zs-sequential_formal/s04.pt` | 已定位；后台待评 | NA | S273 |
+| jiangsuiyang | organ_metrics_T134_half_20260909/runs/ind_T4 | 1 | test | `organ_metrics_T134_half_20260909/runs/ind_T4/s01.pt` | 已定位；后台待评 | NA | S274 |
+| jiangsuiyang | organ_metrics_half_20260909/runs/ind_T3 | 1 | test | `organ_metrics_half_20260909/runs/ind_T3/s01.pt` | 已定位；后台待评 | NA | S275 |
+| jiangsuiyang | organ_T3_lr006_spatial_pair10_20260910/runs/spatial0 | 3 | test | `organ_T3_lr006_spatial_pair10_20260910/runs/spatial0/s03.pt` | 已定位；后台待评 | NA | S276 |
+| jiangsuiyang | organ_T3_lr006_spatial_pair10_20260910/runs/spatial001 | 3 | test | `organ_T3_lr006_spatial_pair10_20260910/runs/spatial001/s03.pt` | 已定位；后台待评 | NA | S277 |
+| jiangsuiyang | organ_baseline_tuning_20260911/runs/zs-ewc_c0 | 4 | val | `organ_baseline_tuning_20260911/runs/zs-ewc_c0/s04.pt` | 已定位；后台待评 | NA | S278 |
+| jiangsuiyang | organ_baseline_tuning_20260911/runs/zs-ewc_c1 | 4 | val | `organ_baseline_tuning_20260911/runs/zs-ewc_c1/s04.pt` | 已定位；后台待评 | NA | S279 |
+| jiangsuiyang | organ_baseline_tuning_20260911/runs/zs-ewc_c2 | 4 | val | `organ_baseline_tuning_20260911/runs/zs-ewc_c2/s04.pt` | 已定位；后台待评 | NA | S280 |
+| jiangsuiyang | organ_baseline_tuning_20260911/runs/zs-ewc_c3 | 4 | val | `organ_baseline_tuning_20260911/runs/zs-ewc_c3/s04.pt` | 已定位；后台待评 | NA | S281 |
+| jiangsuiyang | organ_baseline_tuning_20260911/runs/zs-gpm_c0 | 4 | val | `organ_baseline_tuning_20260911/runs/zs-gpm_c0/s04.pt` | 已定位；后台待评 | NA | S282 |
+| jiangsuiyang | organ_baseline_tuning_20260911/runs/zs-gpm_c1 | 4 | val | `organ_baseline_tuning_20260911/runs/zs-gpm_c1/s04.pt` | 已定位；后台待评 | NA | S283 |
+| jiangsuiyang | organ_baseline_tuning_20260911/runs/zs-gpm_c2 | 4 | val | `organ_baseline_tuning_20260911/runs/zs-gpm_c2/s04.pt` | 已定位；后台待评 | NA | S284 |
+| jiangsuiyang | organ_baseline_tuning_20260911/runs/zs-gpm_c3 | 4 | val | `organ_baseline_tuning_20260911/runs/zs-gpm_c3/s04.pt` | 已定位；后台待评 | NA | S285 |
+| jiangsuiyang | organ_baseline_tuning_20260911/runs/zs-sequential_c0 | 4 | val | `organ_baseline_tuning_20260911/runs/zs-sequential_c0/s04.pt` | 已定位；后台待评 | NA | S286 |
+| jiangsuiyang | organ_baseline_tuning_20260911/runs/zs-sequential_c1 | 4 | val | `organ_baseline_tuning_20260911/runs/zs-sequential_c1/s04.pt` | 已定位；后台待评 | NA | S287 |
+| jiangsuiyang | organ_baseline_tuning_20260911/runs/zs-sequential_c2 | 4 | val | `organ_baseline_tuning_20260911/runs/zs-sequential_c2/s04.pt` | 已定位；后台待评 | NA | S288 |
+| jiangsuiyang | organ_baseline_tuning_20260911/runs/zs-sequential_c3 | 4 | val | `organ_baseline_tuning_20260911/runs/zs-sequential_c3/s04.pt` | 已定位；后台待评 | NA | S289 |
+| jiangsuiyang | organ_metrics_half_20260909/runs/organ_no_replay | 4 | test | `organ_metrics_half_20260909/runs/organ_no_replay/s04.pt` | 已定位；后台待评 | NA | S290 |
+| jiangsuiyang | organ_metrics_half_20260909/runs/organ_retention | 4 | test | `organ_metrics_half_20260909/runs/organ_retention/s04.pt` | 已定位；后台待评 | NA | S291 |
 | jiangsuiyang | legacy_joint/h4m8q | 1 | test | `<legacy q1d7f>/runs/h4m8q/s01.pt` | complete | 0.565419 | S142 |
 | jiangsuiyang | legacy_joint/k7v2n | 1 | test | `<legacy q1d7f>/runs/k7v2n/s01.pt` | complete | 0.561027 | S143 |
 | jiangsuiyang | legacy_joint/p3x6d | 1 | test | `<legacy q1d7f>/runs/p3x6d/s01.pt` | complete | 0.501509 | S144 |
-| jiangsuiyang | legacy_joint/r8c4w | 1 | test | `<legacy q1d7f>/runs/r8c4w/s01.pt` | 已定位；后台待评 | NA | S295 |
-| jiangsuiyang | legacy_joint/t5n9b | 1 | test | `<legacy q1d7f>/runs/t5n9b/s01.pt` | 已定位；后台待评 | NA | S296 |
-| jiangsuiyang | legacy_joint/u2f7k | 1 | test | `<legacy q1d7f>/runs/u2f7k/s01.pt` | 已定位；后台待评 | NA | S297 |
-| jiangsuiyang | legacy_joint/w6d3s | 1 | test | `<legacy q1d7f>/runs/w6d3s/s01.pt` | 已定位；后台待评 | NA | S298 |
-| jiangsuiyang | legacy_domain/m7v2q | 1 | test | `<legacy q1d7f>/runs/m7v2q/s01.pt` | 已定位；后台待评 | NA | S299 |
-| jiangsuiyang | legacy_domain/m7v2q | 2 | test | `<legacy q1d7f>/runs/m7v2q/s02.pt` | 已定位；后台待评 | NA | S300 |
-| jiangsuiyang | legacy_domain/m7v2q | 3 | test | `<legacy q1d7f>/runs/m7v2q/s03.pt` | 已定位；后台待评 | NA | S301 |
-| jiangsuiyang | legacy_domain/m7v2q | 4 | test | `<legacy q1d7f>/runs/m7v2q/s04.pt` | 已定位；后台待评 | NA | S302 |
-| jiangsuiyang | legacy_domain/m7v2q | 5 | test | `<legacy q1d7f>/runs/m7v2q/s05.pt` | 已定位；后台待评 | NA | S303 |
-| jiangsuiyang | legacy_domain/t4m7b | 1 | test | `<legacy NAS runs>/t4m7b/s01.pt` | 已定位；后台待评 | NA | S304 |
-| jiangsuiyang | legacy_domain/t4m7b | 2 | test | `<legacy NAS runs>/t4m7b/s02.pt` | 已定位；后台待评 | NA | S305 |
-| jiangsuiyang | legacy_domain/t4m7b | 3 | test | `<legacy NAS runs>/t4m7b/s03.pt` | 已定位；后台待评 | NA | S306 |
-| jiangsuiyang | legacy_domain/t4m7b | 4 | test | `<legacy NAS runs>/t4m7b/s04.pt` | 已定位；后台待评 | NA | S307 |
-| jiangsuiyang | legacy_domain/t4m7b | 5 | test | `<legacy NAS runs>/t4m7b/s05.pt` | 已定位；后台待评 | NA | S308 |
+| jiangsuiyang | legacy_joint/r8c4w | 1 | test | `<legacy q1d7f>/runs/r8c4w/s01.pt` | complete | 0.677230 | S145 |
+| jiangsuiyang | legacy_joint/t5n9b | 1 | test | `<legacy q1d7f>/runs/t5n9b/s01.pt` | complete | 0.736325 | S146 |
+| jiangsuiyang | legacy_joint/u2f7k | 1 | test | `<legacy q1d7f>/runs/u2f7k/s01.pt` | complete | 0.765420 | S147 |
+| jiangsuiyang | legacy_joint/w6d3s | 1 | test | `<legacy q1d7f>/runs/w6d3s/s01.pt` | complete | 0.743595 | S148 |
+| jiangsuiyang | legacy_domain/m7v2q | 1 | test | `<legacy q1d7f>/runs/m7v2q/s01.pt` | complete | 0.860545 | S292 |
+| jiangsuiyang | legacy_domain/m7v2q | 2 | test | `<legacy q1d7f>/runs/m7v2q/s02.pt` | complete | 0.768055 | S293 |
+| jiangsuiyang | legacy_domain/m7v2q | 3 | test | `<legacy q1d7f>/runs/m7v2q/s03.pt` | complete | 0.844347 | S294 |
+| jiangsuiyang | legacy_domain/m7v2q | 4 | test | `<legacy q1d7f>/runs/m7v2q/s04.pt` | complete | 0.778141 | S295 |
+| jiangsuiyang | legacy_domain/m7v2q | 5 | test | `<legacy q1d7f>/runs/m7v2q/s05.pt` | complete | 0.866099 | S296 |
+| jiangsuiyang | legacy_domain/t4m7b | 1 | test | `<legacy NAS runs>/t4m7b/s01.pt` | complete | 0.770834 | S297 |
+| jiangsuiyang | legacy_domain/t4m7b | 2 | test | `<legacy NAS runs>/t4m7b/s02.pt` | complete | 0.844488 | S298 |
+| jiangsuiyang | legacy_domain/t4m7b | 3 | test | `<legacy NAS runs>/t4m7b/s03.pt` | complete | 0.847956 | S299 |
+| jiangsuiyang | legacy_domain/t4m7b | 4 | test | `<legacy NAS runs>/t4m7b/s04.pt` | complete | 0.844937 | S300 |
+| jiangsuiyang | legacy_domain/t4m7b | 5 | test | `<legacy NAS runs>/t4m7b/s05.pt` | complete | 0.871841 | S301 |
+| jiangsuiyang | organ_T4_from_T3best_lr006_spatial_pair10_20260910/runs/spatial0 | 4 | test | `organ_T4_from_T3best_lr006_spatial_pair10_20260910/runs/spatial0/s04.pt` | complete | 0.848059 | S015 |
 
 上述 legacy_domain 记录仅计算首次学完对应任务的对角线值，用于后续含背景 BWTR；其单任务均值不等于六域最终 A-Dice。标为“后台待评”的来源为预定输出位置，尚非已有结果证据。
 
@@ -687,6 +707,33 @@ Joint 的 y9h4m 已在第 4 节由归档背景复评文件补齐；其余 Joint 
 | my-gpu | class_independent_spatial_sweep_20260908/jobs/ind_T2_lr0.03 | 1 | val | T2 | 0.983541 | 0.658331 | 0.000000 | S092 |
 | my-gpu | class_independent_spatial_sweep_20260908/jobs/ind_T3_lr0.01 | 1 | val | T3 | 0.998224 | 0.711128 | 0.000000 | S093 |
 | my-gpu | class_independent_spatial_sweep_20260908/jobs/ind_T3_lr0.03 | 1 | val | T3 | 0.998325 | 0.713457 | 0.000000 | S094 |
+| my-gpu | core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/pce_mib_seed42 | 3 | test | T1 | 0.931045 | 0.675441 | 0.000000 | S100 |
+| my-gpu | core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/pce_mib_seed42 | 3 | test | T2 | 0.924686 | 0.688768 | 0.000000 | S100 |
+| my-gpu | core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/pce_mib_seed42 | 3 | test | T3 | 0.916251 | 0.635130 | 0.000000 | S100 |
+| my-gpu | core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/pce_sequential_seed42 | 3 | test | T1 | 0.967222 | 0.241805 | 0.000000 | S101 |
+| my-gpu | core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/pce_sequential_seed42 | 3 | test | T2 | 0.973908 | 0.324636 | 0.000000 | S101 |
+| my-gpu | core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/pce_sequential_seed42 | 3 | test | T3 | 0.991817 | 0.702913 | 0.000000 | S101 |
+| my-gpu | core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/zs_mib_global1_origscale_seed42 | 3 | test | T1 | 0.969613 | 0.822527 | 0.000000 | S102 |
+| my-gpu | core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/zs_mib_global1_origscale_seed42 | 3 | test | T2 | 0.962291 | 0.827738 | 0.000000 | S102 |
+| my-gpu | core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/zs_mib_global1_origscale_seed42 | 3 | test | T3 | 0.952174 | 0.767067 | 0.000000 | S102 |
+| my-gpu | core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/zs_sequential_global1_origscale_seed42 | 3 | test | T1 | 0.970692 | 0.242673 | 0.000000 | S103 |
+| my-gpu | core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/zs_sequential_global1_origscale_seed42 | 3 | test | T2 | 0.977135 | 0.325712 | 0.000000 | S103 |
+| my-gpu | core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/zs_sequential_global1_origscale_seed42 | 3 | test | T3 | 0.996968 | 0.815867 | 0.000000 | S103 |
+| my-gpu | class_independent_spatial_sweep_20260908/jobs/cl_spatial_0.01 | 3 | val | T1 | 0.974339 | 0.830800 | 0.000000 | S088 |
+| my-gpu | class_independent_spatial_sweep_20260908/jobs/cl_spatial_0.01 | 3 | val | T2 | 0.970031 | 0.719103 | 0.000000 | S088 |
+| my-gpu | class_independent_spatial_sweep_20260908/jobs/cl_spatial_0.01 | 3 | val | T3 | 0.966795 | 0.775431 | 0.000000 | S088 |
+| my-gpu | domain_runs_20260901/runs/d0gpm_r1 | 6 | test | A | 0.809257 | 0.450111 | 0.000000 | S106 |
+| my-gpu | domain_runs_20260901/runs/d0gpm_r1 | 6 | test | B | 0.827789 | 0.461325 | 0.000000 | S106 |
+| my-gpu | domain_runs_20260901/runs/d0gpm_r1 | 6 | test | C | 0.836460 | 0.489359 | 0.000000 | S106 |
+| my-gpu | domain_runs_20260901/runs/d0gpm_r1 | 6 | test | D | 0.843736 | 0.465462 | 0.000000 | S106 |
+| my-gpu | domain_runs_20260901/runs/d0gpm_r1 | 6 | test | E | 0.854268 | 0.507230 | 0.000000 | S106 |
+| my-gpu | domain_runs_20260901/runs/d0gpm_r1 | 6 | test | F | 0.825791 | 0.442008 | 0.000000 | S106 |
+| my-gpu | domain_runs_20260901/runs/d3p9n_r1 | 6 | test | A | 0.806092 | 0.447455 | 0.000000 | S107 |
+| my-gpu | domain_runs_20260901/runs/d3p9n_r1 | 6 | test | B | 0.807468 | 0.447668 | 0.000000 | S107 |
+| my-gpu | domain_runs_20260901/runs/d3p9n_r1 | 6 | test | C | 0.813152 | 0.470232 | 0.000000 | S107 |
+| my-gpu | domain_runs_20260901/runs/d3p9n_r1 | 6 | test | D | 0.809657 | 0.442087 | 0.000000 | S107 |
+| my-gpu | domain_runs_20260901/runs/d3p9n_r1 | 6 | test | E | 0.811379 | 0.473352 | 0.000000 | S107 |
+| my-gpu | domain_runs_20260901/runs/d3p9n_r1 | 6 | test | F | 0.806425 | 0.429799 | 0.000000 | S107 |
 | my-gpu | class_replay_improve_20260915_r2/jobs/zs-der-control5 | 2 | val | T1 | 0.970863 | 0.242716 | 0.000000 | S050 |
 | my-gpu | class_replay_improve_20260915_r2/jobs/zs-der-control5 | 2 | val | T2 | 0.980762 | 0.514116 | 0.000000 | S050 |
 | my-gpu | class_replay_improve_20260915_r2/jobs/zs-der-improved5 | 2 | val | T1 | 0.960327 | 0.240082 | 0.000000 | S051 |
@@ -713,6 +760,44 @@ Joint 的 y9h4m 已在第 4 节由归档背景复评文件补齐；其余 Joint 
 | jiangsuiyang | legacy_joint/p3x6d | 1 | test | D | 0.991916 | 0.497930 | 0.000000 | S144 |
 | jiangsuiyang | legacy_joint/p3x6d | 1 | test | E | 0.987475 | 0.499205 | 0.000000 | S144 |
 | jiangsuiyang | legacy_joint/p3x6d | 1 | test | F | 0.994276 | 0.497785 | 0.000000 | S144 |
+| jiangsuiyang | legacy_joint/r8c4w | 1 | test | A | 0.965944 | 0.634316 | 0.000000 | S145 |
+| jiangsuiyang | legacy_joint/r8c4w | 1 | test | B | 0.983453 | 0.719403 | 0.000000 | S145 |
+| jiangsuiyang | legacy_joint/r8c4w | 1 | test | C | 0.985462 | 0.741127 | 0.000000 | S145 |
+| jiangsuiyang | legacy_joint/r8c4w | 1 | test | D | 0.990312 | 0.612023 | 0.000000 | S145 |
+| jiangsuiyang | legacy_joint/r8c4w | 1 | test | E | 0.986936 | 0.730748 | 0.000000 | S145 |
+| jiangsuiyang | legacy_joint/r8c4w | 1 | test | F | 0.976533 | 0.625761 | 0.000000 | S145 |
+| jiangsuiyang | legacy_joint/t5n9b | 1 | test | A | 0.981636 | 0.696957 | 0.000000 | S146 |
+| jiangsuiyang | legacy_joint/t5n9b | 1 | test | B | 0.986345 | 0.743327 | 0.000000 | S146 |
+| jiangsuiyang | legacy_joint/t5n9b | 1 | test | C | 0.987805 | 0.778989 | 0.000000 | S146 |
+| jiangsuiyang | legacy_joint/t5n9b | 1 | test | D | 0.993916 | 0.777883 | 0.000000 | S146 |
+| jiangsuiyang | legacy_joint/t5n9b | 1 | test | E | 0.987062 | 0.750752 | 0.000000 | S146 |
+| jiangsuiyang | legacy_joint/t5n9b | 1 | test | F | 0.984085 | 0.670040 | 0.000000 | S146 |
+| jiangsuiyang | legacy_joint/u2f7k | 1 | test | A | 0.982719 | 0.714278 | 0.000000 | S147 |
+| jiangsuiyang | legacy_joint/u2f7k | 1 | test | B | 0.990721 | 0.790918 | 0.000000 | S147 |
+| jiangsuiyang | legacy_joint/u2f7k | 1 | test | C | 0.990882 | 0.802399 | 0.000000 | S147 |
+| jiangsuiyang | legacy_joint/u2f7k | 1 | test | D | 0.995276 | 0.804098 | 0.000000 | S147 |
+| jiangsuiyang | legacy_joint/u2f7k | 1 | test | E | 0.988250 | 0.768150 | 0.000000 | S147 |
+| jiangsuiyang | legacy_joint/u2f7k | 1 | test | F | 0.988882 | 0.712678 | 0.000000 | S147 |
+| jiangsuiyang | legacy_joint/w6d3s | 1 | test | A | 0.983350 | 0.723432 | 0.000000 | S148 |
+| jiangsuiyang | legacy_joint/w6d3s | 1 | test | B | 0.988191 | 0.762867 | 0.000000 | S148 |
+| jiangsuiyang | legacy_joint/w6d3s | 1 | test | C | 0.988166 | 0.780244 | 0.000000 | S148 |
+| jiangsuiyang | legacy_joint/w6d3s | 1 | test | D | 0.993989 | 0.766292 | 0.000000 | S148 |
+| jiangsuiyang | legacy_joint/w6d3s | 1 | test | E | 0.990754 | 0.785984 | 0.000000 | S148 |
+| jiangsuiyang | legacy_joint/w6d3s | 1 | test | F | 0.979889 | 0.642752 | 0.000000 | S148 |
+| jiangsuiyang | legacy_domain/m7v2q | 1 | test | A | 0.994949 | 0.860545 | 0.000000 | S292 |
+| jiangsuiyang | legacy_domain/m7v2q | 2 | test | B | 0.988053 | 0.768055 | 0.000000 | S293 |
+| jiangsuiyang | legacy_domain/m7v2q | 3 | test | C | 0.991456 | 0.844347 | 0.000000 | S294 |
+| jiangsuiyang | legacy_domain/m7v2q | 4 | test | D | 0.992568 | 0.778141 | 0.000000 | S295 |
+| jiangsuiyang | legacy_domain/m7v2q | 5 | test | E | 0.993446 | 0.866099 | 0.000000 | S296 |
+| jiangsuiyang | legacy_domain/t4m7b | 1 | test | A | 0.989414 | 0.770834 | 0.000000 | S297 |
+| jiangsuiyang | legacy_domain/t4m7b | 2 | test | B | 0.994052 | 0.844488 | 0.000000 | S298 |
+| jiangsuiyang | legacy_domain/t4m7b | 3 | test | C | 0.992320 | 0.847956 | 0.000000 | S299 |
+| jiangsuiyang | legacy_domain/t4m7b | 4 | test | D | 0.996225 | 0.844937 | 0.000000 | S300 |
+| jiangsuiyang | legacy_domain/t4m7b | 5 | test | E | 0.994344 | 0.871841 | 0.000000 | S301 |
+| jiangsuiyang | organ_T4_from_T3best_lr006_spatial_pair10_20260910/runs/spatial0 | 4 | test | T1 | 0.994827 | 0.814544 | 0.000000 | S015 |
+| jiangsuiyang | organ_T4_from_T3best_lr006_spatial_pair10_20260910/runs/spatial0 | 4 | test | T2 | 0.995778 | 0.784317 | 0.000000 | S015 |
+| jiangsuiyang | organ_T4_from_T3best_lr006_spatial_pair10_20260910/runs/spatial0 | 4 | test | T3 | 0.982703 | 0.887446 | 0.000000 | S015 |
+| jiangsuiyang | organ_T4_from_T3best_lr006_spatial_pair10_20260910/runs/spatial0 | 4 | test | T4 | 0.992339 | 0.905929 | 0.000000 | S015 |
 
 ### 其余条目的 checkpoint 可用性
 
@@ -732,20 +817,13 @@ Joint 的 y9h4m 已在第 4 节由归档背景复评文件补齐；其余 Joint 
 | my-gpu | class_comparisons_20260910_neutral_restart/jobs/ind_T3_s0 | `s01.pt`, `s01_best.pt` | 存在阶段权重；待按原协议匹配 |
 | my-gpu | class_comparisons_20260910/dense_smoke | `s01.pt`, `s01_best.pt` | 存在阶段权重；待按原协议匹配 |
 | my-gpu | class_comparisons_20260910/gpm_smoke | `s01.pt`, `s02.pt`, `s02_best.pt`, `s01_best.pt` | 存在阶段权重；待按原协议匹配 |
-| my-gpu | class_independent_spatial_sweep_20260908/jobs/cl_spatial_0.01 | `s01.pt`, `s02.pt`, `s02_best.pt`, `s03.pt`, `s03_best.pt`, `s01_best.pt` | 存在阶段权重；待按原协议匹配 |
 | my-gpu | class_independent_spatial_sweep_20260908/smoke_cl_spatial_original_gco | `s01.pt`, `s02.pt`, `s02_best.pt`, `s03.pt`, `s03_best.pt`, `s01_best.pt` | 存在阶段权重；待按原协议匹配 |
 | my-gpu | class_independent_spatial_sweep_20260908/smoke_ind_T3_gco | `s01.pt`, `s01_best.pt` | 存在阶段权重；待按原协议匹配 |
 | my-gpu | class_replay_improve_20260915/jobs/zs-der-smoke | `s01.pt`, `s02.pt`, `s02_best.pt`, `s01_best.pt` | 存在阶段权重；待按原协议匹配 |
 | my-gpu | class_replay_improve_20260915_r2/jobs/zs-der-smoke | `s01.pt`, `s02.pt`, `s02_best.pt`, `s01_best.pt` | 存在阶段权重；待按原协议匹配 |
 | my-gpu | class_replay_improve_20260915_r2/jobs/zs-er-smoke | `s01.pt`, `s02.pt`, `s02_best.pt`, `s01_best.pt` | 存在阶段权重；待按原协议匹配 |
-| my-gpu | core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/pce_mib_seed42 | `s01.pt`, `s02.pt`, `s02_best.pt`, `s03.pt`, `s03_best.pt`, `s01_best.pt` | 存在阶段权重；待按原协议匹配 |
-| my-gpu | core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/pce_sequential_seed42 | `s01.pt`, `s02.pt`, `s02_best.pt`, `s03.pt`, `s03_best.pt`, `s01_best.pt` | 存在阶段权重；待按原协议匹配 |
-| my-gpu | core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/zs_mib_global1_origscale_seed42 | `s01.pt`, `s02.pt`, `s02_best.pt`, `s03.pt`, `s03_best.pt`, `s01_best.pt` | 存在阶段权重；待按原协议匹配 |
-| my-gpu | core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/zs_sequential_global1_origscale_seed42 | `s01.pt`, `s02.pt`, `s02_best.pt`, `s03.pt`, `s03_best.pt`, `s01_best.pt` | 存在阶段权重；待按原协议匹配 |
 | my-gpu | domain_joint_runs_20260901/runs/j0b2l15_r1 | `joint_best.pt`, `joint_model.pt` | 仅 best/state 或诊断权重；最终状态未确认 |
 | my-gpu | domain_joint_runs_20260901/runs/j1b4l30_r1 | `joint_best.pt`, `joint_model.pt` | 仅 best/state 或诊断权重；最终状态未确认 |
-| my-gpu | domain_runs_20260901/runs/d0gpm_r1 | `s01.pt`, `s02.pt`, `s06.pt`, `s02_best.pt`, `s03.pt`, `s06_best.pt`, `s05_best.pt`, `s04_best.pt`, `s04.pt`, `s05.pt`, `s03_best.pt`, `s01_best.pt` | 存在阶段权重；待按原协议匹配 |
-| my-gpu | domain_runs_20260901/runs/d3p9n_r1 | `s01.pt`, `s02.pt`, `s06.pt`, `s02_best.pt`, `s03.pt`, `s06_best.pt`, `s05_best.pt`, `s04_best.pt`, `s04.pt`, `s05.pt`, `s03_best.pt`, `s01_best.pt` | 存在阶段权重；待按原协议匹配 |
 | my-gpu | domain_runs_20260901/smoke/joint_smoke_b8 | `joint_best.pt`, `joint_model.pt` | 仅 best/state 或诊断权重；最终状态未确认 |
 | my-gpu | scribblecl_domain_organ_20260809/runs/domain/domain_pce_ft_seed42_20260809T082951Z | — | 本次目标目录顶层未检索到 checkpoint |
 | my-gpu | scribblecl_domain_organ_20260809/runs/organ/organ_pce_ft_seed42_20260809T083415Z | — | 本次目标目录顶层未检索到 checkpoint |
@@ -778,30 +856,29 @@ Joint 的 y9h4m 已在第 4 节由归档背景复评文件补齐；其余 Joint 
 | my-gpu | organ_runs_20260901/runs/v3p8n_r1 | — | 本次目标目录顶层未检索到 checkpoint |
 | my-gpu | organ_runs_20260901/runs/v3p8n_r2 | — | 本次目标目录顶层未检索到 checkpoint |
 | jiangsuiyang | replay_comparisons_20260911/runs/organ_zs-er | `s01_best.pt`, `s01.pt`, `s02_best.pt`, `s02.pt`, `s03_best.pt`, `s03.pt`, `s04_best.pt`, `s04.pt` | 存在阶段权重；待按原协议匹配 |
+| jiangsuiyang | organ_comparisons_20260910/runs/dense-sequential | `s01_best.pt`, `s01.pt`, `s02_best.pt`, `s02.pt`, `s03_best.pt`, `s03.pt`, `s04_best.pt`, `s04.pt` | 存在阶段权重；待按原协议匹配 |
+| jiangsuiyang | organ_comparisons_20260910/runs/pce-sequential | `s01_best.pt`, `s01.pt`, `s02_best.pt`, `s02.pt`, `s03_best.pt`, `s03.pt`, `s04_best.pt`, `s04.pt` | 存在阶段权重；待按原协议匹配 |
+| jiangsuiyang | organ_comparisons_20260910/runs/zs-sequential | `s01_best.pt`, `s01.pt`, `s02_best.pt`, `s02.pt`, `s03_best.pt`, `s03.pt`, `s04_best.pt`, `s04.pt` | 存在阶段权重；待按原协议匹配 |
+| jiangsuiyang | organ_comparisons_20260910/runs/zs-ewc | `s01_best.pt`, `s01.pt`, `s02_best.pt`, `s02.pt`, `s03_best.pt`, `s03.pt`, `s04_best.pt`, `s04.pt` | 存在阶段权重；待按原协议匹配 |
+| jiangsuiyang | organ_comparisons_20260910/runs/zs-gpm | `s01_best.pt`, `s01.pt`, `s02_best.pt`, `s02.pt`, `s03_best.pt`, `s03.pt`, `s04_best.pt`, `s04.pt` | 存在阶段权重；待按原协议匹配 |
+| jiangsuiyang | organ_baseline_tuning_20260911/runs/zs-sequential_formal | `s01_best.pt`, `s01.pt`, `s02_best.pt`, `s02.pt`, `s03_best.pt`, `s03.pt`, `s04_best.pt`, `s04.pt` | 存在阶段权重；待按原协议匹配 |
+| jiangsuiyang | organ_baseline_tuning_20260911/runs/zs-ewc_formal | `s01_best.pt`, `s01.pt`, `s02_best.pt`, `s02.pt`, `s03_best.pt`, `s03.pt`, `s04_best.pt`, `s04.pt` | 存在阶段权重；待按原协议匹配 |
+| jiangsuiyang | organ_baseline_tuning_20260911/runs/zs-gpm_formal | `s01_best.pt`, `s01.pt`, `s02_best.pt`, `s02.pt`, `s03_best.pt`, `s03.pt`, `s04_best.pt`, `s04.pt` | 存在阶段权重；待按原协议匹配 |
 | jiangsuiyang | organ_T3_lr006_spatial_pair10_20260910/runs/spatial0 | `s01.pt`, `s02.pt`, `s03_best.pt`, `t3_epoch_01.pt`, `t3_epoch_02.pt`, `t3_epoch_03.pt`, `t3_epoch_04.pt`, `t3_epoch_05.pt`, `t3_epoch_06.pt`, `t3_epoch_07.pt`, `t3_epoch_08.pt`, `t3_epoch_09.pt`, `t3_epoch_10.pt`, `s03.pt` | 存在阶段权重；待按原协议匹配 |
 | jiangsuiyang | organ_T3_lr006_spatial_pair10_20260910/runs/spatial001 | `s01.pt`, `s02.pt`, `s03_best.pt`, `t3_epoch_01.pt`, `t3_epoch_02.pt`, `t3_epoch_03.pt`, `t3_epoch_04.pt`, `t3_epoch_05.pt`, `t3_epoch_06.pt`, `t3_epoch_07.pt`, `t3_epoch_08.pt`, `t3_epoch_09.pt`, `t3_epoch_10.pt`, `s03.pt` | 存在阶段权重；待按原协议匹配 |
-| jiangsuiyang | organ_T4_from_T3best_lr006_spatial_pair10_20260910/runs/spatial0 | `s01.pt`, `s02.pt`, `s03.pt`, `s04_best.pt`, `s04.pt` | 存在阶段权重；待按原协议匹配 |
 | jiangsuiyang | organ_T4_from_T3best_lr006_spatial_pair10_20260910/runs/spatial001 | `s01.pt`, `s02.pt`, `s03.pt`, `s04_best.pt`, `s04.pt` | 存在阶段权重；待按原协议匹配 |
 | jiangsuiyang | organ_baseline_tuning_20260911/runs/zs-ewc_c0 | `s01_best.pt`, `s01.pt`, `s02_best.pt`, `s02.pt`, `s03_best.pt`, `s03.pt`, `s04_best.pt`, `s04.pt` | 存在阶段权重；待按原协议匹配 |
 | jiangsuiyang | organ_baseline_tuning_20260911/runs/zs-ewc_c1 | `s01_best.pt`, `s01.pt`, `s02_best.pt`, `s02.pt`, `s03_best.pt`, `s03.pt`, `s04_best.pt`, `s04.pt` | 存在阶段权重；待按原协议匹配 |
 | jiangsuiyang | organ_baseline_tuning_20260911/runs/zs-ewc_c2 | `s01_best.pt`, `s01.pt`, `s02_best.pt`, `s02.pt`, `s03_best.pt`, `s03.pt`, `s04_best.pt`, `s04.pt` | 存在阶段权重；待按原协议匹配 |
 | jiangsuiyang | organ_baseline_tuning_20260911/runs/zs-ewc_c3 | `s01_best.pt`, `s01.pt`, `s02_best.pt`, `s02.pt`, `s03_best.pt`, `s03.pt`, `s04_best.pt`, `s04.pt` | 存在阶段权重；待按原协议匹配 |
-| jiangsuiyang | organ_baseline_tuning_20260911/runs/zs-ewc_formal | `s01_best.pt`, `s01.pt`, `s02_best.pt`, `s02.pt`, `s03_best.pt`, `s03.pt`, `s04_best.pt`, `s04.pt` | 存在阶段权重；待按原协议匹配 |
 | jiangsuiyang | organ_baseline_tuning_20260911/runs/zs-gpm_c0 | `s01_best.pt`, `s01.pt`, `s02_best.pt`, `s02.pt`, `s03_best.pt`, `s03.pt`, `s04_best.pt`, `s04.pt` | 存在阶段权重；待按原协议匹配 |
 | jiangsuiyang | organ_baseline_tuning_20260911/runs/zs-gpm_c1 | `s01_best.pt`, `s01.pt`, `s02_best.pt`, `s02.pt`, `s03_best.pt`, `s03.pt`, `s04_best.pt`, `s04.pt` | 存在阶段权重；待按原协议匹配 |
 | jiangsuiyang | organ_baseline_tuning_20260911/runs/zs-gpm_c2 | `s01_best.pt`, `s01.pt`, `s02_best.pt`, `s02.pt`, `s03_best.pt`, `s03.pt`, `s04_best.pt`, `s04.pt` | 存在阶段权重；待按原协议匹配 |
 | jiangsuiyang | organ_baseline_tuning_20260911/runs/zs-gpm_c3 | `s01_best.pt`, `s01.pt`, `s02_best.pt`, `s02.pt`, `s03_best.pt`, `s03.pt`, `s04_best.pt`, `s04.pt` | 存在阶段权重；待按原协议匹配 |
-| jiangsuiyang | organ_baseline_tuning_20260911/runs/zs-gpm_formal | `s01_best.pt`, `s01.pt`, `s02_best.pt`, `s02.pt`, `s03_best.pt`, `s03.pt`, `s04_best.pt`, `s04.pt` | 存在阶段权重；待按原协议匹配 |
 | jiangsuiyang | organ_baseline_tuning_20260911/runs/zs-sequential_c0 | `s01_best.pt`, `s01.pt`, `s02_best.pt`, `s02.pt`, `s03_best.pt`, `s03.pt`, `s04_best.pt`, `s04.pt` | 存在阶段权重；待按原协议匹配 |
 | jiangsuiyang | organ_baseline_tuning_20260911/runs/zs-sequential_c1 | `s01_best.pt`, `s01.pt`, `s02_best.pt`, `s02.pt`, `s03_best.pt`, `s03.pt`, `s04_best.pt`, `s04.pt` | 存在阶段权重；待按原协议匹配 |
 | jiangsuiyang | organ_baseline_tuning_20260911/runs/zs-sequential_c2 | `s01_best.pt`, `s01.pt`, `s02_best.pt`, `s02.pt`, `s03_best.pt`, `s03.pt`, `s04_best.pt`, `s04.pt` | 存在阶段权重；待按原协议匹配 |
 | jiangsuiyang | organ_baseline_tuning_20260911/runs/zs-sequential_c3 | `s01_best.pt`, `s01.pt`, `s02_best.pt`, `s02.pt`, `s03_best.pt`, `s03.pt`, `s04_best.pt`, `s04.pt` | 存在阶段权重；待按原协议匹配 |
-| jiangsuiyang | organ_baseline_tuning_20260911/runs/zs-sequential_formal | `s01_best.pt`, `s01.pt`, `s02_best.pt`, `s02.pt`, `s03_best.pt`, `s03.pt`, `s04_best.pt`, `s04.pt` | 存在阶段权重；待按原协议匹配 |
-| jiangsuiyang | organ_comparisons_20260910/runs/dense-sequential | `s01_best.pt`, `s01.pt`, `s02_best.pt`, `s02.pt`, `s03_best.pt`, `s03.pt`, `s04_best.pt`, `s04.pt` | 存在阶段权重；待按原协议匹配 |
-| jiangsuiyang | organ_comparisons_20260910/runs/pce-sequential | `s01_best.pt`, `s01.pt`, `s02_best.pt`, `s02.pt`, `s03_best.pt`, `s03.pt`, `s04_best.pt`, `s04.pt` | 存在阶段权重；待按原协议匹配 |
-| jiangsuiyang | organ_comparisons_20260910/runs/zs-ewc | `s01_best.pt`, `s01.pt`, `s02_best.pt`, `s02.pt`, `s03_best.pt`, `s03.pt`, `s04_best.pt`, `s04.pt` | 存在阶段权重；待按原协议匹配 |
-| jiangsuiyang | organ_comparisons_20260910/runs/zs-gpm | `s01_best.pt`, `s01.pt`, `s02_best.pt`, `s02.pt`, `s03_best.pt`, `s03.pt`, `s04_best.pt`, `s04.pt` | 存在阶段权重；待按原协议匹配 |
-| jiangsuiyang | organ_comparisons_20260910/runs/zs-sequential | `s01_best.pt`, `s01.pt`, `s02_best.pt`, `s02.pt`, `s03_best.pt`, `s03.pt`, `s04_best.pt`, `s04.pt` | 存在阶段权重；待按原协议匹配 |
 | jiangsuiyang | organ_metrics_T134_half_20260909/runs/ind_T4 | `s01_best.pt`, `s01.pt` | 存在阶段权重；待按原协议匹配 |
 | jiangsuiyang | organ_metrics_half_20260909/runs/ind_T3 | `s01_best.pt`, `s01.pt` | 存在阶段权重；待按原协议匹配 |
 | jiangsuiyang | organ_metrics_half_20260909/runs/organ_no_replay | `s01.pt`, `s02_best.pt`, `s02.pt`, `s03_best.pt`, `s03.pt`, `s04_best.pt`, `s04.pt` | 存在阶段权重；待按原协议匹配 |
@@ -942,7 +1019,7 @@ Joint 的 y9h4m 已在第 4 节由归档背景复评文件补齐；其余 Joint 
 ## 9. 结果使用结论与缺项
 
 1. 当前同预算 Class 正式组已具备完整含背景结果、阶段矩阵与统一独立参考；ZS-DER++-MiB 的 A-Dice=0.767664。ER/guarded DER 已完成，但训练预算不同且旧任务结果弱。
-2. Organ ER 已完成且含背景 A-Dice=0.784476。最新主方法与多数 Organ baseline 的原始汇总只保存前景分数，不能据此给出含背景统一排名。u5k2n 的 0.768314 来自未完成 checkpoint。
+2. Organ ER 已完成且含背景 A-Dice=0.784476。主方法 ZS-DER++ / spatial0 已补评，含背景 A-Dice=0.848059；其预算为 60/60/10/10，ER 为 40/40/40/40，不能直接当作匹配对照。其余 Organ baseline 训练已完成，含背景补评待完成。u5k2n 的 0.768314 来自未完成 checkpoint。
 3. 归档 Domain DER++ 为 0.768733，GPM 为 0.657588，但预算分别为 80 与 150 epochs/任务。新 Domain ER/DER 失败，不能用缺失结果代表 0 分或宣称完成。
 4. 独立训练、验证筛选、测试选模演示、短诊断与正式持续学习分别展示。所有缺项均保留，不用背景≈1 的假设估算，不复制前景 BWTR/RMA 冒充含背景结果。
 5. 后续请求已授权并启动背景补评。原来未学习的任务、原来没有做 test 的验证筛选，以及没有完整 checkpoint 的失败实验，其 NA 不应通过扩大评估范围或猜测填满。补评状态与 checkpoint 索引见文末补充节。
@@ -967,30 +1044,30 @@ Joint 的 y9h4m 已在第 4 节由归档背景复评文件补齐；其余 Joint 
 | S012 | published | `results/class_zs_mib/background_comparison.json` |
 | S013 | jiangsuiyang | `replay_comparisons_20260911/runs/organ_zs-er/summary.json` |
 | S014 | published | `results/organ_zs_derpp_partial/background_comparison.json` |
-| S015 | jiangsuiyang | `organ_T3_lr006_spatial_pair10_20260910/runs/spatial0/summary.json` |
-| S016 | jiangsuiyang | `organ_T3_lr006_spatial_pair10_20260910/runs/spatial001/summary.json` |
-| S017 | jiangsuiyang | `organ_T4_from_T3best_lr006_spatial_pair10_20260910/runs/spatial0/summary.json` |
-| S018 | jiangsuiyang | `organ_T4_from_T3best_lr006_spatial_pair10_20260910/runs/spatial001/summary.json` |
-| S019 | jiangsuiyang | `organ_baseline_tuning_20260911/runs/zs-ewc_c0/summary.json` |
-| S020 | jiangsuiyang | `organ_baseline_tuning_20260911/runs/zs-ewc_c1/summary.json` |
-| S021 | jiangsuiyang | `organ_baseline_tuning_20260911/runs/zs-ewc_c2/summary.json` |
-| S022 | jiangsuiyang | `organ_baseline_tuning_20260911/runs/zs-ewc_c3/summary.json` |
-| S023 | jiangsuiyang | `organ_baseline_tuning_20260911/runs/zs-ewc_formal/summary.json` |
-| S024 | jiangsuiyang | `organ_baseline_tuning_20260911/runs/zs-gpm_c0/summary.json` |
-| S025 | jiangsuiyang | `organ_baseline_tuning_20260911/runs/zs-gpm_c1/summary.json` |
-| S026 | jiangsuiyang | `organ_baseline_tuning_20260911/runs/zs-gpm_c2/summary.json` |
-| S027 | jiangsuiyang | `organ_baseline_tuning_20260911/runs/zs-gpm_c3/summary.json` |
-| S028 | jiangsuiyang | `organ_baseline_tuning_20260911/runs/zs-gpm_formal/summary.json` |
-| S029 | jiangsuiyang | `organ_baseline_tuning_20260911/runs/zs-sequential_c0/summary.json` |
-| S030 | jiangsuiyang | `organ_baseline_tuning_20260911/runs/zs-sequential_c1/summary.json` |
-| S031 | jiangsuiyang | `organ_baseline_tuning_20260911/runs/zs-sequential_c2/summary.json` |
-| S032 | jiangsuiyang | `organ_baseline_tuning_20260911/runs/zs-sequential_c3/summary.json` |
-| S033 | jiangsuiyang | `organ_baseline_tuning_20260911/runs/zs-sequential_formal/summary.json` |
-| S034 | jiangsuiyang | `organ_comparisons_20260910/runs/dense-sequential/summary.json` |
-| S035 | jiangsuiyang | `organ_comparisons_20260910/runs/pce-sequential/summary.json` |
-| S036 | jiangsuiyang | `organ_comparisons_20260910/runs/zs-ewc/summary.json` |
-| S037 | jiangsuiyang | `organ_comparisons_20260910/runs/zs-gpm/summary.json` |
-| S038 | jiangsuiyang | `organ_comparisons_20260910/runs/zs-sequential/summary.json` |
+| S015 | jiangsuiyang | `background_recovery_20260915/cached/results/r001.json` |
+| S016 | jiangsuiyang | `organ_comparisons_20260910/runs/dense-sequential/summary.json` |
+| S017 | jiangsuiyang | `organ_comparisons_20260910/runs/pce-sequential/summary.json` |
+| S018 | jiangsuiyang | `organ_comparisons_20260910/runs/zs-sequential/summary.json` |
+| S019 | jiangsuiyang | `organ_comparisons_20260910/runs/zs-ewc/summary.json` |
+| S020 | jiangsuiyang | `organ_comparisons_20260910/runs/zs-gpm/summary.json` |
+| S021 | jiangsuiyang | `organ_baseline_tuning_20260911/runs/zs-sequential_formal/summary.json` |
+| S022 | jiangsuiyang | `organ_baseline_tuning_20260911/runs/zs-ewc_formal/summary.json` |
+| S023 | jiangsuiyang | `organ_baseline_tuning_20260911/runs/zs-gpm_formal/summary.json` |
+| S024 | jiangsuiyang | `organ_T3_lr006_spatial_pair10_20260910/runs/spatial0/summary.json` |
+| S025 | jiangsuiyang | `organ_T3_lr006_spatial_pair10_20260910/runs/spatial001/summary.json` |
+| S026 | jiangsuiyang | `organ_T4_from_T3best_lr006_spatial_pair10_20260910/runs/spatial001/summary.json` |
+| S027 | jiangsuiyang | `organ_baseline_tuning_20260911/runs/zs-ewc_c0/summary.json` |
+| S028 | jiangsuiyang | `organ_baseline_tuning_20260911/runs/zs-ewc_c1/summary.json` |
+| S029 | jiangsuiyang | `organ_baseline_tuning_20260911/runs/zs-ewc_c2/summary.json` |
+| S030 | jiangsuiyang | `organ_baseline_tuning_20260911/runs/zs-ewc_c3/summary.json` |
+| S031 | jiangsuiyang | `organ_baseline_tuning_20260911/runs/zs-gpm_c0/summary.json` |
+| S032 | jiangsuiyang | `organ_baseline_tuning_20260911/runs/zs-gpm_c1/summary.json` |
+| S033 | jiangsuiyang | `organ_baseline_tuning_20260911/runs/zs-gpm_c2/summary.json` |
+| S034 | jiangsuiyang | `organ_baseline_tuning_20260911/runs/zs-gpm_c3/summary.json` |
+| S035 | jiangsuiyang | `organ_baseline_tuning_20260911/runs/zs-sequential_c0/summary.json` |
+| S036 | jiangsuiyang | `organ_baseline_tuning_20260911/runs/zs-sequential_c1/summary.json` |
+| S037 | jiangsuiyang | `organ_baseline_tuning_20260911/runs/zs-sequential_c2/summary.json` |
+| S038 | jiangsuiyang | `organ_baseline_tuning_20260911/runs/zs-sequential_c3/summary.json` |
 | S039 | jiangsuiyang | `organ_metrics_T134_half_20260909/runs/ind_T4/summary.json` |
 | S040 | jiangsuiyang | `organ_metrics_half_20260909/runs/ind_T3/summary.json` |
 | S041 | jiangsuiyang | `organ_metrics_half_20260909/runs/organ_no_replay/summary.json` |
@@ -1040,7 +1117,7 @@ Joint 的 y9h4m 已在第 4 节由归档背景复评文件补齐；其余 Joint 
 | S085 | local | `independent_a_work/results/independent_domains_sweep4_lr_global_20260908/all_runs.csv` |
 | S086 | my-gpu | `class_comparisons_20260910/dense_smoke/summary.json` |
 | S087 | my-gpu | `class_comparisons_20260910/gpm_smoke/summary.json` |
-| S088 | my-gpu | `class_independent_spatial_sweep_20260908/jobs/cl_spatial_0.01/summary.json` |
+| S088 | my-gpu | `background_recovery_20260915/results/r015.json` |
 | S089 | my-gpu | `background_recovery_20260915/results/r005.json` |
 | S090 | my-gpu | `background_recovery_20260915/results/r006.json` |
 | S091 | my-gpu | `background_recovery_20260915/results/r007.json` |
@@ -1052,14 +1129,14 @@ Joint 的 y9h4m 已在第 4 节由归档背景复评文件补齐；其余 Joint 
 | S097 | my-gpu | `class_replay_improve_20260915/jobs/zs-der-smoke/summary.json` |
 | S098 | my-gpu | `class_replay_improve_20260915_r2/jobs/zs-der-smoke/summary.json` |
 | S099 | my-gpu | `class_replay_improve_20260915_r2/jobs/zs-er-smoke/summary.json` |
-| S100 | my-gpu | `core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/pce_mib_seed42/summary.json` |
-| S101 | my-gpu | `core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/pce_sequential_seed42/summary.json` |
-| S102 | my-gpu | `core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/zs_mib_global1_origscale_seed42/summary.json` |
-| S103 | my-gpu | `core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/zs_sequential_global1_origscale_seed42/summary.json` |
+| S100 | my-gpu | `background_recovery_20260915/results/r011.json` |
+| S101 | my-gpu | `background_recovery_20260915/results/r012.json` |
+| S102 | my-gpu | `background_recovery_20260915/results/r013.json` |
+| S103 | my-gpu | `background_recovery_20260915/results/r014.json` |
 | S104 | my-gpu | `domain_joint_runs_20260901/runs/j0b2l15_r1/summary.json` |
 | S105 | my-gpu | `domain_joint_runs_20260901/runs/j1b4l30_r1/summary.json` |
-| S106 | my-gpu | `domain_runs_20260901/runs/d0gpm_r1/summary.json` |
-| S107 | my-gpu | `domain_runs_20260901/runs/d3p9n_r1/summary.json` |
+| S106 | my-gpu | `background_recovery_20260915/results/r016.json` |
+| S107 | my-gpu | `background_recovery_20260915/results/r017.json` |
 | S108 | my-gpu | `domain_runs_20260901/smoke/joint_smoke_b8/summary.json` |
 | S109 | my-gpu | `scribblecl_domain_organ_20260809/runs/domain/domain_pce_ft_seed42_20260809T082951Z/summary.json` |
 | S110 | my-gpu | `scribblecl_domain_organ_20260809/runs/organ/organ_pce_ft_seed42_20260809T083415Z/summary.json` |
@@ -1097,167 +1174,160 @@ Joint 的 y9h4m 已在第 4 节由归档背景复评文件补齐；其余 Joint 
 | S142 | jiangsuiyang | `background_recovery_20260915/legacy/results/l001.json` |
 | S143 | jiangsuiyang | `background_recovery_20260915/legacy/results/l002.json` |
 | S144 | jiangsuiyang | `background_recovery_20260915/legacy/results/l003.json` |
-| S145 | my-gpu | `static_reference_exports_20260807/static_reference_results.csv` |
-| S146 | my-gpu | `coverage_runs/B1/pce_seed42_stage1/stage_metrics.csv` |
-| S147 | my-gpu | `coverage_runs/B1/zs_seed42_stage1/stage_metrics.csv` |
-| S148 | my-gpu | `coverage_runs/B2/pce_seed42_stage1/stage_metrics.csv` |
-| S149 | my-gpu | `coverage_runs/B2/zs_seed42_stage1/stage_metrics.csv` |
-| S150 | my-gpu | `coverage_runs/B3/pce_seed42_stage1/stage_metrics.csv` |
-| S151 | my-gpu | `coverage_runs/B3/zs_seed42_stage1/stage_metrics.csv` |
-| S152 | my-gpu | `coverage_runs/Dense/dense_seed42_stage1/stage_metrics.csv` |
-| S153 | my-gpu | `overfit/pce_mib_seed42_stage2/stage_metrics.csv` |
-| S154 | my-gpu | `overfit/pce_seed42_stage1/stage_metrics.csv` |
-| S155 | my-gpu | `overfit/zs_mib_seed42_stage2/stage_metrics.csv` |
-| S156 | my-gpu | `overfit/zs_seed42_stage1/stage_metrics.csv` |
-| S157 | my-gpu | `overfit_fixed/pce_mib_seed42_stage2/stage_metrics.csv` |
-| S158 | my-gpu | `class_comparisons_20260910/jobs/pce_sequential/manifest.json` |
-| S159 | my-gpu | `class_comparisons_20260910/jobs/zs_sequential/manifest.json` |
-| S160 | my-gpu | `class_er_gpu3_20260913/jobs/zs-er/manifest.json` |
-| S161 | my-gpu | `class_independent_spatial_sweep_20260908/jobs/cl_spatial_0.001/manifest.json` |
-| S162 | my-gpu | `class_independent_spatial_sweep_20260908/jobs/ind_T1_formal/manifest.json` |
-| S163 | my-gpu | `class_independent_spatial_sweep_20260908/smoke_cl_spatial_original/manifest.json` |
-| S164 | my-gpu | `class_independent_spatial_sweep_20260908/smoke_ind_T3/manifest.json` |
-| S165 | my-gpu | `class_replay_comparisons_20260912/jobs/zs-der/manifest.json` |
-| S166 | my-gpu | `class_replay_comparisons_20260912/jobs/zs-er/manifest.json` |
-| S167 | my-gpu | `class_replay_improve_20260915/jobs/zs-der-control5/manifest.json` |
-| S168 | my-gpu | `class_replay_improve_20260915/jobs/zs-er-smoke/manifest.json` |
-| S169 | my-gpu | `class_replay_resume_20260913/jobs/zs-der/manifest.json` |
-| S170 | my-gpu | `class_replay_resume_20260913/jobs/zs-er/manifest.json` |
-| S171 | my-gpu | `core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/zs_mib_raw_global1_diagnostic_stopped_iter1000_seed42/manifest.json` |
-| S172 | my-gpu | `core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/zs_sequential_raw_global1_diagnostic_stopped_iter1200_seed42/manifest.json` |
-| S173 | my-gpu | `domain_joint_c3fix_20260902/runs/c3adam_e5_s42/manifest.json` |
-| S174 | my-gpu | `domain_joint_c3fix_20260902/runs/c3adamgd_e5_s42/manifest.json` |
-| S175 | my-gpu | `domain_joint_c3fix_20260902/runs/c3sgd_e3_s42/manifest.json` |
-| S176 | my-gpu | `domain_joint_validation_20260902/runs/balpce_b4e20_s42/manifest.json` |
-| S177 | my-gpu | `domain_joint_validation_20260902/runs/balzs_b4e20_s42/manifest.json` |
-| S178 | my-gpu | `organ_runs_20260901/runs/o1seq_r1/manifest.json` |
-| S179 | my-gpu | `organ_runs_20260901/runs/o2ewc_r1/manifest.json` |
-| S180 | my-gpu | `organ_runs_20260901/runs/u2k7m/manifest.json` |
-| S181 | my-gpu | `organ_runs_20260901/runs/u2k7m_r1/manifest.json` |
-| S182 | my-gpu | `organ_runs_20260901/runs/u2k7m_r2/manifest.json` |
-| S183 | my-gpu | `organ_runs_20260901/runs/v3p8n/manifest.json` |
-| S184 | my-gpu | `organ_runs_20260901/runs/v3p8n_r1/manifest.json` |
-| S185 | my-gpu | `organ_runs_20260901/runs/v3p8n_r2/manifest.json` |
-| S186 | jiangsuiyang | `class_independent_spatial_sweep_20260908/jobs/ind_T1_lr0.01/manifest.json` |
-| S187 | jiangsuiyang | `class_independent_spatial_sweep_20260908/jobs/ind_T2_lr0.01/manifest.json` |
-| S188 | jiangsuiyang | `class_independent_spatial_sweep_20260908/jobs/ind_T3_lr0.01/manifest.json` |
-| S189 | jiangsuiyang | `class_independent_spatial_sweep_20260908/smoke_cl_spatial/manifest.json` |
-| S190 | jiangsuiyang | `independent80_seed42_20260906/smoke_class_T2_scribble/manifest.json` |
-| S191 | jiangsuiyang | `independent80_seed42_20260906/smoke_domain_A_full/manifest.json` |
-| S192 | jiangsuiyang | `organ_CL_throughput_20260908/spatial_off/run/manifest.json` |
-| S193 | jiangsuiyang | `organ_T13_half_cl_20260908/balance_checks_20260908_v2/balanced_current_full_replay/run/manifest.json` |
-| S194 | jiangsuiyang | `organ_T13_half_cl_20260908/balance_checks_20260908_v2/feature_replay_only/run/manifest.json` |
-| S195 | jiangsuiyang | `organ_T13_half_cl_20260908/balance_checks_20260908_v2/no_replay_losses/run/manifest.json` |
-| S196 | jiangsuiyang | `organ_T13_half_cl_20260908/balance_checks_20260908_v2/supervision_replay_only/run/manifest.json` |
-| S197 | jiangsuiyang | `organ_T13_half_cl_20260908/diagnostic_t2_seed43_v3/run/manifest.json` |
-| S198 | jiangsuiyang | `organ_T13_half_cl_20260908/formal_controls_20260908/alpha0/manifest.json` |
-| S199 | jiangsuiyang | `organ_T13_half_cl_20260908/formal_controls_20260908/alpha01/manifest.json` |
-| S200 | jiangsuiyang | `organ_T13_half_cl_20260908/formal_controls_20260908/no_spatial/manifest.json` |
-| S201 | jiangsuiyang | `organ_T13_half_cl_20260908/run/manifest.json` |
-| S202 | jiangsuiyang | `organ_T13_half_cl_20260908/run60/manifest.json` |
-| S203 | jiangsuiyang | `organ_T13_half_cl_20260908/short_checks_20260908/clean_bn/run/manifest.json` |
-| S204 | jiangsuiyang | `organ_T13_half_cl_20260908/short_checks_20260908/clean_bn_clip5_126/run/manifest.json` |
-| S205 | jiangsuiyang | `organ_T13_half_cl_20260908/short_checks_20260908/clip5/run/manifest.json` |
-| S206 | jiangsuiyang | `organ_T13_half_cl_20260908/short_checks_20260908/clip5_126/run/manifest.json` |
-| S207 | jiangsuiyang | `organ_T13_half_cl_20260908/short_checks_20260908/clip5_420/run/manifest.json` |
-| S208 | jiangsuiyang | `organ_T13_half_cl_20260908/short_checks_20260908/clip5_seed44_126/run/manifest.json` |
-| S209 | jiangsuiyang | `organ_T13_half_cl_20260908/short_checks_20260908/frozen_bn_126/run/manifest.json` |
-| S210 | jiangsuiyang | `organ_T13_half_cl_20260908/short_checks_20260908/frozen_bn_clip5_126/run/manifest.json` |
-| S211 | jiangsuiyang | `organ_T13_half_cl_20260908/short_checks_20260908/lr003/run/manifest.json` |
-| S212 | jiangsuiyang | `organ_T13_half_cl_20260908/short_checks_20260908/lr003_126/run/manifest.json` |
-| S213 | jiangsuiyang | `organ_T13_half_cl_20260908/short_checks_20260908/lr003_clip5/run/manifest.json` |
-| S214 | jiangsuiyang | `organ_T13_half_cl_20260908/short_checks_20260908/lr003_clip5_126/run/manifest.json` |
-| S215 | jiangsuiyang | `organ_T13_half_cl_20260908/small_alpha_checks_20260908/alpha_0.01/run/manifest.json` |
-| S216 | jiangsuiyang | `organ_T13_half_cl_20260908/small_alpha_checks_20260908/alpha_0.05/run/manifest.json` |
-| S217 | jiangsuiyang | `organ_T13_half_cl_20260908/small_alpha_checks_20260908/alpha_0.1/run/manifest.json` |
-| S218 | jiangsuiyang | `organ_T2_coverage_20260908/runs/cl_fg20/manifest.json` |
-| S219 | jiangsuiyang | `organ_T2_coverage_20260908/runs/cl_fg40/manifest.json` |
-| S220 | jiangsuiyang | `organ_T2_coverage_20260908/runs/stability_gate/manifest.json` |
-| S221 | jiangsuiyang | `organ_T2_coverage_20260908/runs/sw_lr01_g0/manifest.json` |
-| S222 | jiangsuiyang | `organ_T2_coverage_20260908/runs/sw_lr01_g01/manifest.json` |
-| S223 | jiangsuiyang | `organ_T2_coverage_20260908/runs/sw_lr03_g0/manifest.json` |
-| S224 | jiangsuiyang | `organ_T2_coverage_20260908/runs/sw_lr03_g01/manifest.json` |
-| S225 | jiangsuiyang | `organ_T34_lr006_spatial_pair20_20260910/runs/spatial0/manifest.json` |
-| S226 | jiangsuiyang | `organ_T34_lr006_spatial_pair20_20260910/runs/spatial001/manifest.json` |
-| S227 | jiangsuiyang | `organ_batch8_probe_20260908/b8_spatial_on/run/manifest.json` |
-| S228 | jiangsuiyang | `organ_metrics_half_20260909/prefix_T2/manifest.json` |
-| S229 | jiangsuiyang | `organ_metrics_half_20260909/runs/ind_T4/manifest.json` |
-| S230 | jiangsuiyang | `organ_t3_retention_probe_20260909/R0/manifest.json` |
-| S231 | jiangsuiyang | `organ_t3_retention_probe_20260909/R1/manifest.json` |
-| S232 | jiangsuiyang | `organ_t3_retention_probe_20260909/R2/manifest.json` |
-| S233 | jiangsuiyang | `organ_t3_retention_probe_20260909/R3/manifest.json` |
-| S234 | jiangsuiyang | `organ_t3_retention_probe_20260909/frozen/manifest.json` |
-| S235 | jiangsuiyang | `replay_comparisons_20260911/runs/domain_zs-der/manifest.json` |
-| S236 | jiangsuiyang | `replay_comparisons_20260911/runs/domain_zs-er/manifest.json` |
-| S237 | jiangsuiyang | `replay_comparisons_20260911/runs/organ_zs-der/manifest.json` |
-| S238 | jiangsuiyang | `tune_independent_A_07261_seed42_20260907_1303/independent/manifest.json` |
-| S239 | jiangsuiyang | `tune_independent_A_07261_seed42_20260907_1303/oracle/manifest.json` |
-| S240 | jiangsuiyang | `tune_independent_A_07261_seed42_20260907_1303/parity/independent/manifest.json` |
-| S241 | jiangsuiyang | `tune_independent_A_07261_seed42_20260907_1303/parity/oracle/manifest.json` |
-| S242 | jiangsuiyang | `tune_independent_A_07261_seed42_20260907_1303/parity_deterministic/independent/manifest.json` |
-| S243 | jiangsuiyang | `tune_independent_A_07261_seed42_20260907_1303/parity_deterministic/oracle/manifest.json` |
-| S244 | jiangsuiyang | `tune_independent_A_07261_seed42_20260907_1303/parity_pattern_f5_b10/independent/manifest.json` |
-| S245 | jiangsuiyang | `tune_independent_A_07261_seed42_20260907_1303/parity_pattern_f5_b10/oracle/manifest.json` |
-| S246 | jiangsuiyang | `tune_independent_A_07261_seed42_20260907_1303/parity_pattern_f5_b10/oracle_repeat/manifest.json` |
-| S247 | jiangsuiyang | `tune_independent_A_07261_seed42_20260907_1303/parity_repeat/independent/manifest.json` |
-| S248 | jiangsuiyang | `tune_independent_A_07261_seed42_20260907_1303/parity_repeat/oracle/manifest.json` |
-| S249 | jiangsuiyang | `tune_independent_A_07261_seed42_20260907_1303/parity_repeat/oracle_repeat/manifest.json` |
-| S250 | jiangsuiyang | `zs_independent_search_seed42_20260906_inclusive_aborted_20260906_2128/tuning/class_T2_c01/manifest.json` |
-| S251 | jiangsuiyang | `zs_independent_search_seed42_20260906_inclusive_aborted_20260906_2128/tuning/class_T2_c02/manifest.json` |
-| S252 | jiangsuiyang | `zs_independent_search_seed42_20260906_inclusive_aborted_20260906_2128/tuning/class_T2_c03/manifest.json` |
-| S253 | jiangsuiyang | `zs_independent_search_seed42_20260906_inclusive_aborted_20260906_2128/tuning/class_T2_c04/manifest.json` |
-| S254 | jiangsuiyang | `zs_independent_search_seed42_20260906_inclusive_aborted_20260906_2128/tuning/domain_C_c01/manifest.json` |
-| S255 | jiangsuiyang | `zs_independent_search_seed42_20260906_inclusive_aborted_20260906_2128/tuning/domain_C_c02/manifest.json` |
-| S256 | jiangsuiyang | `zs_independent_search_seed42_20260906_inclusive_aborted_20260906_2128/tuning/domain_C_c03/manifest.json` |
-| S257 | jiangsuiyang | `zs_independent_search_seed42_20260906_inclusive_aborted_20260906_2128/tuning/domain_C_c04/manifest.json` |
-| S258 | jiangsuiyang | `zs_independent_tuning_seed42_20260906/smoke_class_T2/manifest.json` |
-| S259 | jiangsuiyang | `zs_independent_tuning_seed42_20260906/smoke_domain_B_skiptest/manifest.json` |
-| S260 | my-gpu | `background_recovery_20260915/results/r011.json` |
-| S261 | my-gpu | `background_recovery_20260915/results/r012.json` |
-| S262 | my-gpu | `background_recovery_20260915/results/r013.json` |
-| S263 | my-gpu | `background_recovery_20260915/results/r014.json` |
-| S264 | my-gpu | `background_recovery_20260915/results/r015.json` |
-| S265 | my-gpu | `background_recovery_20260915/results/r016.json` |
-| S266 | my-gpu | `background_recovery_20260915/results/r017.json` |
-| S267 | jiangsuiyang | `background_recovery_20260915/results/r001.json` |
-| S268 | jiangsuiyang | `background_recovery_20260915/results/r002.json` |
-| S269 | jiangsuiyang | `background_recovery_20260915/results/r003.json` |
-| S270 | jiangsuiyang | `background_recovery_20260915/results/r004.json` |
-| S271 | jiangsuiyang | `background_recovery_20260915/results/r005.json` |
-| S272 | jiangsuiyang | `background_recovery_20260915/results/r006.json` |
-| S273 | jiangsuiyang | `background_recovery_20260915/results/r007.json` |
-| S274 | jiangsuiyang | `background_recovery_20260915/results/r008.json` |
-| S275 | jiangsuiyang | `background_recovery_20260915/results/r009.json` |
-| S276 | jiangsuiyang | `background_recovery_20260915/results/r010.json` |
-| S277 | jiangsuiyang | `background_recovery_20260915/results/r011.json` |
-| S278 | jiangsuiyang | `background_recovery_20260915/results/r012.json` |
-| S279 | jiangsuiyang | `background_recovery_20260915/results/r013.json` |
-| S280 | jiangsuiyang | `background_recovery_20260915/results/r014.json` |
-| S281 | jiangsuiyang | `background_recovery_20260915/results/r015.json` |
-| S282 | jiangsuiyang | `background_recovery_20260915/results/r016.json` |
-| S283 | jiangsuiyang | `background_recovery_20260915/results/r017.json` |
-| S284 | jiangsuiyang | `background_recovery_20260915/results/r018.json` |
-| S285 | jiangsuiyang | `background_recovery_20260915/results/r019.json` |
-| S286 | jiangsuiyang | `background_recovery_20260915/results/r020.json` |
-| S287 | jiangsuiyang | `background_recovery_20260915/results/r021.json` |
-| S288 | jiangsuiyang | `background_recovery_20260915/results/r022.json` |
-| S289 | jiangsuiyang | `background_recovery_20260915/results/r023.json` |
-| S290 | jiangsuiyang | `background_recovery_20260915/results/r024.json` |
-| S291 | jiangsuiyang | `background_recovery_20260915/results/r025.json` |
-| S292 | jiangsuiyang | `background_recovery_20260915/results/r026.json` |
-| S293 | jiangsuiyang | `background_recovery_20260915/results/r027.json` |
-| S294 | jiangsuiyang | `background_recovery_20260915/results/r028.json` |
-| S295 | jiangsuiyang | `background_recovery_20260915/legacy/results/l004.json` |
-| S296 | jiangsuiyang | `background_recovery_20260915/legacy/results/l005.json` |
-| S297 | jiangsuiyang | `background_recovery_20260915/legacy/results/l006.json` |
-| S298 | jiangsuiyang | `background_recovery_20260915/legacy/results/l007.json` |
-| S299 | jiangsuiyang | `background_recovery_20260915/legacy/results/l008.json` |
-| S300 | jiangsuiyang | `background_recovery_20260915/legacy/results/l009.json` |
-| S301 | jiangsuiyang | `background_recovery_20260915/legacy/results/l010.json` |
-| S302 | jiangsuiyang | `background_recovery_20260915/legacy/results/l011.json` |
-| S303 | jiangsuiyang | `background_recovery_20260915/legacy/results/l012.json` |
-| S304 | jiangsuiyang | `background_recovery_20260915/legacy/results/l013.json` |
-| S305 | jiangsuiyang | `background_recovery_20260915/legacy/results/l014.json` |
-| S306 | jiangsuiyang | `background_recovery_20260915/legacy/results/l015.json` |
-| S307 | jiangsuiyang | `background_recovery_20260915/legacy/results/l016.json` |
-| S308 | jiangsuiyang | `background_recovery_20260915/legacy/results/l017.json` |
+| S145 | jiangsuiyang | `background_recovery_20260915/legacy/results/l004.json` |
+| S146 | jiangsuiyang | `background_recovery_20260915/legacy/results/l005.json` |
+| S147 | jiangsuiyang | `background_recovery_20260915/legacy/results/l006.json` |
+| S148 | jiangsuiyang | `background_recovery_20260915/legacy/results/l007.json` |
+| S149 | my-gpu | `static_reference_exports_20260807/static_reference_results.csv` |
+| S150 | my-gpu | `coverage_runs/B1/pce_seed42_stage1/stage_metrics.csv` |
+| S151 | my-gpu | `coverage_runs/B1/zs_seed42_stage1/stage_metrics.csv` |
+| S152 | my-gpu | `coverage_runs/B2/pce_seed42_stage1/stage_metrics.csv` |
+| S153 | my-gpu | `coverage_runs/B2/zs_seed42_stage1/stage_metrics.csv` |
+| S154 | my-gpu | `coverage_runs/B3/pce_seed42_stage1/stage_metrics.csv` |
+| S155 | my-gpu | `coverage_runs/B3/zs_seed42_stage1/stage_metrics.csv` |
+| S156 | my-gpu | `coverage_runs/Dense/dense_seed42_stage1/stage_metrics.csv` |
+| S157 | my-gpu | `overfit/pce_mib_seed42_stage2/stage_metrics.csv` |
+| S158 | my-gpu | `overfit/pce_seed42_stage1/stage_metrics.csv` |
+| S159 | my-gpu | `overfit/zs_mib_seed42_stage2/stage_metrics.csv` |
+| S160 | my-gpu | `overfit/zs_seed42_stage1/stage_metrics.csv` |
+| S161 | my-gpu | `overfit_fixed/pce_mib_seed42_stage2/stage_metrics.csv` |
+| S162 | my-gpu | `class_comparisons_20260910/jobs/pce_sequential/manifest.json` |
+| S163 | my-gpu | `class_comparisons_20260910/jobs/zs_sequential/manifest.json` |
+| S164 | my-gpu | `class_er_gpu3_20260913/jobs/zs-er/manifest.json` |
+| S165 | my-gpu | `class_independent_spatial_sweep_20260908/jobs/cl_spatial_0.001/manifest.json` |
+| S166 | my-gpu | `class_independent_spatial_sweep_20260908/jobs/ind_T1_formal/manifest.json` |
+| S167 | my-gpu | `class_independent_spatial_sweep_20260908/smoke_cl_spatial_original/manifest.json` |
+| S168 | my-gpu | `class_independent_spatial_sweep_20260908/smoke_ind_T3/manifest.json` |
+| S169 | my-gpu | `class_replay_comparisons_20260912/jobs/zs-der/manifest.json` |
+| S170 | my-gpu | `class_replay_comparisons_20260912/jobs/zs-er/manifest.json` |
+| S171 | my-gpu | `class_replay_improve_20260915/jobs/zs-der-control5/manifest.json` |
+| S172 | my-gpu | `class_replay_improve_20260915/jobs/zs-er-smoke/manifest.json` |
+| S173 | my-gpu | `class_replay_resume_20260913/jobs/zs-der/manifest.json` |
+| S174 | my-gpu | `class_replay_resume_20260913/jobs/zs-er/manifest.json` |
+| S175 | my-gpu | `core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/zs_mib_raw_global1_diagnostic_stopped_iter1000_seed42/manifest.json` |
+| S176 | my-gpu | `core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/zs_sequential_raw_global1_diagnostic_stopped_iter1200_seed42/manifest.json` |
+| S177 | my-gpu | `domain_joint_c3fix_20260902/runs/c3adam_e5_s42/manifest.json` |
+| S178 | my-gpu | `domain_joint_c3fix_20260902/runs/c3adamgd_e5_s42/manifest.json` |
+| S179 | my-gpu | `domain_joint_c3fix_20260902/runs/c3sgd_e3_s42/manifest.json` |
+| S180 | my-gpu | `domain_joint_validation_20260902/runs/balpce_b4e20_s42/manifest.json` |
+| S181 | my-gpu | `domain_joint_validation_20260902/runs/balzs_b4e20_s42/manifest.json` |
+| S182 | my-gpu | `organ_runs_20260901/runs/o1seq_r1/manifest.json` |
+| S183 | my-gpu | `organ_runs_20260901/runs/o2ewc_r1/manifest.json` |
+| S184 | my-gpu | `organ_runs_20260901/runs/u2k7m/manifest.json` |
+| S185 | my-gpu | `organ_runs_20260901/runs/u2k7m_r1/manifest.json` |
+| S186 | my-gpu | `organ_runs_20260901/runs/u2k7m_r2/manifest.json` |
+| S187 | my-gpu | `organ_runs_20260901/runs/v3p8n/manifest.json` |
+| S188 | my-gpu | `organ_runs_20260901/runs/v3p8n_r1/manifest.json` |
+| S189 | my-gpu | `organ_runs_20260901/runs/v3p8n_r2/manifest.json` |
+| S190 | jiangsuiyang | `class_independent_spatial_sweep_20260908/jobs/ind_T1_lr0.01/manifest.json` |
+| S191 | jiangsuiyang | `class_independent_spatial_sweep_20260908/jobs/ind_T2_lr0.01/manifest.json` |
+| S192 | jiangsuiyang | `class_independent_spatial_sweep_20260908/jobs/ind_T3_lr0.01/manifest.json` |
+| S193 | jiangsuiyang | `class_independent_spatial_sweep_20260908/smoke_cl_spatial/manifest.json` |
+| S194 | jiangsuiyang | `independent80_seed42_20260906/smoke_class_T2_scribble/manifest.json` |
+| S195 | jiangsuiyang | `independent80_seed42_20260906/smoke_domain_A_full/manifest.json` |
+| S196 | jiangsuiyang | `organ_CL_throughput_20260908/spatial_off/run/manifest.json` |
+| S197 | jiangsuiyang | `organ_T13_half_cl_20260908/balance_checks_20260908_v2/balanced_current_full_replay/run/manifest.json` |
+| S198 | jiangsuiyang | `organ_T13_half_cl_20260908/balance_checks_20260908_v2/feature_replay_only/run/manifest.json` |
+| S199 | jiangsuiyang | `organ_T13_half_cl_20260908/balance_checks_20260908_v2/no_replay_losses/run/manifest.json` |
+| S200 | jiangsuiyang | `organ_T13_half_cl_20260908/balance_checks_20260908_v2/supervision_replay_only/run/manifest.json` |
+| S201 | jiangsuiyang | `organ_T13_half_cl_20260908/diagnostic_t2_seed43_v3/run/manifest.json` |
+| S202 | jiangsuiyang | `organ_T13_half_cl_20260908/formal_controls_20260908/alpha0/manifest.json` |
+| S203 | jiangsuiyang | `organ_T13_half_cl_20260908/formal_controls_20260908/alpha01/manifest.json` |
+| S204 | jiangsuiyang | `organ_T13_half_cl_20260908/formal_controls_20260908/no_spatial/manifest.json` |
+| S205 | jiangsuiyang | `organ_T13_half_cl_20260908/run/manifest.json` |
+| S206 | jiangsuiyang | `organ_T13_half_cl_20260908/run60/manifest.json` |
+| S207 | jiangsuiyang | `organ_T13_half_cl_20260908/short_checks_20260908/clean_bn/run/manifest.json` |
+| S208 | jiangsuiyang | `organ_T13_half_cl_20260908/short_checks_20260908/clean_bn_clip5_126/run/manifest.json` |
+| S209 | jiangsuiyang | `organ_T13_half_cl_20260908/short_checks_20260908/clip5/run/manifest.json` |
+| S210 | jiangsuiyang | `organ_T13_half_cl_20260908/short_checks_20260908/clip5_126/run/manifest.json` |
+| S211 | jiangsuiyang | `organ_T13_half_cl_20260908/short_checks_20260908/clip5_420/run/manifest.json` |
+| S212 | jiangsuiyang | `organ_T13_half_cl_20260908/short_checks_20260908/clip5_seed44_126/run/manifest.json` |
+| S213 | jiangsuiyang | `organ_T13_half_cl_20260908/short_checks_20260908/frozen_bn_126/run/manifest.json` |
+| S214 | jiangsuiyang | `organ_T13_half_cl_20260908/short_checks_20260908/frozen_bn_clip5_126/run/manifest.json` |
+| S215 | jiangsuiyang | `organ_T13_half_cl_20260908/short_checks_20260908/lr003/run/manifest.json` |
+| S216 | jiangsuiyang | `organ_T13_half_cl_20260908/short_checks_20260908/lr003_126/run/manifest.json` |
+| S217 | jiangsuiyang | `organ_T13_half_cl_20260908/short_checks_20260908/lr003_clip5/run/manifest.json` |
+| S218 | jiangsuiyang | `organ_T13_half_cl_20260908/short_checks_20260908/lr003_clip5_126/run/manifest.json` |
+| S219 | jiangsuiyang | `organ_T13_half_cl_20260908/small_alpha_checks_20260908/alpha_0.01/run/manifest.json` |
+| S220 | jiangsuiyang | `organ_T13_half_cl_20260908/small_alpha_checks_20260908/alpha_0.05/run/manifest.json` |
+| S221 | jiangsuiyang | `organ_T13_half_cl_20260908/small_alpha_checks_20260908/alpha_0.1/run/manifest.json` |
+| S222 | jiangsuiyang | `organ_T2_coverage_20260908/runs/cl_fg20/manifest.json` |
+| S223 | jiangsuiyang | `organ_T2_coverage_20260908/runs/cl_fg40/manifest.json` |
+| S224 | jiangsuiyang | `organ_T2_coverage_20260908/runs/stability_gate/manifest.json` |
+| S225 | jiangsuiyang | `organ_T2_coverage_20260908/runs/sw_lr01_g0/manifest.json` |
+| S226 | jiangsuiyang | `organ_T2_coverage_20260908/runs/sw_lr01_g01/manifest.json` |
+| S227 | jiangsuiyang | `organ_T2_coverage_20260908/runs/sw_lr03_g0/manifest.json` |
+| S228 | jiangsuiyang | `organ_T2_coverage_20260908/runs/sw_lr03_g01/manifest.json` |
+| S229 | jiangsuiyang | `organ_T34_lr006_spatial_pair20_20260910/runs/spatial0/manifest.json` |
+| S230 | jiangsuiyang | `organ_T34_lr006_spatial_pair20_20260910/runs/spatial001/manifest.json` |
+| S231 | jiangsuiyang | `organ_batch8_probe_20260908/b8_spatial_on/run/manifest.json` |
+| S232 | jiangsuiyang | `organ_metrics_half_20260909/prefix_T2/manifest.json` |
+| S233 | jiangsuiyang | `organ_metrics_half_20260909/runs/ind_T4/manifest.json` |
+| S234 | jiangsuiyang | `organ_t3_retention_probe_20260909/R0/manifest.json` |
+| S235 | jiangsuiyang | `organ_t3_retention_probe_20260909/R1/manifest.json` |
+| S236 | jiangsuiyang | `organ_t3_retention_probe_20260909/R2/manifest.json` |
+| S237 | jiangsuiyang | `organ_t3_retention_probe_20260909/R3/manifest.json` |
+| S238 | jiangsuiyang | `organ_t3_retention_probe_20260909/frozen/manifest.json` |
+| S239 | jiangsuiyang | `replay_comparisons_20260911/runs/domain_zs-der/manifest.json` |
+| S240 | jiangsuiyang | `replay_comparisons_20260911/runs/domain_zs-er/manifest.json` |
+| S241 | jiangsuiyang | `replay_comparisons_20260911/runs/organ_zs-der/manifest.json` |
+| S242 | jiangsuiyang | `tune_independent_A_07261_seed42_20260907_1303/independent/manifest.json` |
+| S243 | jiangsuiyang | `tune_independent_A_07261_seed42_20260907_1303/oracle/manifest.json` |
+| S244 | jiangsuiyang | `tune_independent_A_07261_seed42_20260907_1303/parity/independent/manifest.json` |
+| S245 | jiangsuiyang | `tune_independent_A_07261_seed42_20260907_1303/parity/oracle/manifest.json` |
+| S246 | jiangsuiyang | `tune_independent_A_07261_seed42_20260907_1303/parity_deterministic/independent/manifest.json` |
+| S247 | jiangsuiyang | `tune_independent_A_07261_seed42_20260907_1303/parity_deterministic/oracle/manifest.json` |
+| S248 | jiangsuiyang | `tune_independent_A_07261_seed42_20260907_1303/parity_pattern_f5_b10/independent/manifest.json` |
+| S249 | jiangsuiyang | `tune_independent_A_07261_seed42_20260907_1303/parity_pattern_f5_b10/oracle/manifest.json` |
+| S250 | jiangsuiyang | `tune_independent_A_07261_seed42_20260907_1303/parity_pattern_f5_b10/oracle_repeat/manifest.json` |
+| S251 | jiangsuiyang | `tune_independent_A_07261_seed42_20260907_1303/parity_repeat/independent/manifest.json` |
+| S252 | jiangsuiyang | `tune_independent_A_07261_seed42_20260907_1303/parity_repeat/oracle/manifest.json` |
+| S253 | jiangsuiyang | `tune_independent_A_07261_seed42_20260907_1303/parity_repeat/oracle_repeat/manifest.json` |
+| S254 | jiangsuiyang | `zs_independent_search_seed42_20260906_inclusive_aborted_20260906_2128/tuning/class_T2_c01/manifest.json` |
+| S255 | jiangsuiyang | `zs_independent_search_seed42_20260906_inclusive_aborted_20260906_2128/tuning/class_T2_c02/manifest.json` |
+| S256 | jiangsuiyang | `zs_independent_search_seed42_20260906_inclusive_aborted_20260906_2128/tuning/class_T2_c03/manifest.json` |
+| S257 | jiangsuiyang | `zs_independent_search_seed42_20260906_inclusive_aborted_20260906_2128/tuning/class_T2_c04/manifest.json` |
+| S258 | jiangsuiyang | `zs_independent_search_seed42_20260906_inclusive_aborted_20260906_2128/tuning/domain_C_c01/manifest.json` |
+| S259 | jiangsuiyang | `zs_independent_search_seed42_20260906_inclusive_aborted_20260906_2128/tuning/domain_C_c02/manifest.json` |
+| S260 | jiangsuiyang | `zs_independent_search_seed42_20260906_inclusive_aborted_20260906_2128/tuning/domain_C_c03/manifest.json` |
+| S261 | jiangsuiyang | `zs_independent_search_seed42_20260906_inclusive_aborted_20260906_2128/tuning/domain_C_c04/manifest.json` |
+| S262 | jiangsuiyang | `zs_independent_tuning_seed42_20260906/smoke_class_T2/manifest.json` |
+| S263 | jiangsuiyang | `zs_independent_tuning_seed42_20260906/smoke_domain_B_skiptest/manifest.json` |
+| S264 | jiangsuiyang | `background_recovery_20260915/results/r001.json` |
+| S265 | jiangsuiyang | `background_recovery_20260915/results/r002.json` |
+| S266 | jiangsuiyang | `background_recovery_20260915/results/r003.json` |
+| S267 | jiangsuiyang | `background_recovery_20260915/results/r004.json` |
+| S268 | jiangsuiyang | `background_recovery_20260915/results/r005.json` |
+| S269 | jiangsuiyang | `background_recovery_20260915/results/r006.json` |
+| S270 | jiangsuiyang | `background_recovery_20260915/results/r007.json` |
+| S271 | jiangsuiyang | `background_recovery_20260915/results/r008.json` |
+| S272 | jiangsuiyang | `background_recovery_20260915/results/r009.json` |
+| S273 | jiangsuiyang | `background_recovery_20260915/results/r010.json` |
+| S274 | jiangsuiyang | `background_recovery_20260915/results/r011.json` |
+| S275 | jiangsuiyang | `background_recovery_20260915/results/r012.json` |
+| S276 | jiangsuiyang | `background_recovery_20260915/results/r013.json` |
+| S277 | jiangsuiyang | `background_recovery_20260915/results/r014.json` |
+| S278 | jiangsuiyang | `background_recovery_20260915/results/r015.json` |
+| S279 | jiangsuiyang | `background_recovery_20260915/results/r016.json` |
+| S280 | jiangsuiyang | `background_recovery_20260915/results/r017.json` |
+| S281 | jiangsuiyang | `background_recovery_20260915/results/r018.json` |
+| S282 | jiangsuiyang | `background_recovery_20260915/results/r019.json` |
+| S283 | jiangsuiyang | `background_recovery_20260915/results/r020.json` |
+| S284 | jiangsuiyang | `background_recovery_20260915/results/r021.json` |
+| S285 | jiangsuiyang | `background_recovery_20260915/results/r022.json` |
+| S286 | jiangsuiyang | `background_recovery_20260915/results/r023.json` |
+| S287 | jiangsuiyang | `background_recovery_20260915/results/r024.json` |
+| S288 | jiangsuiyang | `background_recovery_20260915/results/r025.json` |
+| S289 | jiangsuiyang | `background_recovery_20260915/results/r026.json` |
+| S290 | jiangsuiyang | `background_recovery_20260915/results/r027.json` |
+| S291 | jiangsuiyang | `background_recovery_20260915/results/r028.json` |
+| S292 | jiangsuiyang | `background_recovery_20260915/legacy/results/l008.json` |
+| S293 | jiangsuiyang | `background_recovery_20260915/legacy/results/l009.json` |
+| S294 | jiangsuiyang | `background_recovery_20260915/legacy/results/l010.json` |
+| S295 | jiangsuiyang | `background_recovery_20260915/legacy/results/l011.json` |
+| S296 | jiangsuiyang | `background_recovery_20260915/legacy/results/l012.json` |
+| S297 | jiangsuiyang | `background_recovery_20260915/legacy/results/l013.json` |
+| S298 | jiangsuiyang | `background_recovery_20260915/legacy/results/l014.json` |
+| S299 | jiangsuiyang | `background_recovery_20260915/legacy/results/l015.json` |
+| S300 | jiangsuiyang | `background_recovery_20260915/legacy/results/l016.json` |
+| S301 | jiangsuiyang | `background_recovery_20260915/legacy/results/l017.json` |

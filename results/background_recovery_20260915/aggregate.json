@@ -5,24 +5,32 @@
   "foreground_tolerance": 0.0001,
   "hosts": {
     "my-gpu": {
-      "checked_at": "2026-09-15T08:13:44.320106+00:00",
+      "checked_at": "2026-09-15T10:45:47.777305+00:00",
       "batches": {
         "background_recovery_20260915": {
           "progress": {
-            "current": "r011",
+            "current": "r017",
+            "finished_at": 1789462028.4220066,
             "jobs": {
               "r005": "complete",
               "r006": "complete",
               "r007": "complete",
               "r008": "complete",
               "r009": "complete",
-              "r010": "complete"
+              "r010": "complete",
+              "r011": "complete",
+              "r012": "complete",
+              "r013": "complete",
+              "r014": "complete",
+              "r015": "complete",
+              "r016": "complete",
+              "r017": "complete"
             },
             "pid": 1879800,
             "started_at": 1789459634.0743313,
-            "status": "running",
+            "status": "complete",
             "total": 13,
-            "worker_pid": 1880157
+            "worker_pid": 1882822
           },
           "plan": {
             "minimum_free_mib": 5000,
@@ -597,6 +605,452 @@
             "scope": "existing-checkpoint evaluation only; preserve original split and checkpoint selection"
           },
           "results": {
+            "r016": {
+              "background_inclusive_mean": 0.4692492882925734,
+              "checkpoint": "<project_root>/domain_runs_20260901/runs/d0gpm_r1/s06.pt",
+              "checkpoint_bytes": 103132828,
+              "checkpoint_mtime": 1788288536.7721865,
+              "code": "<project_root>/class_comparisons_20260910_neutral_restart/source",
+              "compared_tasks": [
+                "A",
+                "B",
+                "C",
+                "D",
+                "E",
+                "F"
+              ],
+              "data_root": "<benchmark_data>",
+              "finished_at": 1789461948.4771862,
+              "foreground_max_abs_difference": 0.0,
+              "foreground_parity_passed": true,
+              "gpu_peak_mib": 1062.0,
+              "job_id": "r016",
+              "run": "domain_runs_20260901/runs/d0gpm_r1",
+              "scenario": "domain",
+              "split": "test",
+              "stage": 6,
+              "status": "complete",
+              "tasks": {
+                "A": {
+                  "background_dice": 0.809256505699811,
+                  "background_inclusive_mean": 0.4501114229345788,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.09096634016934634,
+                  "patients": 3,
+                  "per_class_including_background": [
+                    0.809256505699811,
+                    0.09096634016934634
+                  ],
+                  "slices": 126
+                },
+                "B": {
+                  "background_dice": 0.8277892621454207,
+                  "background_inclusive_mean": 0.4613253574489269,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.09486145275243306,
+                  "patients": 3,
+                  "per_class_including_background": [
+                    0.8277892621454207,
+                    0.09486145275243306
+                  ],
+                  "slices": 72
+                },
+                "C": {
+                  "background_dice": 0.8364603281554476,
+                  "background_inclusive_mean": 0.4893589285118138,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.14225752886818005,
+                  "patients": 8,
+                  "per_class_including_background": [
+                    0.8364603281554476,
+                    0.14225752886818008
+                  ],
+                  "slices": 158
+                },
+                "D": {
+                  "background_dice": 0.8437355339008454,
+                  "background_inclusive_mean": 0.4654622778849272,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.08718902186900901,
+                  "patients": 4,
+                  "per_class_including_background": [
+                    0.8437355339008454,
+                    0.08718902186900901
+                  ],
+                  "slices": 100
+                },
+                "E": {
+                  "background_dice": 0.8542679029485727,
+                  "background_inclusive_mean": 0.507229602611287,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.1601913022740014,
+                  "patients": 8,
+                  "per_class_including_background": [
+                    0.8542679029485727,
+                    0.1601913022740014
+                  ],
+                  "slices": 254
+                },
+                "F": {
+                  "background_dice": 0.8257911913623062,
+                  "background_inclusive_mean": 0.44200814036390657,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.05822508936550702,
+                  "patients": 5,
+                  "per_class_including_background": [
+                    0.8257911913623062,
+                    0.05822508936550702
+                  ],
+                  "slices": 320
+                }
+              }
+            },
+            "r012": {
+              "background_inclusive_mean": 0.42311831753290835,
+              "checkpoint": "<project_root>/core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/pce_sequential_seed42/s03.pt",
+              "checkpoint_bytes": 103140958,
+              "checkpoint_mtime": 1786550001.112034,
+              "code": "<project_root>/class_comparisons_20260910_neutral_restart/source",
+              "compared_tasks": [
+                "T1",
+                "T2",
+                "T3"
+              ],
+              "data_root": "<benchmark_data>",
+              "finished_at": 1789460650.2229223,
+              "foreground_max_abs_difference": 0.0,
+              "foreground_parity_passed": true,
+              "gpu_peak_mib": 1060.0,
+              "job_id": "r012",
+              "run": "core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/pce_sequential_seed42",
+              "scenario": "class",
+              "split": "test",
+              "stage": 3,
+              "status": "complete",
+              "tasks": {
+                "T1": {
+                  "background_dice": 0.967221720089381,
+                  "background_inclusive_mean": 0.24180543011358477,
+                  "classes": [
+                    0,
+                    1,
+                    2,
+                    3
+                  ],
+                  "foreground_mean": 1.2165263034679748e-10,
+                  "patients": 9,
+                  "per_class_including_background": [
+                    0.967221720089381,
+                    8.50159225080593e-11,
+                    1.6232272778115067e-10,
+                    1.1761924075118244e-10
+                  ],
+                  "slices": 900
+                },
+                "T2": {
+                  "background_dice": 0.9739084390092333,
+                  "background_inclusive_mean": 0.3246361464152278,
+                  "classes": [
+                    0,
+                    4,
+                    5
+                  ],
+                  "foreground_mean": 1.182250823464804e-10,
+                  "patients": 9,
+                  "per_class_including_background": [
+                    0.9739084390092333,
+                    1.5684885145793122e-10,
+                    7.960131323502956e-11
+                  ],
+                  "slices": 900
+                },
+                "T3": {
+                  "background_dice": 0.9918174183534373,
+                  "background_inclusive_mean": 0.7029133760699127,
+                  "classes": [
+                    0,
+                    6,
+                    7
+                  ],
+                  "foreground_mean": 0.5584613549281504,
+                  "patients": 9,
+                  "per_class_including_background": [
+                    0.9918174183534373,
+                    0.6910280803289455,
+                    0.4258946295273552
+                  ],
+                  "slices": 900
+                }
+              },
+              "whole_class_dice": {
+                "background_dice": 0.9675362837615472,
+                "background_inclusive_mean": 0.26378164224842754,
+                "classes": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7
+                ],
+                "foreground_mean": 0.1632452648894105,
+                "patients": 9,
+                "per_class_including_background": [
+                  0.9675362837615472,
+                  8.091223748803169e-11,
+                  1.62152568223797e-10,
+                  1.1727494314475825e-10,
+                  1.3518690156718758e-10,
+                  7.790020574004004e-11,
+                  0.6930418220411635,
+                  0.449675031611283
+                ],
+                "slices": 1350
+              }
+            },
+            "r017": {
+              "background_inclusive_mean": 0.45176546557908637,
+              "checkpoint": "<project_root>/domain_runs_20260901/runs/d3p9n_r1/s06.pt",
+              "checkpoint_bytes": 103132828,
+              "checkpoint_mtime": 1788309332.757126,
+              "code": "<project_root>/class_comparisons_20260910_neutral_restart/source",
+              "compared_tasks": [
+                "A",
+                "B",
+                "C",
+                "D",
+                "E",
+                "F"
+              ],
+              "data_root": "<benchmark_data>",
+              "finished_at": 1789462026.0846326,
+              "foreground_max_abs_difference": 0.0,
+              "foreground_parity_passed": true,
+              "gpu_peak_mib": 1062.0,
+              "job_id": "r017",
+              "run": "domain_runs_20260901/runs/d3p9n_r1",
+              "scenario": "domain",
+              "split": "test",
+              "stage": 6,
+              "status": "complete",
+              "tasks": {
+                "A": {
+                  "background_dice": 0.8060915513849302,
+                  "background_inclusive_mean": 0.4474547033606297,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.08881785533632912,
+                  "patients": 3,
+                  "per_class_including_background": [
+                    0.8060915513849302,
+                    0.08881785533632912
+                  ],
+                  "slices": 126
+                },
+                "B": {
+                  "background_dice": 0.8074679701464418,
+                  "background_inclusive_mean": 0.4476679840827565,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.08786799801907108,
+                  "patients": 3,
+                  "per_class_including_background": [
+                    0.8074679701464418,
+                    0.08786799801907108
+                  ],
+                  "slices": 72
+                },
+                "C": {
+                  "background_dice": 0.8131520317083858,
+                  "background_inclusive_mean": 0.4702318850112247,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.12731173831406362,
+                  "patients": 8,
+                  "per_class_including_background": [
+                    0.8131520317083857,
+                    0.1273117383140636
+                  ],
+                  "slices": 158
+                },
+                "D": {
+                  "background_dice": 0.8096572089889591,
+                  "background_inclusive_mean": 0.44208674999449965,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.0745162910000402,
+                  "patients": 4,
+                  "per_class_including_background": [
+                    0.8096572089889591,
+                    0.0745162910000402
+                  ],
+                  "slices": 100
+                },
+                "E": {
+                  "background_dice": 0.8113787445196842,
+                  "background_inclusive_mean": 0.4733520481445094,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.13532535176933458,
+                  "patients": 8,
+                  "per_class_including_background": [
+                    0.8113787445196841,
+                    0.13532535176933455
+                  ],
+                  "slices": 254
+                },
+                "F": {
+                  "background_dice": 0.8064253754015465,
+                  "background_inclusive_mean": 0.4297994228808985,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.053173470360250594,
+                  "patients": 5,
+                  "per_class_including_background": [
+                    0.8064253754015465,
+                    0.053173470360250594
+                  ],
+                  "slices": 320
+                }
+              }
+            },
+            "r011": {
+              "background_inclusive_mean": 0.6664463414297833,
+              "checkpoint": "<project_root>/core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/pce_mib_seed42/s03.pt",
+              "checkpoint_bytes": 103140958,
+              "checkpoint_mtime": 1786550064.0575426,
+              "code": "<project_root>/class_comparisons_20260910_neutral_restart/source",
+              "compared_tasks": [
+                "T1",
+                "T2",
+                "T3"
+              ],
+              "data_root": "<benchmark_data>",
+              "finished_at": 1789460121.430893,
+              "foreground_max_abs_difference": 0.0,
+              "foreground_parity_passed": true,
+              "gpu_peak_mib": 1060.0,
+              "job_id": "r011",
+              "run": "core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/pce_mib_seed42",
+              "scenario": "class",
+              "split": "test",
+              "stage": 3,
+              "status": "complete",
+              "tasks": {
+                "T1": {
+                  "background_dice": 0.931045276450787,
+                  "background_inclusive_mean": 0.6754414190240792,
+                  "classes": [
+                    0,
+                    1,
+                    2,
+                    3
+                  ],
+                  "foreground_mean": 0.5902401332151764,
+                  "patients": 9,
+                  "per_class_including_background": [
+                    0.931045276450787,
+                    0.4496916108912884,
+                    0.6746302354450673,
+                    0.6463985533091736
+                  ],
+                  "slices": 900
+                },
+                "T2": {
+                  "background_dice": 0.9246858324143976,
+                  "background_inclusive_mean": 0.6887675936337361,
+                  "classes": [
+                    0,
+                    4,
+                    5
+                  ],
+                  "foreground_mean": 0.5708084742434053,
+                  "patients": 9,
+                  "per_class_including_background": [
+                    0.9246858324143974,
+                    0.6159927604658191,
+                    0.5256241880209915
+                  ],
+                  "slices": 900
+                },
+                "T3": {
+                  "background_dice": 0.9162506367112342,
+                  "background_inclusive_mean": 0.6351300116315349,
+                  "classes": [
+                    0,
+                    6,
+                    7
+                  ],
+                  "foreground_mean": 0.49456969909168547,
+                  "patients": 9,
+                  "per_class_including_background": [
+                    0.9162506367112341,
+                    0.5744930410901824,
+                    0.41464635709318814
+                  ],
+                  "slices": 900
+                }
+              },
+              "whole_class_dice": {
+                "background_dice": 0.9566366901645661,
+                "background_inclusive_mean": 0.57772577111293,
+                "classes": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7
+                ],
+                "foreground_mean": 0.5235956398198391,
+                "patients": 9,
+                "per_class_including_background": [
+                  0.9566366901645661,
+                  0.393944273791916,
+                  0.6611493950473418,
+                  0.6193399132459572,
+                  0.6087077723335788,
+                  0.4713490864729573,
+                  0.49075574704665403,
+                  0.41992329080046903
+                ],
+                "slices": 1350
+              }
+            },
             "r005": {
               "background_inclusive_mean": 0.7355648046115728,
               "checkpoint": "<project_root>/class_independent_spatial_sweep_20260908/jobs/ind_T1_lr0.01/s01.pt",
@@ -761,6 +1215,189 @@
                 }
               }
             },
+            "r013": {
+              "background_inclusive_mean": 0.805777367544481,
+              "checkpoint": "<project_root>/core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/zs_mib_global1_origscale_seed42/s03.pt",
+              "checkpoint_bytes": 103140958,
+              "checkpoint_mtime": 1786590300.719011,
+              "code": "<project_root>/class_comparisons_20260910_neutral_restart/source",
+              "compared_tasks": [
+                "T1",
+                "T2",
+                "T3"
+              ],
+              "data_root": "<benchmark_data>",
+              "finished_at": 1789461141.0370214,
+              "foreground_max_abs_difference": 0.0,
+              "foreground_parity_passed": true,
+              "gpu_peak_mib": 1060.0,
+              "job_id": "r013",
+              "run": "core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/zs_mib_global1_origscale_seed42",
+              "scenario": "class",
+              "split": "test",
+              "stage": 3,
+              "status": "complete",
+              "tasks": {
+                "T1": {
+                  "background_dice": 0.9696126162339451,
+                  "background_inclusive_mean": 0.8225268615110392,
+                  "classes": [
+                    0,
+                    1,
+                    2,
+                    3
+                  ],
+                  "foreground_mean": 0.7734982766034038,
+                  "patients": 9,
+                  "per_class_including_background": [
+                    0.9696126162339451,
+                    0.7209008373188943,
+                    0.7831697599404432,
+                    0.8164242325508744
+                  ],
+                  "slices": 900
+                },
+                "T2": {
+                  "background_dice": 0.9622914391238057,
+                  "background_inclusive_mean": 0.8277383491954787,
+                  "classes": [
+                    0,
+                    4,
+                    5
+                  ],
+                  "foreground_mean": 0.7604618042313152,
+                  "patients": 9,
+                  "per_class_including_background": [
+                    0.9622914391238057,
+                    0.7071595435345587,
+                    0.813764064928072
+                  ],
+                  "slices": 900
+                },
+                "T3": {
+                  "background_dice": 0.9521740643057428,
+                  "background_inclusive_mean": 0.7670668919269255,
+                  "classes": [
+                    0,
+                    6,
+                    7
+                  ],
+                  "foreground_mean": 0.6745133057375168,
+                  "patients": 9,
+                  "per_class_including_background": [
+                    0.9521740643057428,
+                    0.7955392394287633,
+                    0.5534873720462705
+                  ],
+                  "slices": 900
+                }
+              },
+              "whole_class_dice": {
+                "background_dice": 0.9752071652484903,
+                "background_inclusive_mean": 0.7460305635898643,
+                "classes": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7
+                ],
+                "foreground_mean": 0.7132910490672033,
+                "patients": 9,
+                "per_class_including_background": [
+                  0.9752071652484903,
+                  0.711543821720638,
+                  0.7865867601713616,
+                  0.822498816688553,
+                  0.7012536224528378,
+                  0.7854329988363065,
+                  0.7600320425635468,
+                  0.4256892810371805
+                ],
+                "slices": 1350
+              }
+            },
+            "r015": {
+              "background_inclusive_mean": 0.7751109109935531,
+              "checkpoint": "<project_root>/class_independent_spatial_sweep_20260908/jobs/cl_spatial_0.01/s03.pt",
+              "checkpoint_bytes": 103140958,
+              "checkpoint_mtime": 1788906810.3834646,
+              "code": "<project_root>/class_independent_spatial_sweep_20260908/source",
+              "compared_tasks": [
+                "T1",
+                "T2",
+                "T3"
+              ],
+              "data_root": "<benchmark_data>",
+              "finished_at": 1789461870.2739484,
+              "foreground_max_abs_difference": 0.0,
+              "foreground_parity_passed": true,
+              "gpu_peak_mib": 1060.0,
+              "job_id": "r015",
+              "run": "class_independent_spatial_sweep_20260908/jobs/cl_spatial_0.01",
+              "scenario": "class",
+              "split": "val",
+              "stage": 3,
+              "status": "complete",
+              "tasks": {
+                "T1": {
+                  "background_dice": 0.9743387750229331,
+                  "background_inclusive_mean": 0.8307995748605039,
+                  "classes": [
+                    0,
+                    1,
+                    2,
+                    3
+                  ],
+                  "foreground_mean": 0.7829531748063608,
+                  "patients": 2,
+                  "per_class_including_background": [
+                    0.9743387750229331,
+                    0.7224081397105327,
+                    0.7451768491580004,
+                    0.8812745355505494
+                  ],
+                  "slices": 200
+                },
+                "T2": {
+                  "background_dice": 0.9700313689276401,
+                  "background_inclusive_mean": 0.7191026472898607,
+                  "classes": [
+                    0,
+                    4,
+                    5
+                  ],
+                  "foreground_mean": 0.5936382864709708,
+                  "patients": 2,
+                  "per_class_including_background": [
+                    0.9700313689276401,
+                    0.4855201628771021,
+                    0.7017564100648397
+                  ],
+                  "slices": 200
+                },
+                "T3": {
+                  "background_dice": 0.9667949169832689,
+                  "background_inclusive_mean": 0.7754305108302946,
+                  "classes": [
+                    0,
+                    6,
+                    7
+                  ],
+                  "foreground_mean": 0.6797483077538072,
+                  "patients": 2,
+                  "per_class_including_background": [
+                    0.9667949169832689,
+                    0.8458226563749096,
+                    0.513673959132705
+                  ],
+                  "slices": 200
+                }
+              }
+            },
             "r010": {
               "background_inclusive_mean": 0.7134565612199136,
               "checkpoint": "<project_root>/class_independent_spatial_sweep_20260908/jobs/ind_T3_lr0.03/s01.pt",
@@ -799,6 +1436,111 @@
                   ],
                   "slices": 200
                 }
+              }
+            },
+            "r014": {
+              "background_inclusive_mean": 0.4614170493536995,
+              "checkpoint": "<project_root>/core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/zs_sequential_global1_origscale_seed42/s03.pt",
+              "checkpoint_bytes": 103140958,
+              "checkpoint_mtime": 1786584303.589649,
+              "code": "<project_root>/class_comparisons_20260910_neutral_restart/source",
+              "compared_tasks": [
+                "T1",
+                "T2",
+                "T3"
+              ],
+              "data_root": "<benchmark_data>",
+              "finished_at": 1789461637.401979,
+              "foreground_max_abs_difference": 0.0,
+              "foreground_parity_passed": true,
+              "gpu_peak_mib": 1060.0,
+              "job_id": "r014",
+              "run": "core_runs/class_q8v2n6_seed42_150e_20260811T1345Z/zs_sequential_global1_origscale_seed42",
+              "scenario": "class",
+              "split": "test",
+              "stage": 3,
+              "status": "complete",
+              "tasks": {
+                "T1": {
+                  "background_dice": 0.9706921627176628,
+                  "background_inclusive_mean": 0.2426730407744769,
+                  "classes": [
+                    0,
+                    1,
+                    2,
+                    3
+                  ],
+                  "foreground_mean": 1.2674818099044152e-10,
+                  "patients": 9,
+                  "per_class_including_background": [
+                    0.970692162717663,
+                    9.972807946399828e-11,
+                    1.6232272778115067e-10,
+                    1.1819373572617558e-10
+                  ],
+                  "slices": 900
+                },
+                "T2": {
+                  "background_dice": 0.977134780887537,
+                  "background_inclusive_mean": 0.3257115937104544,
+                  "classes": [
+                    0,
+                    4,
+                    5
+                  ],
+                  "foreground_mean": 1.2191307713805875e-10,
+                  "patients": 9,
+                  "per_class_including_background": [
+                    0.977134780887537,
+                    1.64224841041088e-10,
+                    7.960131323502956e-11
+                  ],
+                  "slices": 900
+                },
+                "T3": {
+                  "background_dice": 0.9969679651926359,
+                  "background_inclusive_mean": 0.815866513576167,
+                  "classes": [
+                    0,
+                    6,
+                    7
+                  ],
+                  "foreground_mean": 0.7253157877679325,
+                  "patients": 9,
+                  "per_class_including_background": [
+                    0.9969679651926359,
+                    0.8062079371571707,
+                    0.6444236383786944
+                  ],
+                  "slices": 900
+                }
+              },
+              "whole_class_dice": {
+                "background_dice": 0.9713541073900518,
+                "background_inclusive_mean": 0.3042733498726482,
+                "classes": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7
+                ],
+                "foreground_mean": 0.20897609879873336,
+                "patients": 9,
+                "per_class_including_background": [
+                  0.971354107390052,
+                  9.601919416635562e-11,
+                  1.62152568223797e-10,
+                  1.1807416239359686e-10,
+                  1.640750179133381e-10,
+                  7.790020574004004e-11,
+                  0.7909035416661793,
+                  0.6719291493067332
+                ],
+                "slices": 1350
               }
             },
             "r008": {
@@ -1266,7 +2008,7 @@
       }
     },
     "jiangsuiyang": {
-      "checked_at": "2026-09-15T16:13:44.541032+08:00",
+      "checked_at": "2026-09-15T18:45:47.878669+08:00",
       "batches": {
         "background_recovery_20260915": {
           "progress": {
@@ -2776,17 +3518,32 @@
         },
         "legacy": {
           "progress": {
-            "current": "l004",
+            "current": "l017",
+            "finished_at": 1789460601.255773,
             "jobs": {
               "l001": "complete",
               "l002": "complete",
-              "l003": "complete"
+              "l003": "complete",
+              "l004": "complete",
+              "l005": "complete",
+              "l006": "complete",
+              "l007": "complete",
+              "l008": "complete",
+              "l009": "complete",
+              "l010": "complete",
+              "l011": "complete",
+              "l012": "complete",
+              "l013": "complete",
+              "l014": "complete",
+              "l015": "complete",
+              "l016": "complete",
+              "l017": "complete"
             },
             "pid": 37837,
             "started_at": 1789459788.6674948,
-            "status": "running",
+            "status": "complete",
             "total": 17,
-            "worker_pid": 40411
+            "worker_pid": 45422
           },
           "plan": {
             "minimum_free_mib": 5000,
@@ -3949,8 +4706,1026 @@
                   "slices": 320
                 }
               }
+            },
+            "l004": {
+              "background_inclusive_mean": 0.6772295844974751,
+              "checkpoint": "<legacy_home>/q1d7f/runs/r8c4w/s01.pt",
+              "checkpoint_bytes": 103132828,
+              "checkpoint_mtime": 1788313525.1112163,
+              "code": "<legacy_home>/q1d7f",
+              "compared_tasks": [
+                "A",
+                "B",
+                "C",
+                "D",
+                "E",
+                "F"
+              ],
+              "data_root": "<project_root>/replay_comparisons_20260911/inputs/domain/data",
+              "finished_at": 1789460097.0297527,
+              "foreground_max_abs_difference": 0.0,
+              "foreground_parity_passed": true,
+              "gpu_peak_mib": 1062.0,
+              "job_id": "l004",
+              "run": "legacy_joint/r8c4w",
+              "scenario": "domain",
+              "split": "test",
+              "stage": 1,
+              "status": "complete",
+              "tasks": {
+                "A": {
+                  "background_dice": 0.9659441143018469,
+                  "background_inclusive_mean": 0.6343156406473863,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.3026871669929258,
+                  "patients": 3,
+                  "per_class_including_background": [
+                    0.9659441143018469,
+                    0.3026871669929258
+                  ],
+                  "slices": 126
+                },
+                "B": {
+                  "background_dice": 0.9834528114055944,
+                  "background_inclusive_mean": 0.7194034890791072,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.45535416675262025,
+                  "patients": 3,
+                  "per_class_including_background": [
+                    0.9834528114055944,
+                    0.45535416675262025
+                  ],
+                  "slices": 72
+                },
+                "C": {
+                  "background_dice": 0.9854615137702808,
+                  "background_inclusive_mean": 0.7411269150281463,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.4967923162860117,
+                  "patients": 8,
+                  "per_class_including_background": [
+                    0.9854615137702808,
+                    0.4967923162860117
+                  ],
+                  "slices": 158
+                },
+                "D": {
+                  "background_dice": 0.9903115583672955,
+                  "background_inclusive_mean": 0.6120230401515063,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.23373452193571742,
+                  "patients": 4,
+                  "per_class_including_background": [
+                    0.9903115583672955,
+                    0.23373452193571742
+                  ],
+                  "slices": 100
+                },
+                "E": {
+                  "background_dice": 0.9869360791685524,
+                  "background_inclusive_mean": 0.7307477018331696,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.47455932449778704,
+                  "patients": 8,
+                  "per_class_including_background": [
+                    0.9869360791685524,
+                    0.47455932449778704
+                  ],
+                  "slices": 254
+                },
+                "F": {
+                  "background_dice": 0.9765327142512513,
+                  "background_inclusive_mean": 0.6257607202455349,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.2749887262398185,
+                  "patients": 5,
+                  "per_class_including_background": [
+                    0.9765327142512513,
+                    0.2749887262398185
+                  ],
+                  "slices": 320
+                }
+              }
+            },
+            "l005": {
+              "background_inclusive_mean": 0.73632455360831,
+              "checkpoint": "<legacy_home>/q1d7f/runs/t5n9b/s01.pt",
+              "checkpoint_bytes": 103132828,
+              "checkpoint_mtime": 1788313519.4192548,
+              "code": "<legacy_home>/q1d7f",
+              "compared_tasks": [
+                "A",
+                "B",
+                "C",
+                "D",
+                "E",
+                "F"
+              ],
+              "data_root": "<project_root>/replay_comparisons_20260911/inputs/domain/data",
+              "finished_at": 1789460179.7240658,
+              "foreground_max_abs_difference": 0.0,
+              "foreground_parity_passed": true,
+              "gpu_peak_mib": 1062.0,
+              "job_id": "l005",
+              "run": "legacy_joint/t5n9b",
+              "scenario": "domain",
+              "split": "test",
+              "stage": 1,
+              "status": "complete",
+              "tasks": {
+                "A": {
+                  "background_dice": 0.9816359399913083,
+                  "background_inclusive_mean": 0.6969570619889695,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.4122781839866306,
+                  "patients": 3,
+                  "per_class_including_background": [
+                    0.9816359399913083,
+                    0.4122781839866306
+                  ],
+                  "slices": 126
+                },
+                "B": {
+                  "background_dice": 0.98634453556296,
+                  "background_inclusive_mean": 0.7433270675473169,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.5003095995316738,
+                  "patients": 3,
+                  "per_class_including_background": [
+                    0.98634453556296,
+                    0.5003095995316738
+                  ],
+                  "slices": 72
+                },
+                "C": {
+                  "background_dice": 0.9878048630037981,
+                  "background_inclusive_mean": 0.7789885653001558,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.5701722675965137,
+                  "patients": 8,
+                  "per_class_including_background": [
+                    0.987804863003798,
+                    0.5701722675965137
+                  ],
+                  "slices": 158
+                },
+                "D": {
+                  "background_dice": 0.9939161950441958,
+                  "background_inclusive_mean": 0.777882777349604,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.561849359655012,
+                  "patients": 4,
+                  "per_class_including_background": [
+                    0.9939161950441958,
+                    0.561849359655012
+                  ],
+                  "slices": 100
+                },
+                "E": {
+                  "background_dice": 0.9870624226044592,
+                  "background_inclusive_mean": 0.750751530498845,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.5144406383932307,
+                  "patients": 8,
+                  "per_class_including_background": [
+                    0.9870624226044592,
+                    0.5144406383932307
+                  ],
+                  "slices": 254
+                },
+                "F": {
+                  "background_dice": 0.984084727127747,
+                  "background_inclusive_mean": 0.6700403189649685,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.3559959108021899,
+                  "patients": 5,
+                  "per_class_including_background": [
+                    0.984084727127747,
+                    0.3559959108021899
+                  ],
+                  "slices": 320
+                }
+              }
+            },
+            "l006": {
+              "background_inclusive_mean": 0.7654201275491985,
+              "checkpoint": "<legacy_home>/q1d7f/runs/u2f7k/s01.pt",
+              "checkpoint_bytes": 103132828,
+              "checkpoint_mtime": 1788313525.2352154,
+              "code": "<legacy_home>/q1d7f",
+              "compared_tasks": [
+                "A",
+                "B",
+                "C",
+                "D",
+                "E",
+                "F"
+              ],
+              "data_root": "<project_root>/replay_comparisons_20260911/inputs/domain/data",
+              "finished_at": 1789460257.4165905,
+              "foreground_max_abs_difference": 0.0,
+              "foreground_parity_passed": true,
+              "gpu_peak_mib": 1062.0,
+              "job_id": "l006",
+              "run": "legacy_joint/u2f7k",
+              "scenario": "domain",
+              "split": "test",
+              "stage": 1,
+              "status": "complete",
+              "tasks": {
+                "A": {
+                  "background_dice": 0.9827188683473532,
+                  "background_inclusive_mean": 0.7142784015578761,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.4458379347683991,
+                  "patients": 3,
+                  "per_class_including_background": [
+                    0.9827188683473532,
+                    0.4458379347683991
+                  ],
+                  "slices": 126
+                },
+                "B": {
+                  "background_dice": 0.9907211609053924,
+                  "background_inclusive_mean": 0.7909175011635683,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.591113841421744,
+                  "patients": 3,
+                  "per_class_including_background": [
+                    0.9907211609053924,
+                    0.591113841421744
+                  ],
+                  "slices": 72
+                },
+                "C": {
+                  "background_dice": 0.9908817636774587,
+                  "background_inclusive_mean": 0.8023992790295055,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.6139167943815522,
+                  "patients": 8,
+                  "per_class_including_background": [
+                    0.9908817636774586,
+                    0.6139167943815521
+                  ],
+                  "slices": 158
+                },
+                "D": {
+                  "background_dice": 0.9952763852442765,
+                  "background_inclusive_mean": 0.8040983423841255,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.6129202995239745,
+                  "patients": 4,
+                  "per_class_including_background": [
+                    0.9952763852442765,
+                    0.6129202995239745
+                  ],
+                  "slices": 100
+                },
+                "E": {
+                  "background_dice": 0.9882496874886778,
+                  "background_inclusive_mean": 0.7681496201276306,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.5480495527665831,
+                  "patients": 8,
+                  "per_class_including_background": [
+                    0.9882496874886778,
+                    0.5480495527665831
+                  ],
+                  "slices": 254
+                },
+                "F": {
+                  "background_dice": 0.988881696033635,
+                  "background_inclusive_mean": 0.7126776210324856,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.43647354603133603,
+                  "patients": 5,
+                  "per_class_including_background": [
+                    0.988881696033635,
+                    0.43647354603133603
+                  ],
+                  "slices": 320
+                }
+              }
+            },
+            "l007": {
+              "background_inclusive_mean": 0.7435952656923499,
+              "checkpoint": "<legacy_home>/q1d7f/runs/w6d3s/s01.pt",
+              "checkpoint_bytes": 103132828,
+              "checkpoint_mtime": 1788313899.2886002,
+              "code": "<legacy_home>/q1d7f",
+              "compared_tasks": [
+                "A",
+                "B",
+                "C",
+                "D",
+                "E",
+                "F"
+              ],
+              "data_root": "<project_root>/replay_comparisons_20260911/inputs/domain/data",
+              "finished_at": 1789460337.351225,
+              "foreground_max_abs_difference": 0.0,
+              "foreground_parity_passed": true,
+              "gpu_peak_mib": 1062.0,
+              "job_id": "l007",
+              "run": "legacy_joint/w6d3s",
+              "scenario": "domain",
+              "split": "test",
+              "stage": 1,
+              "status": "complete",
+              "tasks": {
+                "A": {
+                  "background_dice": 0.9833500604278234,
+                  "background_inclusive_mean": 0.723432376170953,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.46351469191408284,
+                  "patients": 3,
+                  "per_class_including_background": [
+                    0.9833500604278234,
+                    0.46351469191408284
+                  ],
+                  "slices": 126
+                },
+                "B": {
+                  "background_dice": 0.9881913184429635,
+                  "background_inclusive_mean": 0.7628670370270418,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.5375427556111202,
+                  "patients": 3,
+                  "per_class_including_background": [
+                    0.9881913184429635,
+                    0.5375427556111202
+                  ],
+                  "slices": 72
+                },
+                "C": {
+                  "background_dice": 0.9881656965246215,
+                  "background_inclusive_mean": 0.7802441808733127,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.5723226652220037,
+                  "patients": 8,
+                  "per_class_including_background": [
+                    0.9881656965246215,
+                    0.5723226652220038
+                  ],
+                  "slices": 158
+                },
+                "D": {
+                  "background_dice": 0.99398869927841,
+                  "background_inclusive_mean": 0.76629177371181,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.53859484814521,
+                  "patients": 4,
+                  "per_class_including_background": [
+                    0.99398869927841,
+                    0.53859484814521
+                  ],
+                  "slices": 100
+                },
+                "E": {
+                  "background_dice": 0.9907537185999877,
+                  "background_inclusive_mean": 0.7859838489530324,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.5812139793060772,
+                  "patients": 8,
+                  "per_class_including_background": [
+                    0.990753718599988,
+                    0.5812139793060772
+                  ],
+                  "slices": 254
+                },
+                "F": {
+                  "background_dice": 0.9798894229205825,
+                  "background_inclusive_mean": 0.6427523774179498,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.3056153319153172,
+                  "patients": 5,
+                  "per_class_including_background": [
+                    0.9798894229205825,
+                    0.3056153319153172
+                  ],
+                  "slices": 320
+                }
+              }
+            },
+            "l008": {
+              "background_inclusive_mean": 0.8605453027538156,
+              "checkpoint": "<legacy_home>/q1d7f/runs/m7v2q/s01.pt",
+              "checkpoint_bytes": 103132828,
+              "checkpoint_mtime": 1786512975.3083994,
+              "code": "<legacy_home>/q1d7f",
+              "compared_tasks": [
+                "A"
+              ],
+              "data_root": "<project_root>/replay_comparisons_20260911/inputs/domain/data",
+              "finished_at": 1789460361.1870654,
+              "foreground_max_abs_difference": 0.0,
+              "foreground_parity_passed": true,
+              "gpu_peak_mib": 1062.0,
+              "job_id": "l008",
+              "run": "legacy_domain/m7v2q",
+              "scenario": "domain",
+              "split": "test",
+              "stage": 1,
+              "status": "complete",
+              "tasks": {
+                "A": {
+                  "background_dice": 0.9949492748353906,
+                  "background_inclusive_mean": 0.8605453027538156,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.7261413306722405,
+                  "patients": 3,
+                  "per_class_including_background": [
+                    0.9949492748353906,
+                    0.7261413306722405
+                  ],
+                  "slices": 126
+                }
+              }
+            },
+            "l009": {
+              "background_inclusive_mean": 0.7680548140599707,
+              "checkpoint": "<legacy_home>/q1d7f/runs/m7v2q/s02.pt",
+              "checkpoint_bytes": 103132828,
+              "checkpoint_mtime": 1786515151.1129787,
+              "code": "<legacy_home>/q1d7f",
+              "compared_tasks": [
+                "B"
+              ],
+              "data_root": "<project_root>/replay_comparisons_20260911/inputs/domain/data",
+              "finished_at": 1789460381.5885324,
+              "foreground_max_abs_difference": 0.0,
+              "foreground_parity_passed": true,
+              "gpu_peak_mib": 1060.0,
+              "job_id": "l009",
+              "run": "legacy_domain/m7v2q",
+              "scenario": "domain",
+              "split": "test",
+              "stage": 2,
+              "status": "complete",
+              "tasks": {
+                "B": {
+                  "background_dice": 0.9880530055341802,
+                  "background_inclusive_mean": 0.7680548140599707,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.5480566225857612,
+                  "patients": 3,
+                  "per_class_including_background": [
+                    0.9880530055341802,
+                    0.5480566225857612
+                  ],
+                  "slices": 72
+                }
+              }
+            },
+            "l010": {
+              "background_inclusive_mean": 0.8443474079050604,
+              "checkpoint": "<legacy_home>/q1d7f/runs/m7v2q/s03.pt",
+              "checkpoint_bytes": 103132828,
+              "checkpoint_mtime": 1786519531.4934185,
+              "code": "<legacy_home>/q1d7f",
+              "compared_tasks": [
+                "C"
+              ],
+              "data_root": "<project_root>/replay_comparisons_20260911/inputs/domain/data",
+              "finished_at": 1789460407.578141,
+              "foreground_max_abs_difference": 0.0,
+              "foreground_parity_passed": true,
+              "gpu_peak_mib": 1062.0,
+              "job_id": "l010",
+              "run": "legacy_domain/m7v2q",
+              "scenario": "domain",
+              "split": "test",
+              "stage": 3,
+              "status": "complete",
+              "tasks": {
+                "C": {
+                  "background_dice": 0.9914562054145055,
+                  "background_inclusive_mean": 0.8443474079050604,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.6972386103956152,
+                  "patients": 8,
+                  "per_class_including_background": [
+                    0.9914562054145055,
+                    0.6972386103956152
+                  ],
+                  "slices": 158
+                }
+              }
+            },
+            "l011": {
+              "background_inclusive_mean": 0.7781412688265261,
+              "checkpoint": "<legacy_home>/q1d7f/runs/m7v2q/s04.pt",
+              "checkpoint_bytes": 103132828,
+              "checkpoint_mtime": 1786521710.3204515,
+              "code": "<legacy_home>/q1d7f",
+              "compared_tasks": [
+                "D"
+              ],
+              "data_root": "<project_root>/replay_comparisons_20260911/inputs/domain/data",
+              "finished_at": 1789460429.5737128,
+              "foreground_max_abs_difference": 0.0,
+              "foreground_parity_passed": true,
+              "gpu_peak_mib": 1060.0,
+              "job_id": "l011",
+              "run": "legacy_domain/m7v2q",
+              "scenario": "domain",
+              "split": "test",
+              "stage": 4,
+              "status": "complete",
+              "tasks": {
+                "D": {
+                  "background_dice": 0.9925681915818981,
+                  "background_inclusive_mean": 0.7781412688265261,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.5637143460711539,
+                  "patients": 4,
+                  "per_class_including_background": [
+                    0.9925681915818981,
+                    0.5637143460711539
+                  ],
+                  "slices": 100
+                }
+              }
+            },
+            "l012": {
+              "background_inclusive_mean": 0.8660993468876953,
+              "checkpoint": "<legacy_home>/q1d7f/runs/m7v2q/s05.pt",
+              "checkpoint_bytes": 103132828,
+              "checkpoint_mtime": 1786529420.7333853,
+              "code": "<legacy_home>/q1d7f",
+              "compared_tasks": [
+                "E"
+              ],
+              "data_root": "<project_root>/replay_comparisons_20260911/inputs/domain/data",
+              "finished_at": 1789460465.0441945,
+              "foreground_max_abs_difference": 0.0,
+              "foreground_parity_passed": true,
+              "gpu_peak_mib": 1062.0,
+              "job_id": "l012",
+              "run": "legacy_domain/m7v2q",
+              "scenario": "domain",
+              "split": "test",
+              "stage": 5,
+              "status": "complete",
+              "tasks": {
+                "E": {
+                  "background_dice": 0.9934459173120952,
+                  "background_inclusive_mean": 0.8660993468876953,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.7387527764632954,
+                  "patients": 8,
+                  "per_class_including_background": [
+                    0.9934459173120952,
+                    0.7387527764632953
+                  ],
+                  "slices": 254
+                }
+              }
+            },
+            "l013": {
+              "background_inclusive_mean": 0.770833787394802,
+              "checkpoint": "<legacy_nas>/runs/t4m7b/s01.pt",
+              "checkpoint_bytes": 103132828,
+              "checkpoint_mtime": 1788346119.3152084,
+              "code": "<legacy_home>/q1d7f",
+              "compared_tasks": [
+                "A"
+              ],
+              "data_root": "<project_root>/replay_comparisons_20260911/inputs/domain/data",
+              "finished_at": 1789460490.6904178,
+              "foreground_max_abs_difference": 0.0,
+              "foreground_parity_passed": true,
+              "gpu_peak_mib": 1062.0,
+              "job_id": "l013",
+              "run": "legacy_domain/t4m7b",
+              "scenario": "domain",
+              "split": "test",
+              "stage": 1,
+              "status": "complete",
+              "tasks": {
+                "A": {
+                  "background_dice": 0.9894139044459728,
+                  "background_inclusive_mean": 0.770833787394802,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.5522536703436313,
+                  "patients": 3,
+                  "per_class_including_background": [
+                    0.9894139044459728,
+                    0.5522536703436313
+                  ],
+                  "slices": 126
+                }
+              }
+            },
+            "l014": {
+              "background_inclusive_mean": 0.8444881533168748,
+              "checkpoint": "<legacy_nas>/runs/t4m7b/s02.pt",
+              "checkpoint_bytes": 103132828,
+              "checkpoint_mtime": 1788350153.671171,
+              "code": "<legacy_home>/q1d7f",
+              "compared_tasks": [
+                "B"
+              ],
+              "data_root": "<project_root>/replay_comparisons_20260911/inputs/domain/data",
+              "finished_at": 1789460513.245564,
+              "foreground_max_abs_difference": 0.0,
+              "foreground_parity_passed": true,
+              "gpu_peak_mib": 1060.0,
+              "job_id": "l014",
+              "run": "legacy_domain/t4m7b",
+              "scenario": "domain",
+              "split": "test",
+              "stage": 2,
+              "status": "complete",
+              "tasks": {
+                "B": {
+                  "background_dice": 0.9940524034060881,
+                  "background_inclusive_mean": 0.8444881533168748,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.6949239032276612,
+                  "patients": 3,
+                  "per_class_including_background": [
+                    0.9940524034060881,
+                    0.6949239032276612
+                  ],
+                  "slices": 72
+                }
+              }
+            },
+            "l015": {
+              "background_inclusive_mean": 0.8479562770744853,
+              "checkpoint": "<legacy_nas>/runs/t4m7b/s03.pt",
+              "checkpoint_bytes": 103132828,
+              "checkpoint_mtime": 1788358777.7150908,
+              "code": "<legacy_home>/q1d7f",
+              "compared_tasks": [
+                "C"
+              ],
+              "data_root": "<project_root>/replay_comparisons_20260911/inputs/domain/data",
+              "finished_at": 1789460540.9345093,
+              "foreground_max_abs_difference": 0.0,
+              "foreground_parity_passed": true,
+              "gpu_peak_mib": 1062.0,
+              "job_id": "l015",
+              "run": "legacy_domain/t4m7b",
+              "scenario": "domain",
+              "split": "test",
+              "stage": 3,
+              "status": "complete",
+              "tasks": {
+                "C": {
+                  "background_dice": 0.9923202920674201,
+                  "background_inclusive_mean": 0.8479562770744853,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.7035922620815506,
+                  "patients": 8,
+                  "per_class_including_background": [
+                    0.9923202920674201,
+                    0.7035922620815506
+                  ],
+                  "slices": 158
+                }
+              }
+            },
+            "l016": {
+              "background_inclusive_mean": 0.8449370247806385,
+              "checkpoint": "<legacy_nas>/runs/t4m7b/s04.pt",
+              "checkpoint_bytes": 103132828,
+              "checkpoint_mtime": 1788363023.8130512,
+              "code": "<legacy_home>/q1d7f",
+              "compared_tasks": [
+                "D"
+              ],
+              "data_root": "<project_root>/replay_comparisons_20260911/inputs/domain/data",
+              "finished_at": 1789460564.8826325,
+              "foreground_max_abs_difference": 0.0,
+              "foreground_parity_passed": true,
+              "gpu_peak_mib": 1060.0,
+              "job_id": "l016",
+              "run": "legacy_domain/t4m7b",
+              "scenario": "domain",
+              "split": "test",
+              "stage": 4,
+              "status": "complete",
+              "tasks": {
+                "D": {
+                  "background_dice": 0.9962252111866665,
+                  "background_inclusive_mean": 0.8449370247806385,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.6936488383746104,
+                  "patients": 4,
+                  "per_class_including_background": [
+                    0.9962252111866665,
+                    0.6936488383746104
+                  ],
+                  "slices": 100
+                }
+              }
+            },
+            "l017": {
+              "background_inclusive_mean": 0.8718414705151453,
+              "checkpoint": "<legacy_nas>/runs/t4m7b/s05.pt",
+              "checkpoint_bytes": 103132828,
+              "checkpoint_mtime": 1788377916.0739126,
+              "code": "<legacy_home>/q1d7f",
+              "compared_tasks": [
+                "E"
+              ],
+              "data_root": "<project_root>/replay_comparisons_20260911/inputs/domain/data",
+              "finished_at": 1789460600.3831952,
+              "foreground_max_abs_difference": 0.0,
+              "foreground_parity_passed": true,
+              "gpu_peak_mib": 1062.0,
+              "job_id": "l017",
+              "run": "legacy_domain/t4m7b",
+              "scenario": "domain",
+              "split": "test",
+              "stage": 5,
+              "status": "complete",
+              "tasks": {
+                "E": {
+                  "background_dice": 0.9943438217331264,
+                  "background_inclusive_mean": 0.8718414705151453,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.7493391192971641,
+                  "patients": 8,
+                  "per_class_including_background": [
+                    0.9943438217331264,
+                    0.7493391192971642
+                  ],
+                  "slices": 254
+                }
+              }
             }
           }
+        },
+        "cached": {
+          "progress": {
+            "current": "r001",
+            "finished_at": 1789469404.4885132,
+            "jobs": {
+              "r001": "complete"
+            },
+            "pid": 101170,
+            "started_at": 1789469334.4845283,
+            "status": "complete",
+            "total": 1,
+            "worker_pid": 101173
+          },
+          "plan": {
+            "minimum_free_mib": 5000,
+            "jobs": [
+              {
+                "run": "organ_T4_from_T3best_lr006_spatial_pair10_20260910/runs/spatial0",
+                "scenario": "organ",
+                "stage": 4,
+                "independent": false,
+                "split": "test",
+                "code": "<project_root>/organ_T4_from_T3best_lr006_spatial_pair10_20260910/source",
+                "data_root": "<project_root>/organ_T4_from_T3best_lr006_spatial_pair10_20260910/inputs/data",
+                "checkpoint": "<project_root>/organ_T4_from_T3best_lr006_spatial_pair10_20260910/runs/spatial0/s04.pt",
+                "tasks": [
+                  {
+                    "code": "T1",
+                    "file": "Task_incre/UtahI.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 0
+                  },
+                  {
+                    "code": "T2",
+                    "file": "Task_incre/UCL.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 1
+                  },
+                  {
+                    "code": "T3",
+                    "file": "Task_incre/Lits.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 2
+                  },
+                  {
+                    "code": "T4",
+                    "file": "Task_incre/brain.h5",
+                    "classes": [
+                      1
+                    ],
+                    "label_shift": 0,
+                    "head": 3
+                  }
+                ],
+                "expected_foreground": {
+                  "T1": 0.6342617788087944,
+                  "T2": 0.5728554590666434,
+                  "T3": 0.7921885215378445,
+                  "T4": 0.8195190509003548
+                },
+                "whole_class": false,
+                "id": "r001"
+              }
+            ],
+            "scope": "existing-checkpoint evaluation only; preserve original split and checkpoint selection",
+            "purpose": "same checkpoint retry using confirmed H5 memory cache after excessive per-slice I/O; do not modify existing processes"
+          },
+          "results": {
+            "r001": {
+              "background_inclusive_mean": 0.8480589434934231,
+              "checkpoint": "<project_root>/organ_T4_from_T3best_lr006_spatial_pair10_20260910/runs/spatial0/s04.pt",
+              "checkpoint_bytes": 103140894,
+              "checkpoint_mtime": 1789051456.340643,
+              "code": "<project_root>/organ_T4_from_T3best_lr006_spatial_pair10_20260910/source",
+              "compared_tasks": [
+                "T1",
+                "T2",
+                "T3",
+                "T4"
+              ],
+              "data_root": "<project_root>/organ_T4_from_T3best_lr006_spatial_pair10_20260910/inputs/data",
+              "finished_at": 1789469403.3592262,
+              "foreground_max_abs_difference": 0.0,
+              "foreground_parity_passed": true,
+              "gpu_peak_mib": 1068.0,
+              "job_id": "r001",
+              "run": "organ_T4_from_T3best_lr006_spatial_pair10_20260910/runs/spatial0",
+              "scenario": "organ",
+              "split": "test",
+              "stage": 4,
+              "status": "complete",
+              "tasks": {
+                "T1": {
+                  "background_dice": 0.9948266881929095,
+                  "background_inclusive_mean": 0.8145442335008519,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.6342617788087944,
+                  "patients": 10,
+                  "per_class_including_background": [
+                    0.9948266881929095,
+                    0.6342617788087944
+                  ],
+                  "slices": 298
+                },
+                "T2": {
+                  "background_dice": 0.9957781584337315,
+                  "background_inclusive_mean": 0.7843168087501874,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.5728554590666434,
+                  "patients": 4,
+                  "per_class_including_background": [
+                    0.9957781584337315,
+                    0.5728554590666434
+                  ],
+                  "slices": 100
+                },
+                "T3": {
+                  "background_dice": 0.9827032818340283,
+                  "background_inclusive_mean": 0.8874459016859364,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.7921885215378445,
+                  "patients": 7,
+                  "per_class_including_background": [
+                    0.9827032818340283,
+                    0.7921885215378445
+                  ],
+                  "slices": 496
+                },
+                "T4": {
+                  "background_dice": 0.9923386091730789,
+                  "background_inclusive_mean": 0.9059288300367171,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.8195190509003548,
+                  "patients": 30,
+                  "per_class_including_background": [
+                    0.9923386091730791,
+                    0.8195190509003548
+                  ],
+                  "slices": 1223
+                }
+              }
+            }
+          },
+          "checked_at": "2026-09-15T10:50:56.771032+00:00"
         }
       }
     }
