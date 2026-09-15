@@ -1,0 +1,253 @@
+{
+  "checked_at": "2026-09-15T10:36:35+08:00",
+  "campaign": "class_replay_60e_20260913",
+  "status": "complete",
+  "RMA_reference": {
+    "T2": 0.7786178640330347,
+    "T3": 0.7820229984174101,
+    "epochs_each": 80,
+    "note": "Fixed common ZS independent reference; mixed-budget controls are not equal-budget comparisons."
+  },
+  "runs": {
+    "zs-er": {
+      "variant": "sparse-PCE ER",
+      "finished_at": "2026-09-13T19:08:47.622150+08:00",
+      "exitcode": 0,
+      "completed_stages": 3,
+      "task_epochs": [
+        80,
+        80,
+        60
+      ],
+      "foreground_matrix": [
+        [
+          0.7061057512112096,
+          null,
+          null
+        ],
+        [
+          1.2674818099044152e-10,
+          0.49925466041363337,
+          null
+        ],
+        [
+          1.2674818099044152e-10,
+          1.2191307713805875e-10,
+          0.27232338500838815
+        ]
+      ],
+      "final_task_mean_foreground": 0.09077446175234981,
+      "whole_class_foreground": 0.05887006124729039,
+      "selected_epochs_one_based": [
+        80,
+        17,
+        2
+      ],
+      "benchmark_metrics": {
+        "background_inclusive_matrix": [
+          [
+            0.7769027743360222
+          ],
+          [
+            0.24372330020633073,
+            0.6601265303205955
+          ],
+          [
+            0.24415460813970022,
+            0.32749003195904947,
+            0.513164801388866
+          ]
+        ],
+        "A_Dice": 0.36160314716253855,
+        "BWTR": -0.5948157359626908,
+        "RMA": 0.7520100237344515,
+        "WCD": 0.17261283929753024,
+        "MPE": 0.0,
+        "DRR": 0.03333333333333333,
+        "DRR_raw_image_replay": true
+      },
+      "manifest": {
+        "backbone": "ZScribbleSeg_UNet",
+        "batch_size": 4,
+        "class_independent_task": null,
+        "data_root": "<external_data>",
+        "der_alpha": 0.0,
+        "der_beta": 1.0,
+        "der_buffer_size": 64,
+        "der_minibatch_size": 4,
+        "der_target": null,
+        "derpp_target": "sparse_pce_current_seen_classes",
+        "epochs_per_task": 80,
+        "ewc_gamma": null,
+        "ewc_lambda": null,
+        "fisher_batches": null,
+        "gpm_examples": null,
+        "gpm_max_matrix_elements": null,
+        "gpm_max_patches_per_layer": null,
+        "gpm_threshold": null,
+        "gpm_threshold_step": null,
+        "grad_clip_norm": null,
+        "history_images": true,
+        "ignore_index": -100,
+        "independent_global_classes": null,
+        "independent_scores": null,
+        "learning_rate": 0.03,
+        "main_entry": "main.py",
+        "max_train_batches": null,
+        "method": "zs-er",
+        "mib_kd_weight": null,
+        "pce_loss_weight": 1.0,
+        "replay": true,
+        "resume": {
+          "completed_stages": 2,
+          "optimizer": "fresh per-task SGD, as in the original runner",
+          "rng": "reset to configured seed; original checkpoint has no RNG state",
+          "source_run": "zs-er"
+        },
+        "safe_numerics": false,
+        "scenario": "class",
+        "seed": 42,
+        "selection_min_epoch": 1,
+        "sparse_root": "<external_data>",
+        "task_count": 3,
+        "task_epochs": [
+          80,
+          80,
+          60
+        ],
+        "task_order": [
+          "T1",
+          "T2",
+          "T3"
+        ],
+        "test_for_selection": false,
+        "validation_only": false,
+        "zs_adversarial_perturbation": false,
+        "zs_gd_loss": false,
+        "zs_global_weight": 0.1,
+        "zs_spatial_loss_weight": 0.0,
+        "zs_spatial_warmup_epochs": 33
+      }
+    },
+    "zs-der": {
+      "variant": "feature-DER with safe saliency/GraphCut and gradient norm clipping at 5",
+      "finished_at": "2026-09-13T21:38:22.899560+08:00",
+      "exitcode": 0,
+      "completed_stages": 3,
+      "task_epochs": [
+        80,
+        60,
+        60
+      ],
+      "foreground_matrix": [
+        [
+          0.5778936685178061,
+          null,
+          null
+        ],
+        [
+          1.2674818099044152e-10,
+          0.5544411841940593,
+          null
+        ],
+        [
+          1.2674818099044152e-10,
+          1.2191307713805875e-10,
+          0.5104894401022216
+        ]
+      ],
+      "final_task_mean_foreground": 0.17016314678362762,
+      "whole_class_foreground": 0.12819260193132556,
+      "selected_epochs_one_based": [
+        64,
+        50,
+        41
+      ],
+      "benchmark_metrics": {
+        "background_inclusive_matrix": [
+          [
+            0.6801579197205503
+          ],
+          [
+            0.24175957442358983,
+            0.6993411771165354
+          ],
+          [
+            0.24342991864958424,
+            0.32660607335321684,
+            0.672246401942278
+          ]
+        ],
+        "A_Dice": 0.41409413131502637,
+        "BWTR": -0.5875391452951861,
+        "RMA": 0.8789038269931693,
+        "WCD": 0.23340847251362884,
+        "MPE": 0.0,
+        "DRR": 0.03166666666666666,
+        "DRR_raw_image_replay": true
+      },
+      "manifest": {
+        "backbone": "ZScribbleSeg_UNet",
+        "batch_size": 4,
+        "class_independent_task": null,
+        "data_root": "<external_data>",
+        "der_alpha": 0.5,
+        "der_beta": 0.0,
+        "der_buffer_size": 64,
+        "der_minibatch_size": 4,
+        "der_target": null,
+        "derpp_target": "backbone_features_only",
+        "epochs_per_task": 80,
+        "ewc_gamma": null,
+        "ewc_lambda": null,
+        "fisher_batches": null,
+        "gpm_examples": null,
+        "gpm_max_matrix_elements": null,
+        "gpm_max_patches_per_layer": null,
+        "gpm_threshold": null,
+        "gpm_threshold_step": null,
+        "grad_clip_norm": 5.0,
+        "history_images": true,
+        "ignore_index": -100,
+        "independent_global_classes": null,
+        "independent_scores": null,
+        "learning_rate": 0.03,
+        "main_entry": "main.py",
+        "max_train_batches": null,
+        "method": "zs-der",
+        "mib_kd_weight": null,
+        "pce_loss_weight": 1.0,
+        "replay": true,
+        "resume": {
+          "completed_stages": 1,
+          "optimizer": "fresh per-task SGD, as in the original runner",
+          "rng": "reset to configured seed; original checkpoint has no RNG state",
+          "source_run": "zs-der"
+        },
+        "safe_numerics": true,
+        "scenario": "class",
+        "seed": 42,
+        "selection_min_epoch": 1,
+        "sparse_root": "<external_data>",
+        "task_count": 3,
+        "task_epochs": [
+          80,
+          60,
+          60
+        ],
+        "task_order": [
+          "T1",
+          "T2",
+          "T3"
+        ],
+        "test_for_selection": false,
+        "validation_only": false,
+        "zs_adversarial_perturbation": false,
+        "zs_gd_loss": false,
+        "zs_global_weight": 0.1,
+        "zs_spatial_loss_weight": 0.0,
+        "zs_spatial_warmup_epochs": 33
+      }
+    }
+  }
+}

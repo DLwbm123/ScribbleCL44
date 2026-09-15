@@ -638,6 +638,30 @@ class DarkExperienceReplayPlus:
             "current_stage": self.current_stage,
         }
 
+    def load_state_dict(self, state: dict) -> None:
+        for key in ("buffer_size", "minibatch_size", "alpha", "beta"):
+            if state[key] != getattr(self, key):
+                raise ValueError(f"replay checkpoint {key} mismatch")
+        fields = ("examples", "feature_targets", "sparse_labels", "task_ids", "class_counts")
+        count = 0 if state["examples"] is None else len(state["examples"])
+        if count > self.buffer_size or any(
+            (0 if state[key] is None else len(state[key])) != count for key in fields
+        ):
+            raise ValueError("inconsistent replay checkpoint lengths")
+        for key in fields[:3]:
+            value = state[key]
+            if value is not None and not torch.isfinite(value).all():
+                raise ValueError(f"non-finite replay checkpoint {key}")
+            setattr(self, key, [] if value is None else list(value.cpu().unbind()))
+        for key in fields[3:]:
+            setattr(self, key, [] if state[key] is None else state[key].tolist())
+        self.source_indices = list(state["source_indices"])
+        if len(self.source_indices) != count:
+            raise ValueError("replay source indices do not align")
+        self.num_seen_examples = int(state["num_seen_examples"])
+        self.current_stage = int(state["current_stage"])
+        self.replayed_sources = {int(k): set(v) for k, v in state["replayed_sources"].items()}
+
     def summary(self) -> dict:
         return {
             "buffer_size": self.buffer_size,

@@ -409,9 +409,14 @@ def zs_cutout_invariance(
         if use_adversarial:
             working_image = image + torch.zeros_like(image).uniform_(10.0 / 255.0, 10.0 / 255.0)
     unary_image = working_image.detach().requires_grad_(True)
-    unary = torch.sqrt(torch.mean(torch.autograd.grad(
+    input_gradient = torch.autograd.grad(
         pce_loss(zs_forward(model, unary_image, task_id)["pred_masks"], target), unary_image,
-    )[0].square(), dim=1))
+    )[0]
+    if getattr(args, "safe_numerics", False):
+        from numerical_safety import rms_saliency
+        unary = rms_saliency(input_gradient)
+    else:
+        unary = torch.sqrt(torch.mean(input_gradient.square(), dim=1))
     mix_args = SimpleNamespace(
         mixup_alpha=0.5,
         in_batch=False,
@@ -763,6 +768,7 @@ def main(project_scenario: str) -> None:
     parser.add_argument("--device", default="cuda:0")
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--epochs-per-task", type=int, default=80)
+    parser.add_argument("--task-epochs", type=int, nargs=3, help="Explicit T1/T2/T3 epoch budgets for Class runs")
     parser.add_argument("--batch-size", type=int, default=4)
     parser.add_argument("--lr", type=float, default=0.03)
     parser.add_argument("--workers", type=int, default=8)
@@ -795,12 +801,17 @@ def main(project_scenario: str) -> None:
     parser.add_argument("--validation-only", action="store_true")
     parser.add_argument("--selection-min-epoch", type=int, default=1)
     parser.add_argument("--cache-h5", action="store_true")
+    parser.add_argument("--resume-from", type=Path, help="Completed Class replay stages in a prior output directory")
+    parser.add_argument("--safe-numerics", action="store_true")
+    parser.add_argument("--grad-clip-norm", type=float)
     args = parser.parse_args()
     H5Slices.cache_arrays = args.cache_h5
     use_zs = args.method.startswith("zs-")
     use_ewc = args.method.endswith("-ewc")
     use_gpm = args.method.endswith("-gpm")
     replay_control = project_scenario == "class" and args.method in {"zs-er", "zs-der"}
+    if args.resume_from and not replay_control:
+        parser.error("completed-stage resume is limited to Class ER/DER")
     use_der = args.method.endswith("-der") and not replay_control
     use_derpp = args.method in {"zs-derpp", "zs-derpp-mib"} or replay_control
     if replay_control and ((args.method == "zs-er" and args.der_alpha != 0)
@@ -836,6 +847,8 @@ def main(project_scenario: str) -> None:
         parser.error("invalid DER controls")
     if args.mib_kd_weight < 0:
         parser.error("MiB KD weight must be non-negative")
+    if args.grad_clip_norm is not None and not 0 < args.grad_clip_norm < float("inf"):
+        parser.error("gradient clipping norm must be finite and positive")
     if args.max_train_batches is not None and args.max_train_batches < 1:
         parser.error("--max-train-batches must be positive")
     if args.independent_reference and (
@@ -855,6 +868,11 @@ def main(project_scenario: str) -> None:
     if args.max_task is not None and not 1 <= args.max_task <= len(tasks):
         parser.error("--max-task is one-based and outside the task sequence")
     last_stage = len(tasks) - 1 if args.max_task is None else args.max_task - 1
+    task_epochs = args.task_epochs or [args.epochs_per_task] * len(tasks)
+    if len(task_epochs) != len(tasks) or min(task_epochs) < args.selection_min_epoch:
+        parser.error("task epoch budgets must match the task sequence and permit checkpoint selection")
+    if args.task_epochs is not None and project_scenario != "class":
+        parser.error("explicit task budgets are currently supported for Class only")
     for task in tasks[:last_stage + 1]:
         data_path = args.data_root / task.folder / task.filename
         sparse_path = _sparse_path(args.sparse_root, project_scenario, task, args.seed)
@@ -911,6 +929,7 @@ def main(project_scenario: str) -> None:
         "backbone": "ZScribbleSeg_UNet",
         "seed": args.seed,
         "epochs_per_task": args.epochs_per_task,
+        "task_epochs": task_epochs,
         "task_count": last_stage + 1,
         "task_order": [task.code for task in tasks[:last_stage + 1]],
         "class_independent_task": args.class_independent_task,
@@ -949,6 +968,8 @@ def main(project_scenario: str) -> None:
                          "backbone_features_plus_sparse_pce_global") if use_derpp else None,
         "mib_kd_weight": args.mib_kd_weight if use_mib else None,
         "max_train_batches": args.max_train_batches,
+        "safe_numerics": args.safe_numerics,
+        "grad_clip_norm": args.grad_clip_norm,
         "independent_scores": None if args.independent_scores is None else args.independent_scores.name,
     }
     (args.output / "manifest.json").write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n")
@@ -960,6 +981,44 @@ def main(project_scenario: str) -> None:
     parameter_counts = []
     train_log = args.output / "train.jsonl"
     random_scores = None
+    start_stage = 0
+    if args.resume_from:
+        previous = json.loads((args.resume_from / "manifest.json").read_text())
+        for key in ("scenario", "method", "seed", "epochs_per_task", "learning_rate", "batch_size",
+                    "pce_loss_weight", "zs_global_weight", "zs_spatial_loss_weight",
+                    "zs_spatial_warmup_epochs", "der_buffer_size", "der_minibatch_size", "der_alpha", "der_beta"):
+            if previous[key] != manifest[key]:
+                raise ValueError(f"resume protocol mismatch: {key}")
+        stage_rows = json.loads((args.resume_from / "stages.json").read_text())
+        start_stage = len(stage_rows)
+        if not 0 < start_stage <= last_stage or [r["stage"] for r in stage_rows] != list(range(start_stage)):
+            raise ValueError("resume requires a contiguous completed task prefix and remaining tasks")
+        state = torch.load(args.resume_from / f"s{start_stage:02d}_state.pt", map_location="cpu", weights_only=False)
+        if state["method"] != args.method or state["stage"] != start_stage - 1:
+            raise ValueError("resume checkpoint method/stage mismatch")
+        model.load_state_dict(state["model"], strict=True)
+        derpp.load_state_dict(state["continual"])
+        del state
+        rows = [json.loads(line) for line in (args.resume_from / "train.jsonl").read_text().splitlines()]
+        rows = [row for row in rows if row["stage"] < start_stage]
+        for stage in range(start_stage):
+            if [r["epoch"] for r in rows if r["stage"] == stage and "loss" in r] != list(range(task_epochs[stage])):
+                raise ValueError("resume source lacks complete training epochs")
+            for suffix in (".pt", "_best.pt", "_state.pt"):
+                source = (args.resume_from / f"s{stage + 1:02d}{suffix}").resolve(strict=True)
+                (args.output / source.name).symlink_to(source)
+            for index, task in enumerate(tasks[:stage + 1]):
+                matrix[stage, index] = stage_rows[stage]["evaluated"][task.code]["benchmark_mean"]
+            with h5py.File(args.data_root / tasks[stage].folder / tasks[stage].filename) as data:
+                train_sizes[stage] = int(data["train_images"].shape[2])
+            parameter_counts.append(sum(p.numel() for p in model.parameters()))
+        train_log.write_text("".join(json.dumps(row, sort_keys=True) + "\n" for row in rows))
+        manifest["resume"] = dict(source_run=args.resume_from.name,completed_stages=start_stage,
+                                 rng="reset to configured seed; original checkpoint has no RNG state",
+                                 optimizer="fresh per-task SGD, as in the original runner")
+        (args.output / "manifest.json").write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n")
+        (args.output / "stages.json").write_text(json.dumps(stage_rows, indent=2) + "\n")
+        print(json.dumps({"resumed_completed_stages": start_stage, "buffer_examples": len(derpp)}), flush=True)
     if project_scenario == "domain":
         random_scores = [
             _evaluate_task(
@@ -975,6 +1034,9 @@ def main(project_scenario: str) -> None:
         }, indent=2, sort_keys=True) + "\n")
 
     for stage, task in enumerate(tasks[:last_stage + 1]):
+        if stage < start_stage:
+            continue
+        epochs_this_task = task_epochs[stage]
         teacher = None
         old_class_count = None
         if use_mib and stage > 0:
@@ -1017,7 +1079,7 @@ def main(project_scenario: str) -> None:
         batches_per_epoch = len(train_loader)
         if args.max_train_batches is not None:
             batches_per_epoch = min(batches_per_epoch, args.max_train_batches)
-        max_iterations = batches_per_epoch * args.epochs_per_task
+        max_iterations = batches_per_epoch * epochs_this_task
         iteration = 0
         best = {"benchmark_mean": -1.0, "epoch": None, "iteration": None}
         best_path = args.output / f"s{stage + 1:02d}_best.pt"
@@ -1025,12 +1087,13 @@ def main(project_scenario: str) -> None:
         classes = model.output_channels(stage)
 
         with train_log.open("a") as stream:
-            for epoch in range(args.epochs_per_task):
+            for epoch in range(epochs_this_task):
                 model.train()
                 totals = {
                     "loss": [], "pce": [], "global": [], "gd": [], "spatial": [],
                     "ewc": [], "mib_kd": [], "gpm_gradient_ratio": [], "der": [],
                     "derpp_feature": [], "derpp_pce": [], "derpp_global": [],
+                    "gradient_norm": [],
                 }
                 adversarial_batches = 0
                 ratios = None
@@ -1094,8 +1157,24 @@ def main(project_scenario: str) -> None:
                     else:
                         spatial_loss, spatial_fraction = image.new_zeros(()), 0.0
                     if not torch.isfinite(loss):
+                        (args.output / "numerical_failure.json").write_text(json.dumps({
+                            "stage": stage, "epoch": epoch, "iteration": iteration + 1,
+                            "branch": "forward", "pce": float(partial_ce.detach()),
+                            "global": float(global_loss.detach()), "feature": float(derpp_feature.detach()),
+                        }) + "\n")
                         raise FloatingPointError("non-finite training loss")
                     loss.backward()
+                    if args.grad_clip_norm is not None:
+                        try:
+                            gradient_norm = float(torch.nn.utils.clip_grad_norm_(
+                                model.parameters(), args.grad_clip_norm, error_if_nonfinite=True))
+                        except RuntimeError:
+                            (args.output / "numerical_failure.json").write_text(json.dumps({
+                                "stage": stage, "epoch": epoch, "iteration": iteration + 1,
+                                "branch": "backward", "finite_loss": float(loss.detach()),
+                            }) + "\n")
+                            raise
+                        totals["gradient_norm"].append(gradient_norm)
                     if use_gpm:
                         with torch.no_grad():
                             for parameter in model.parameters():
@@ -1187,6 +1266,7 @@ def main(project_scenario: str) -> None:
                     "derpp_pce_loss": float(np.mean(totals["derpp_pce"])),
                     "derpp_global_loss": float(np.mean(totals["derpp_global"])),
                     "derpp_stored_examples": None if derpp is None else len(derpp),
+                    "gradient_norm_max_before_clip": max(totals["gradient_norm"], default=None),
                     "zs_em_mixture_ratios": ratios,
                     "zs_spatial_pseudo_negative_fraction": spatial_fraction,
                     "adversarial_batches": adversarial_batches,
@@ -1195,7 +1275,7 @@ def main(project_scenario: str) -> None:
                 stream.flush()
         final_validation = evaluate(model, val_loader, val.ends, device, task_id, task.classes)
         if final_validation["benchmark_mean"] > best["benchmark_mean"]:
-            best = {**final_validation, "epoch": args.epochs_per_task - 1, "iteration": iteration}
+            best = {**final_validation, "epoch": epochs_this_task - 1, "iteration": iteration}
             torch.save(model.state_dict(), best_path)
         model.load_state_dict(torch.load(best_path, map_location=device))
         torch.save(model.state_dict(), args.output / f"s{stage + 1:02d}.pt")
@@ -1318,6 +1398,7 @@ def main(project_scenario: str) -> None:
     ]
     summary = {
         "method": args.method,
+        "task_epochs": task_epochs,
         "completed_stages": last_stage + 1,
         "final_seen_mean": None if args.validation_only else float(np.nanmean(matrix[last_stage, :last_stage + 1])),
         "final_seen_validation_mean": stage_rows[-1]["seen_validation_mean"],

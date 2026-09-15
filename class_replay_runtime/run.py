@@ -25,12 +25,13 @@ def args_for(method,check=False):
     return args
 def complete(output,epochs):
     s=json.loads((output/'summary.json').read_text())
+    budgets=s.get('task_epochs',[epochs]*3)
     rows=[json.loads(x) for x in (output/'train.jsonl').read_text().splitlines()]
     rows=[r for r in rows if 'loss' in r]
     assert s['completed_stages']==3
     for stage in range(3):
         es=[r for r in rows if r['stage']==stage]
-        assert [r['epoch'] for r in es]==list(range(epochs))
+        assert [r['epoch'] for r in es]==list(range(budgets[stage]))
         assert all(math.isfinite(r['loss']) for r in es)
         assert (output/f's{stage+1:02d}_state.pt').stat().st_size>0
     for row in rows:
@@ -39,7 +40,7 @@ def complete(output,epochs):
     key='derpp_pce_loss' if s['method']=='zs-er' else 'derpp_feature_loss'
     assert any(row[key]>0 for row in rows)
     assert s['derpp_buffer']['replayed_unique_source_counts']
-    return dict(foreground_mean=s['final_seen_mean'],epochs_per_task=epochs)
+    return dict(foreground_mean=s['final_seen_mean'],task_epochs=budgets)
 def child(method,check,log):
     env=dict(os.environ,CUDA_VISIBLE_DEVICES='2',JOB=json.dumps(args_for(method,check)))
     return subprocess.Popen([sys.executable,'-u','run.py'],cwd=ROOT/'source',env=env,
