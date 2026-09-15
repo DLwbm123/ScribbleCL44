@@ -5,7 +5,7 @@
   "foreground_tolerance": 0.0001,
   "hosts": {
     "my-gpu": {
-      "checked_at": "2026-09-15T10:45:47.777305+00:00",
+      "checked_at": "2026-09-15T12:11:24.498520+00:00",
       "batches": {
         "background_recovery_20260915": {
           "progress": {
@@ -33,6 +33,7 @@
             "worker_pid": 1882822
           },
           "plan": {
+            "gpu": 3,
             "minimum_free_mib": 5000,
             "jobs": [
               {
@@ -1602,6 +1603,7 @@
             "worker_pid": 1880162
           },
           "plan": {
+            "gpu": 3,
             "minimum_free_mib": 5000,
             "jobs": [
               {
@@ -2008,19 +2010,30 @@
       }
     },
     "jiangsuiyang": {
-      "checked_at": "2026-09-15T18:45:47.878669+08:00",
+      "checked_at": "2026-09-15T12:12:16.489226+00:00",
       "batches": {
         "background_recovery_20260915": {
           "progress": {
-            "current": "r001",
-            "jobs": {},
+            "current": "r010",
+            "jobs": {
+              "r001": "complete",
+              "r002": "complete",
+              "r003": "complete",
+              "r004": "complete",
+              "r005": "complete",
+              "r006": "complete",
+              "r007": "complete",
+              "r008": "complete",
+              "r009": "complete"
+            },
             "pid": 36357,
             "started_at": 1789459633.6601596,
             "status": "running",
             "total": 28,
-            "worker_pid": 36361
+            "worker_pid": 144025
           },
           "plan": {
+            "gpu": 3,
             "minimum_free_mib": 5000,
             "jobs": [
               {
@@ -3514,7 +3527,783 @@
             ],
             "scope": "existing-checkpoint evaluation only; preserve original split and checkpoint selection"
           },
-          "results": {}
+          "results": {
+            "r001": {
+              "background_inclusive_mean": 0.8480589434934231,
+              "checkpoint": "<project_root>/organ_T4_from_T3best_lr006_spatial_pair10_20260910/runs/spatial0/s04.pt",
+              "checkpoint_bytes": 103140894,
+              "checkpoint_mtime": 1789051456.340643,
+              "code": "<project_root>/organ_T4_from_T3best_lr006_spatial_pair10_20260910/source",
+              "compared_tasks": [
+                "T1",
+                "T2",
+                "T3",
+                "T4"
+              ],
+              "data_root": "<project_root>/organ_T4_from_T3best_lr006_spatial_pair10_20260910/inputs/data",
+              "finished_at": 1789473812.7466643,
+              "foreground_max_abs_difference": 0.0,
+              "foreground_parity_passed": true,
+              "gpu_peak_mib": 1068.0,
+              "job_id": "r001",
+              "run": "organ_T4_from_T3best_lr006_spatial_pair10_20260910/runs/spatial0",
+              "scenario": "organ",
+              "split": "test",
+              "stage": 4,
+              "status": "complete",
+              "tasks": {
+                "T1": {
+                  "background_dice": 0.9948266881929095,
+                  "background_inclusive_mean": 0.8145442335008519,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.6342617788087944,
+                  "patients": 10,
+                  "per_class_including_background": [
+                    0.9948266881929095,
+                    0.6342617788087944
+                  ],
+                  "slices": 298
+                },
+                "T2": {
+                  "background_dice": 0.9957781584337315,
+                  "background_inclusive_mean": 0.7843168087501874,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.5728554590666434,
+                  "patients": 4,
+                  "per_class_including_background": [
+                    0.9957781584337315,
+                    0.5728554590666434
+                  ],
+                  "slices": 100
+                },
+                "T3": {
+                  "background_dice": 0.9827032818340283,
+                  "background_inclusive_mean": 0.8874459016859364,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.7921885215378445,
+                  "patients": 7,
+                  "per_class_including_background": [
+                    0.9827032818340283,
+                    0.7921885215378445
+                  ],
+                  "slices": 496
+                },
+                "T4": {
+                  "background_dice": 0.9923386091730789,
+                  "background_inclusive_mean": 0.9059288300367171,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.8195190509003548,
+                  "patients": 30,
+                  "per_class_including_background": [
+                    0.9923386091730791,
+                    0.8195190509003548
+                  ],
+                  "slices": 1223
+                }
+              }
+            },
+            "r002": {
+              "background_inclusive_mean": 0.8404347880982149,
+              "checkpoint": "<project_root>/organ_T4_from_T3best_lr006_spatial_pair10_20260910/runs/spatial001/s04.pt",
+              "checkpoint_bytes": 103140894,
+              "checkpoint_mtime": 1789051676.924641,
+              "code": "<project_root>/organ_T4_from_T3best_lr006_spatial_pair10_20260910/source",
+              "compared_tasks": [
+                "T1",
+                "T2",
+                "T3",
+                "T4"
+              ],
+              "data_root": "<project_root>/organ_T4_from_T3best_lr006_spatial_pair10_20260910/inputs/data",
+              "finished_at": 1789473875.572987,
+              "foreground_max_abs_difference": 0.0,
+              "foreground_parity_passed": true,
+              "gpu_peak_mib": 1068.0,
+              "job_id": "r002",
+              "run": "organ_T4_from_T3best_lr006_spatial_pair10_20260910/runs/spatial001",
+              "scenario": "organ",
+              "split": "test",
+              "stage": 4,
+              "status": "complete",
+              "tasks": {
+                "T1": {
+                  "background_dice": 0.9945696381135581,
+                  "background_inclusive_mean": 0.7853498531095093,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.5761300681054604,
+                  "patients": 10,
+                  "per_class_including_background": [
+                    0.9945696381135581,
+                    0.5761300681054604
+                  ],
+                  "slices": 298
+                },
+                "T2": {
+                  "background_dice": 0.9954742873731018,
+                  "background_inclusive_mean": 0.7952573616943076,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.5950404360155135,
+                  "patients": 4,
+                  "per_class_including_background": [
+                    0.9954742873731018,
+                    0.5950404360155135
+                  ],
+                  "slices": 100
+                },
+                "T3": {
+                  "background_dice": 0.9839194932583674,
+                  "background_inclusive_mean": 0.8753497805669532,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.7667800678755388,
+                  "patients": 7,
+                  "per_class_including_background": [
+                    0.9839194932583674,
+                    0.7667800678755388
+                  ],
+                  "slices": 496
+                },
+                "T4": {
+                  "background_dice": 0.992443376291783,
+                  "background_inclusive_mean": 0.9057821570220894,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.8191209377523959,
+                  "patients": 30,
+                  "per_class_including_background": [
+                    0.9924433762917831,
+                    0.8191209377523959
+                  ],
+                  "slices": 1223
+                }
+              }
+            },
+            "r003": {
+              "background_inclusive_mean": 0.5987298916990023,
+              "checkpoint": "<project_root>/organ_comparisons_20260910/runs/dense-sequential/s04.pt",
+              "checkpoint_bytes": 103140894,
+              "checkpoint_mtime": 1789057546.3805864,
+              "code": "<project_root>/organ_comparisons_20260910/source",
+              "compared_tasks": [
+                "T1",
+                "T2",
+                "T3",
+                "T4"
+              ],
+              "data_root": "<project_root>/organ_comparisons_20260910/inputs/data",
+              "finished_at": 1789473939.1817088,
+              "foreground_max_abs_difference": 0.0,
+              "foreground_parity_passed": true,
+              "gpu_peak_mib": 1068.0,
+              "job_id": "r003",
+              "run": "organ_comparisons_20260910/runs/dense-sequential",
+              "scenario": "organ",
+              "split": "test",
+              "stage": 4,
+              "status": "complete",
+              "tasks": {
+                "T1": {
+                  "background_dice": 0.9950080907590481,
+                  "background_inclusive_mean": 0.4975040456601266,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 5.612052380345734e-10,
+                  "patients": 10,
+                  "per_class_including_background": [
+                    0.9950080907590481,
+                    5.612052380345734e-10
+                  ],
+                  "slices": 298
+                },
+                "T2": {
+                  "background_dice": 0.9861076457097231,
+                  "background_inclusive_mean": 0.4930538229759796,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 2.4223612294242844e-10,
+                  "patients": 4,
+                  "per_class_including_background": [
+                    0.9861076457097231,
+                    2.4223612294242844e-10
+                  ],
+                  "slices": 100
+                },
+                "T3": {
+                  "background_dice": 0.9645204380638529,
+                  "background_inclusive_mean": 0.4822602190548682,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 4.58836699173671e-11,
+                  "patients": 7,
+                  "per_class_including_background": [
+                    0.9645204380638529,
+                    4.58836699173671e-11
+                  ],
+                  "slices": 496
+                },
+                "T4": {
+                  "background_dice": 0.9941657755070582,
+                  "background_inclusive_mean": 0.9221014791050344,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.8500371827030105,
+                  "patients": 30,
+                  "per_class_including_background": [
+                    0.9941657755070582,
+                    0.8500371827030103
+                  ],
+                  "slices": 1223
+                }
+              }
+            },
+            "r004": {
+              "background_inclusive_mean": 0.6140782982790198,
+              "checkpoint": "<project_root>/organ_comparisons_20260910/runs/pce-sequential/s04.pt",
+              "checkpoint_bytes": 103140894,
+              "checkpoint_mtime": 1789061343.4005508,
+              "code": "<project_root>/organ_comparisons_20260910/source",
+              "compared_tasks": [
+                "T1",
+                "T2",
+                "T3",
+                "T4"
+              ],
+              "data_root": "<project_root>/organ_comparisons_20260910/inputs/data",
+              "finished_at": 1789474002.0373125,
+              "foreground_max_abs_difference": 0.0,
+              "foreground_parity_passed": true,
+              "gpu_peak_mib": 1068.0,
+              "job_id": "r004",
+              "run": "organ_comparisons_20260910/runs/pce-sequential",
+              "scenario": "organ",
+              "split": "test",
+              "stage": 4,
+              "status": "complete",
+              "tasks": {
+                "T1": {
+                  "background_dice": 0.993909481713407,
+                  "background_inclusive_mean": 0.4969547410862141,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 4.59021161402307e-10,
+                  "patients": 10,
+                  "per_class_including_background": [
+                    0.9939094817134071,
+                    4.59021161402307e-10
+                  ],
+                  "slices": 298
+                },
+                "T2": {
+                  "background_dice": 0.9896697994449988,
+                  "background_inclusive_mean": 0.49594882704064414,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.002227854636289612,
+                  "patients": 4,
+                  "per_class_including_background": [
+                    0.9896697994449988,
+                    0.002227854636289612
+                  ],
+                  "slices": 100
+                },
+                "T3": {
+                  "background_dice": 0.9580683818190485,
+                  "background_inclusive_mean": 0.5802523425034906,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.2024363031879329,
+                  "patients": 7,
+                  "per_class_including_background": [
+                    0.9580683818190485,
+                    0.2024363031879329
+                  ],
+                  "slices": 496
+                },
+                "T4": {
+                  "background_dice": 0.9904552680483499,
+                  "background_inclusive_mean": 0.8831572824857307,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.7758592969231111,
+                  "patients": 30,
+                  "per_class_including_background": [
+                    0.9904552680483498,
+                    0.7758592969231111
+                  ],
+                  "slices": 1223
+                }
+              }
+            },
+            "r005": {
+              "background_inclusive_mean": 0.6039004917143809,
+              "checkpoint": "<project_root>/organ_comparisons_20260910/runs/zs-ewc/s04.pt",
+              "checkpoint_bytes": 103140894,
+              "checkpoint_mtime": 1789059392.0385692,
+              "code": "<project_root>/organ_comparisons_20260910/source",
+              "compared_tasks": [
+                "T1",
+                "T2",
+                "T3",
+                "T4"
+              ],
+              "data_root": "<project_root>/organ_comparisons_20260910/inputs/data",
+              "finished_at": 1789474064.6793714,
+              "foreground_max_abs_difference": 0.0,
+              "foreground_parity_passed": true,
+              "gpu_peak_mib": 1068.0,
+              "job_id": "r005",
+              "run": "organ_comparisons_20260910/runs/zs-ewc",
+              "scenario": "organ",
+              "split": "test",
+              "stage": 4,
+              "status": "complete",
+              "tasks": {
+                "T1": {
+                  "background_dice": 0.9726131494655027,
+                  "background_inclusive_mean": 0.5279544337512966,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.08329571803709049,
+                  "patients": 10,
+                  "per_class_including_background": [
+                    0.9726131494655027,
+                    0.08329571803709049
+                  ],
+                  "slices": 298
+                },
+                "T2": {
+                  "background_dice": 0.9933440379780629,
+                  "background_inclusive_mean": 0.5063199998827723,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.019295961787481795,
+                  "patients": 4,
+                  "per_class_including_background": [
+                    0.9933440379780629,
+                    0.019295961787481795
+                  ],
+                  "slices": 100
+                },
+                "T3": {
+                  "background_dice": 0.9645230683874594,
+                  "background_inclusive_mean": 0.48226153421667256,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 4.588572746214912e-11,
+                  "patients": 7,
+                  "per_class_including_background": [
+                    0.9645230683874594,
+                    4.588572746214912e-11
+                  ],
+                  "slices": 496
+                },
+                "T4": {
+                  "background_dice": 0.9924592886735982,
+                  "background_inclusive_mean": 0.8990659990067819,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.8056727093399656,
+                  "patients": 30,
+                  "per_class_including_background": [
+                    0.9924592886735982,
+                    0.8056727093399656
+                  ],
+                  "slices": 1223
+                }
+              }
+            },
+            "r006": {
+              "background_inclusive_mean": 0.6201475364654421,
+              "checkpoint": "<project_root>/organ_comparisons_20260910/runs/zs-gpm/s04.pt",
+              "checkpoint_bytes": 103140894,
+              "checkpoint_mtime": 1789059300.71957,
+              "code": "<project_root>/organ_comparisons_20260910/source",
+              "compared_tasks": [
+                "T1",
+                "T2",
+                "T3",
+                "T4"
+              ],
+              "data_root": "<project_root>/organ_comparisons_20260910/inputs/data",
+              "finished_at": 1789474128.160566,
+              "foreground_max_abs_difference": 0.0,
+              "foreground_parity_passed": true,
+              "gpu_peak_mib": 1068.0,
+              "job_id": "r006",
+              "run": "organ_comparisons_20260910/runs/zs-gpm",
+              "scenario": "organ",
+              "split": "test",
+              "stage": 4,
+              "status": "complete",
+              "tasks": {
+                "T1": {
+                  "background_dice": 0.9940031551250801,
+                  "background_inclusive_mean": 0.5723318144660872,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.1506604738070943,
+                  "patients": 10,
+                  "per_class_including_background": [
+                    0.9940031551250801,
+                    0.1506604738070943
+                  ],
+                  "slices": 298
+                },
+                "T2": {
+                  "background_dice": 0.99380411956642,
+                  "background_inclusive_mean": 0.5351194522618146,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.07643478495720915,
+                  "patients": 4,
+                  "per_class_including_background": [
+                    0.99380411956642,
+                    0.07643478495720915
+                  ],
+                  "slices": 100
+                },
+                "T3": {
+                  "background_dice": 0.9650770092500975,
+                  "background_inclusive_mean": 0.5012114383592262,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.037345867468355,
+                  "patients": 7,
+                  "per_class_including_background": [
+                    0.9650770092500975,
+                    0.037345867468355
+                  ],
+                  "slices": 496
+                },
+                "T4": {
+                  "background_dice": 0.9880102003358522,
+                  "background_inclusive_mean": 0.8719274407746401,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.7558446812134286,
+                  "patients": 30,
+                  "per_class_including_background": [
+                    0.988010200335852,
+                    0.7558446812134284
+                  ],
+                  "slices": 1223
+                }
+              }
+            },
+            "r007": {
+              "background_inclusive_mean": 0.5871180352496502,
+              "checkpoint": "<project_root>/organ_comparisons_20260910/runs/zs-sequential/s04.pt",
+              "checkpoint_bytes": 103140894,
+              "checkpoint_mtime": 1789059339.7345695,
+              "code": "<project_root>/organ_comparisons_20260910/source",
+              "compared_tasks": [
+                "T1",
+                "T2",
+                "T3",
+                "T4"
+              ],
+              "data_root": "<project_root>/organ_comparisons_20260910/inputs/data",
+              "finished_at": 1789474190.939452,
+              "foreground_max_abs_difference": 0.0,
+              "foreground_parity_passed": true,
+              "gpu_peak_mib": 1068.0,
+              "job_id": "r007",
+              "run": "organ_comparisons_20260910/runs/zs-sequential",
+              "scenario": "organ",
+              "split": "test",
+              "stage": 4,
+              "status": "complete",
+              "tasks": {
+                "T1": {
+                  "background_dice": 0.9892953244386081,
+                  "background_inclusive_mean": 0.49464766236843244,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 2.9825660906223594e-10,
+                  "patients": 10,
+                  "per_class_including_background": [
+                    0.9892953244386081,
+                    2.9825660906223594e-10
+                  ],
+                  "slices": 298
+                },
+                "T2": {
+                  "background_dice": 0.898650842891401,
+                  "background_inclusive_mean": 0.4665917649534055,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.034532687015410034,
+                  "patients": 4,
+                  "per_class_including_background": [
+                    0.898650842891401,
+                    0.034532687015410034
+                  ],
+                  "slices": 100
+                },
+                "T3": {
+                  "background_dice": 0.9645230683874594,
+                  "background_inclusive_mean": 0.48226153421667256,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 4.588572746214912e-11,
+                  "patients": 7,
+                  "per_class_including_background": [
+                    0.9645230683874594,
+                    4.588572746214912e-11
+                  ],
+                  "slices": 496
+                },
+                "T4": {
+                  "background_dice": 0.9925612353960228,
+                  "background_inclusive_mean": 0.9049711794600905,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.8173811235241583,
+                  "patients": 30,
+                  "per_class_including_background": [
+                    0.9925612353960229,
+                    0.8173811235241584
+                  ],
+                  "slices": 1223
+                }
+              }
+            },
+            "r008": {
+              "background_inclusive_mean": 0.6144177217668689,
+              "checkpoint": "<project_root>/organ_baseline_tuning_20260911/runs/zs-ewc_formal/s04.pt",
+              "checkpoint_bytes": 103140894,
+              "checkpoint_mtime": 1789127252.0079374,
+              "code": "<project_root>/organ_baseline_tuning_20260911/source",
+              "compared_tasks": [
+                "T1",
+                "T2",
+                "T3",
+                "T4"
+              ],
+              "data_root": "<project_root>/organ_baseline_tuning_20260911/inputs/data",
+              "finished_at": 1789474254.2614834,
+              "foreground_max_abs_difference": 0.0,
+              "foreground_parity_passed": true,
+              "gpu_peak_mib": 1068.0,
+              "job_id": "r008",
+              "run": "organ_baseline_tuning_20260911/runs/zs-ewc_formal",
+              "scenario": "organ",
+              "split": "test",
+              "stage": 4,
+              "status": "complete",
+              "tasks": {
+                "T1": {
+                  "background_dice": 0.9891020982053659,
+                  "background_inclusive_mean": 0.4976390826317817,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.0061760670581976086,
+                  "patients": 10,
+                  "per_class_including_background": [
+                    0.9891020982053659,
+                    0.0061760670581976086
+                  ],
+                  "slices": 298
+                },
+                "T2": {
+                  "background_dice": 0.9935934852741627,
+                  "background_inclusive_mean": 0.49679674288469033,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 4.95218043798624e-10,
+                  "patients": 4,
+                  "per_class_including_background": [
+                    0.9935934852741627,
+                    4.95218043798624e-10
+                  ],
+                  "slices": 100
+                },
+                "T3": {
+                  "background_dice": 0.9590720704866039,
+                  "background_inclusive_mean": 0.5606000320062989,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.16212799352599397,
+                  "patients": 7,
+                  "per_class_including_background": [
+                    0.9590720704866039,
+                    0.16212799352599397
+                  ],
+                  "slices": 496
+                },
+                "T4": {
+                  "background_dice": 0.9918610850572516,
+                  "background_inclusive_mean": 0.9026350295447048,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.8134089740321581,
+                  "patients": 30,
+                  "per_class_including_background": [
+                    0.9918610850572516,
+                    0.8134089740321581
+                  ],
+                  "slices": 1223
+                }
+              }
+            },
+            "r009": {
+              "background_inclusive_mean": 0.6487990437073288,
+              "checkpoint": "<project_root>/organ_baseline_tuning_20260911/runs/zs-gpm_formal/s04.pt",
+              "checkpoint_bytes": 103140894,
+              "checkpoint_mtime": 1789126627.1309433,
+              "code": "<project_root>/organ_baseline_tuning_20260911/source",
+              "compared_tasks": [
+                "T1",
+                "T2",
+                "T3",
+                "T4"
+              ],
+              "data_root": "<project_root>/organ_baseline_tuning_20260911/inputs/data",
+              "finished_at": 1789474318.0456882,
+              "foreground_max_abs_difference": 0.0,
+              "foreground_parity_passed": true,
+              "gpu_peak_mib": 1068.0,
+              "job_id": "r009",
+              "run": "organ_baseline_tuning_20260911/runs/zs-gpm_formal",
+              "scenario": "organ",
+              "split": "test",
+              "stage": 4,
+              "status": "complete",
+              "tasks": {
+                "T1": {
+                  "background_dice": 0.9959247230001775,
+                  "background_inclusive_mean": 0.6896122488446371,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.38329977468909654,
+                  "patients": 10,
+                  "per_class_including_background": [
+                    0.9959247230001773,
+                    0.38329977468909654
+                  ],
+                  "slices": 298
+                },
+                "T2": {
+                  "background_dice": 0.9935934852741627,
+                  "background_inclusive_mean": 0.49679674288469033,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 4.95218043798624e-10,
+                  "patients": 4,
+                  "per_class_including_background": [
+                    0.9935934852741627,
+                    4.95218043798624e-10
+                  ],
+                  "slices": 100
+                },
+                "T3": {
+                  "background_dice": 0.9655290654233395,
+                  "background_inclusive_mean": 0.516705738406041,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.06788241138874238,
+                  "patients": 7,
+                  "per_class_including_background": [
+                    0.9655290654233395,
+                    0.06788241138874238
+                  ],
+                  "slices": 496
+                },
+                "T4": {
+                  "background_dice": 0.9913631137282136,
+                  "background_inclusive_mean": 0.8920814446939467,
+                  "classes": [
+                    0,
+                    1
+                  ],
+                  "foreground_mean": 0.7927997756596802,
+                  "patients": 30,
+                  "per_class_including_background": [
+                    0.9913631137282136,
+                    0.7927997756596803
+                  ],
+                  "slices": 1223
+                }
+              }
+            }
+          },
+          "checked_at": "2026-09-15T12:12:43.922099+00:00"
         },
         "legacy": {
           "progress": {
@@ -3546,6 +4335,7 @@
             "worker_pid": 45422
           },
           "plan": {
+            "gpu": 3,
             "minimum_free_mib": 5000,
             "jobs": [
               {
@@ -5575,6 +6365,7 @@
             "worker_pid": 101173
           },
           "plan": {
+            "gpu": 3,
             "minimum_free_mib": 5000,
             "jobs": [
               {
@@ -5724,8 +6515,7 @@
                 }
               }
             }
-          },
-          "checked_at": "2026-09-15T10:50:56.771032+00:00"
+          }
         }
       }
     }
