@@ -98,6 +98,8 @@ v6c43 采用 2026-09-10 同批次 checkpoint 复评值；早期公开归档的 A
 
 ## 3. Organ 持续学习
 
+每种方法一条、包含 A-Dice / BWTR / RMA / MPE / DRR 的完整指标表见 [Organ-CL 实验结果](organ_cl_results_20260915.md)。该表沿用本节七个代表性 run，并补评阶段 checkpoint 计算含背景指标；E-FWT 对 Organ-CL 不适用。
+
 ### 3.1 Organ 主方法与对照总览
 
 ER 的 4 阶段已完成，采用 T1/T3/T4 训练集减半、T2 保持完整的协议，40 epochs/任务、buffer=64。历史 u5k2n 只是 T4 epoch 21 时保存的 partial checkpoint，不能视为完成的正式对照。
