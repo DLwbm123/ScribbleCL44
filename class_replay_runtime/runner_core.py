@@ -794,6 +794,7 @@ def main(project_scenario: str) -> None:
     parser.add_argument("--der-alpha", type=float, default=0.5)
     parser.add_argument("--der-beta", type=float, default=0.5)
     parser.add_argument("--mib-kd-weight", type=float, default=10.0)
+    parser.add_argument("--with-mib", action="store_true", help="Add existing sparse MiB loss/KD to a Class baseline")
     parser.add_argument("--max-train-batches", type=int)
     parser.add_argument("--independent-reference", action="store_true")
     parser.add_argument("--independent-scores", type=Path)
@@ -817,7 +818,10 @@ def main(project_scenario: str) -> None:
     if replay_control and ((args.method == "zs-er" and args.der_alpha != 0)
                            or (args.method == "zs-der" and args.der_beta != 0)):
         parser.error("ER requires alpha=0; feature-DER requires beta=0")
-    use_mib = args.method in {"zs-mib", "zs-derpp-mib"}
+    if args.with_mib and (project_scenario != "class" or args.class_independent_task
+                          or args.method in {"dense-sequential", "zs-derpp", "zs-derpp-mib"}):
+        parser.error("--with-mib is limited to sparse Class baselines; existing DER++ methods are unchanged")
+    use_mib = args.with_mib or args.method in {"zs-mib", "zs-derpp-mib"}
     if args.zs_global_weight is None:
         args.zs_global_weight = 1.0 if use_zs else 0.0
     if not use_zs and (
@@ -967,6 +971,7 @@ def main(project_scenario: str) -> None:
                          "backbone_features_only" if replay_control else
                          "backbone_features_plus_sparse_pce_global") if use_derpp else None,
         "mib_kd_weight": args.mib_kd_weight if use_mib else None,
+        "with_mib": use_mib,
         "max_train_batches": args.max_train_batches,
         "safe_numerics": args.safe_numerics,
         "grad_clip_norm": args.grad_clip_norm,
@@ -991,6 +996,8 @@ def main(project_scenario: str) -> None:
                 raise ValueError(f"resume protocol mismatch: {key}")
         stage_rows = json.loads((args.resume_from / "stages.json").read_text())
         start_stage = len(stage_rows)
+        if start_stage > 1 and previous.get("mib_kd_weight") != manifest["mib_kd_weight"]:
+            raise ValueError("MiB can change only at the T1 boundary, before its first active stage")
         if not 0 < start_stage <= last_stage or [r["stage"] for r in stage_rows] != list(range(start_stage)):
             raise ValueError("resume requires a contiguous completed task prefix and remaining tasks")
         state = torch.load(args.resume_from / f"s{start_stage:02d}_state.pt", map_location="cpu", weights_only=False)
@@ -1213,6 +1220,8 @@ def main(project_scenario: str) -> None:
                             "feature_loss": float(derpp_feature.detach()),
                             "replay_pce_loss": float(derpp_pce.detach()),
                             "replay_global_loss": float(derpp_global.detach()),
+                            "mib_kd_loss": float(mib_kd.detach()),
+                            "mib_enabled": use_mib,
                             "stored_examples": len(derpp),
                             "peak_allocated_mib": torch.cuda.max_memory_allocated(device) / 2**20,
                             "peak_reserved_mib": torch.cuda.max_memory_reserved(device) / 2**20,
