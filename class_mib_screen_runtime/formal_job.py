@@ -35,7 +35,7 @@ try:
     if free < 22000:
         raise RuntimeError("Less than 22000 MiB free; no automatic retry")
     output = ROOT / "jobs" / METHOD
-    source = ROOT / ("source_er" if METHOD == "zs-er" else "source_der")
+    source = ROOT / ("source_der" if METHOD == "zs-der" else "source_er")
     args = ["--data-root", PLAN["data"], "--sparse-root", PLAN["sparse"],
             "--output", str(output), "--device", "cuda:0", "--method", METHOD,
             "--seed", "42", "--epochs-per-task", str(EPOCHS), "--task-epochs", *[str(EPOCHS)] * 3,
@@ -53,6 +53,37 @@ try:
     env = dict(os.environ, CUDA_VISIBLE_DEVICES=GPU, JOB_ARGS=json.dumps(args),
                OMP_NUM_THREADS="4", MKL_NUM_THREADS="4", OPENBLAS_NUM_THREADS="4",
                TMPDIR=str(ROOT / "tmp"), PYTHONUNBUFFERED="1")
+    if PLAN.get("two_stage_preflight", False):
+        check_args = args.copy()
+        check_output = ROOT / "checks" / METHOD
+        for key, value in (("--output", str(check_output)), ("--epochs-per-task", "1"), ("--max-task", "2")):
+            check_args[check_args.index(key) + 1] = value
+        start = check_args.index("--task-epochs") + 1
+        check_args[start:start + 3] = ["1"] * 3
+        check_args += ["--validation-only", "--max-train-batches", "2", "--fisher-batches", "2",
+                       "--gpm-examples", "2", "--gpm-max-patches-per-layer", "64",
+                       "--gpm-max-matrix-elements", "40000"]
+        with (ROOT / "logs" / (METHOD + "-check.log")).open("x") as log:
+            child = subprocess.Popen(["./main", "-u", "entry.py"], cwd=source,
+                                     env=dict(env, JOB_ARGS=json.dumps(check_args)),
+                                     stdin=subprocess.DEVNULL, stdout=log, stderr=subprocess.STDOUT)
+            STATE.update(status="preflight", pid=child.pid)
+            save()
+            check_code = child.wait()
+        if check_code:
+            raise RuntimeError(f"Two-stage preflight exited {check_code}; formal run not started")
+        check = json.loads((check_output / "summary.json").read_text())
+        check_rows = [json.loads(line) for line in (check_output / "train.jsonl").read_text().splitlines()]
+        check_rows = [row for row in check_rows if "loss" in row]
+        assert check["completed_stages"] == 2 and len(check_rows) == 2
+        assert all(math.isfinite(row["loss"]) for row in check_rows)
+        assert check_rows[1]["mib_kd_loss"] > 0 and not check["replay"]
+        if METHOD == "zs-ewc":
+            assert check_rows[1]["ewc_penalty"] > 0
+        if METHOD == "zs-gpm":
+            assert check_rows[1]["gpm_gradient_ratio"] is not None
+        STATE["preflight_passed"] = True
+        save()
     with (ROOT / "logs" / (METHOD + ".log")).open("x") as log:
         child = subprocess.Popen(["./main", "-u", "entry.py"], cwd=source, env=env,
                                  stdin=subprocess.DEVNULL, stdout=log, stderr=subprocess.STDOUT)
